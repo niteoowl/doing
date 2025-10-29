@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>doing! - 로그인/회원가입</title>
+    <!-- Google Material Icons (Google Fonts Icons) 추가 --><link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!-- 모바일 앱의 깔끔함을 위해 시스템 폰트 사용 --><style>
         /* 기본 스타일 및 제약 조건 반영 */
         :root {
@@ -92,7 +93,6 @@
             background-color: var(--color-white); /* 슬라이더 배경 흰색 */
             border-radius: 8px;
             transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);  그림자 삭제 */
             z-index: 1;
         }
         
@@ -110,6 +110,7 @@
         
         /* 입력 필드 스타일 */
         .input-group {
+            position: relative; /* 비밀번호 토글 버튼을 위한 기준점 */
             margin-bottom: 1.25rem;
         }
 
@@ -127,6 +128,34 @@
             border-color: var(--color-accent);
         }
 
+        /* 비밀번호 토글 버튼 스타일 */
+        .password-toggle {
+            position: absolute;
+            right: 0.2rem; /* 입력 필드 안쪽으로 더 넣기 */
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.75rem; /* 더 큰 터치 영역 확보 */
+            color: #777;
+            line-height: 1;
+            z-index: 5;
+            /* transition 제거: 클릭 시 어떠한 시각적 효과도 없도록 */
+        }
+        
+        /* Material Icon 스타일 */
+        .password-toggle i.material-icons {
+            font-size: 24px; /* 아이콘 크기 */
+            line-height: 1;
+            display: block;
+            color: currentColor; /* 부모 버튼의 색상을 따르도록 설정 */
+        }
+
+        .password-toggle:hover {
+            color: var(--color-black);
+        }
+
         /* 액션 버튼 (로그인/회원가입) */
         .action-button {
             width: 100%;
@@ -142,13 +171,19 @@
             margin-top: 1rem;
         }
 
-        /* 버튼 '누르면 작아지는 효과' */
+        /* [일반 버튼] '누르면 크기 변화 효과' (사용자 요청에 따라 scale(0.97) 유지) */
         .interactive:active {
-            transform: scale(0.97);
-            opacity: 0.9;
+            transform: scale(0.97); /* 누르면 작아지는 효과 */
+            opacity: 0.9; /* 투명도를 0.9로 설정하여 깔끔한 시각적 피드백 유지 */
         }
         
-        /* 추가적인 링크 (비밀번호 찾기 등) - 모두 제거됨 */
+        /* [비밀번호 토글 버튼] '크기 변화 효과' 및 '색상 변화 효과' 완전히 제거 */
+        .password-toggle.interactive:active {
+            /* 어떠한 transform 또는 color 변화도 없이 원래 상태 유지 */
+            transform: translateY(-50%) scale(1); /* 위치/크기 고정 */
+            opacity: 1; /* 투명도 고정 */
+            color: #777; /* 기본 색상 고정 (hover 시 검정으로) */
+        }
         
         /* 모바일 화면 높이 조정 */
         @media (max-width: 420px) {
@@ -167,6 +202,7 @@
             left: 0; 
             width: 100%; 
             height: 100%; 
+            max-width: 420px; /* 모바일 컨테이너와 동일한 최대 너비 적용 */
             background-color: rgba(0, 0, 0, 0.4); 
             display: none; 
             justify-content: center; 
@@ -221,15 +257,17 @@
         <div class="input-group">
             <input type="email" id="login-email" class="auth-input" placeholder="이메일 주소" required>
         </div>
-        <div class="input-group">
+        
+        <!-- 비밀번호 입력 그룹 (토글 버튼 추가) --><div class="input-group">
             <input type="password" id="login-password" class="auth-input" placeholder="비밀번호" required>
+            <button type="button" class="password-toggle interactive" onclick="togglePasswordVisibility('login-password', this)">
+                <!-- 아이콘은 JS에서 초기화됩니다. --><div id="toggle-icon-login"></div>
+            </button>
         </div>
         
         <button id="login-button" class="action-button interactive" onclick="handleAuth('login')">
             로그인
         </button>
-        
-        <!-- '비밀번호 찾기 | 회원가입' 링크 제거됨 -->
     </div>
 
     <!-- 회원가입 폼 --><div id="register-form" class="form-container hidden">
@@ -239,18 +277,24 @@
         <div class="input-group">
             <input type="text" id="register-nickname" class="auth-input" placeholder="사용자 이름 (닉네임)" required>
         </div>
-        <div class="input-group">
+        
+        <!-- 비밀번호 입력 그룹 (토글 버튼 추가) --><div class="input-group">
             <input type="password" id="register-password" class="auth-input" placeholder="비밀번호 (6자 이상)" required>
+            <button type="button" class="password-toggle interactive" onclick="togglePasswordVisibility('register-password', this)">
+                <div id="toggle-icon-register"></div>
+            </button>
         </div>
-        <div class="input-group">
+        
+        <!-- 비밀번호 확인 입력 그룹 (토글 버튼 추가) --><div class="input-group">
             <input type="password" id="register-confirm-password" class="auth-input" placeholder="비밀번호 확인" required>
+            <button type="button" class="password-toggle interactive" onclick="togglePasswordVisibility('register-confirm-password', this)">
+                <div id="toggle-icon-confirm"></div>
+            </button>
         </div>
         
         <button id="register-button" class="action-button interactive" onclick="handleAuth('register')">
             회원가입
         </button>
-        
-        <!-- '로그인으로 돌아가기' 링크 제거됨 -->
     </div>
 </div>
 
@@ -273,6 +317,13 @@
         browserSessionPersistence
     } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
+    // --- Google Material Icon HTML 정의 ---
+    // Eye Icon (비밀번호 보이기): Material Icon 'visibility'
+    const EYE_ICON_HTML = '<i class="material-icons">visibility</i>';
+
+    // Eye Off Icon (비밀번호 숨기기): Material Icon 'visibility_off'
+    const EYE_OFF_ICON_HTML = '<i class="material-icons">visibility_off</i>';
+    
     // --- Firebase 설정 및 초기화 ---
     // 사용자 제공 설정 또는 환경 변수 사용
     const userFirebaseConfig = {
@@ -330,6 +381,24 @@
         }
     }
 
+    /**
+     * 비밀번호 입력 필드의 가시성을 토글합니다.
+     * @param {string} inputId - 비밀번호 입력 필드의 ID
+     * @param {HTMLElement} buttonElement - 토글 버튼 요소
+     */
+    window.togglePasswordVisibility = function(inputId, buttonElement) {
+        const input = document.getElementById(inputId);
+        const iconContainer = buttonElement.querySelector('div');
+        
+        if (input.type === 'password') {
+            input.type = 'text';
+            iconContainer.innerHTML = EYE_OFF_ICON_HTML; // 숨김 아이콘
+        } else {
+            input.type = 'password';
+            iconContainer.innerHTML = EYE_ICON_HTML; // 보임 아이콘
+        }
+    }
+
     // --- 인증 처리 로직 (Firebase 연동) ---
 
     /**
@@ -337,6 +406,7 @@
      * @param {string} type - 'login' 또는 'register'
      */
     window.handleAuth = async function(type) {
+        // ... (인증 로직은 변경 없음)
         if (type === 'login') {
             const email = document.getElementById('login-email').value.trim();
             const password = document.getElementById('login-password').value.trim();
@@ -360,6 +430,8 @@
                     errorMessage = '존재하지 않는 사용자입니다.';
                 } else if (error.code === 'auth/wrong-password') {
                     errorMessage = '비밀번호가 일치하지 않습니다.';
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMessage = '유효하지 않은 이메일 주소 형식입니다.';
                 }
                 showModal('로그인 오류', errorMessage);
             }
@@ -409,8 +481,8 @@
         }
     }
 
-    // --- 모달 팝업 함수 ---
-    function showModal(title, text) {
+    // --- 모달 팝업 함수 (window에 바인딩되어 HTML onclick 접근 가능) ---
+    window.showModal = function(title, text) {
         modalTitle.textContent = title;
         modalText.textContent = text;
         modal.style.display = 'flex';
@@ -421,7 +493,7 @@
         }, 10); 
     }
 
-    function hideModal() {
+    window.hideModal = function() {
         // 애니메이션 클래스 제거
         modal.querySelector('.modal-content').style.transform = 'scale(0.9)';
         modal.querySelector('.modal-content').style.opacity = '0';
@@ -430,9 +502,18 @@
             modal.style.display = 'none';
         }, 200); 
     }
+    
+    // --- 초기화 로직 ---
+    function initializeIcons() {
+        // SVG 대신 Material Icon HTML 사용
+        document.getElementById('toggle-icon-login').innerHTML = EYE_ICON_HTML;
+        document.getElementById('toggle-icon-register').innerHTML = EYE_ICON_HTML;
+        document.getElementById('toggle-icon-confirm').innerHTML = EYE_ICON_HTML;
+    }
 
-    // 초기 로드 시 모바일 화면 높이 조정
+    // 초기 로드 시 실행
     window.addEventListener('load', () => {
+        initializeIcons();
         const appContainer = document.getElementById('app-container');
         appContainer.style.minHeight = `${window.innerHeight}px`;
     });
