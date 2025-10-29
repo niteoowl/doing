@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>doing! - 로그인/회원가입</title>
+    <title>Doing! - 로그인/회원가입</title>
+    <!-- Pretendard 폰트 CDN 적용 --><link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
     <!-- Google Material Icons (Google Fonts Icons) 추가 --><link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!-- 모바일 앱의 깔끔함을 위해 시스템 폰트 사용 --><style>
         /* 기본 스타일 및 제약 조건 반영 */
@@ -20,7 +21,8 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            /* === 수정: Pretendard 폰트 적용 === */
+            font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             margin: 0;
             padding: 0;
             background-color: var(--color-white); /* 전체 배경 흰색 */
@@ -30,7 +32,7 @@
             min-height: 100vh;
             color: var(--color-black);
             -webkit-tap-highlight-color: transparent;
-            /* === 수정: 스크롤바 공간을 항상 예약하여 레이아웃 밀림 방지 === */
+            /* 스크롤바 공간을 항상 예약하여 레이아웃 밀림 방지 */
             overflow-y: scroll; 
         }
 
@@ -45,7 +47,17 @@
             min-height: 100vh; /* 전체 화면 채우기 */
             padding: 2rem 1.5rem; /* 상하 여백, 좌우는 조금 남김 */
             justify-content: center; /* 내부 콘텐츠 중앙 정렬 */
+            
+            /* === FOUT 방지를 위해 초기 투명도 설정 === */
+            opacity: 0;
+            transition: opacity 0.5s ease;
         }
+        
+        /* === 폰트 로드 완료 후 표시 === */
+        #app-container.font-loaded {
+            opacity: 1;
+        }
+
 
         /* 헤더 스타일 (로고) */
         .header-title {
@@ -197,7 +209,7 @@
             }
         }
 
-        /* 모달 팝업 스타일 수정: 전체 화면 고정, 배경 오버레이, 중앙 정렬 */
+        /* 모달 팝업 구조 수정 */
         #modal {
             position: fixed; /* 화면에 고정 */
             top: 0; 
@@ -248,7 +260,7 @@
 <body>
 
 <div id="app-container">
-    <h1 class="header-title">doing!</h1>
+    <h1 class="header-title">Doing!</h1>
 
     <!-- 탭 토글 버튼 --><div class="tab-toggle-container">
         <div id="tab-slider"></div>
@@ -357,6 +369,7 @@
     const loginTab = document.getElementById('login-tab');
     const registerTab = document.getElementById('register-tab');
     const tabSlider = document.getElementById('tab-slider');
+    const appContainer = document.getElementById('app-container'); // 앱 컨테이너 요소
     
     // 모달 관련 요소
     const modal = document.getElementById('modal');
@@ -517,12 +530,16 @@
     // 초기 로드 시 실행
     window.addEventListener('load', () => {
         initializeIcons();
-        const appContainer = document.getElementById('app-container');
         appContainer.style.minHeight = `${window.innerHeight}px`;
+        
+        // === FOUT 방지 로직: 폰트 로드 확인 후 컨테이너 표시 ===
+        document.fonts.ready.then(() => {
+             // 폰트 로드 확인 후 opacity 1로 전환 (CSS transition 적용됨)
+             appContainer.classList.add('font-loaded');
+        });
     });
     // 화면 크기 변경 시 높이 조정
     window.addEventListener('resize', () => {
-        const appContainer = document.getElementById('app-container');
         appContainer.style.minHeight = `${window.innerHeight}px`;
     });
 </script>
