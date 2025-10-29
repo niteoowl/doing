@@ -16,9 +16,10 @@
             --color-white: #ffffff;
             --color-black: #000000;
             --color-accent: #1E90FF; /* 포인트 블루 (Dodger Blue) */
-            --color-light-gray: #f0f3f8; /* 배경색을 더 밝게 */
+            --color-light-gray: #f0f4f8; /* 배경색을 더 밝게 */
             --color-border: #e0e0e0;
-            --bottom-nav-height: 80px; 
+            --bottom-nav-height: 80px;
+            --pc-max-width: 1200px; /* PC 환경 최대 콘텐츠 너비 */
         }
 
         * { box-sizing: border-box; }
@@ -38,26 +39,78 @@
 
         #app-container {
             width: 100%;
-            max-width: 768px; /* PC/Tablet 환경 대응을 위해 최대 너비 증가 */
             background-color: var(--color-white);
             display: flex;
             flex-direction: column;
             position: relative;
             min-height: 100vh;
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.05); /* PC에서 앱 경계 강조 */
+            opacity: 0;
             transition: opacity 0.5s ease;
-            opacity: 0; /* 초기 로딩 후 보이기 위해 0으로 설정 */
         }
         
-        #app-container.ready { opacity: 1; } /* 로딩 완료 시 표시 */
+        #app-container.font-loaded { opacity: 1; }
 
-        /* 헤더 스타일 */
+        /* ------------------ PC/Desktop Layout ------------------ */
+        @media (min-width: 640px) {
+            body {
+                align-items: flex-start; 
+                justify-content: center;
+            }
+            #app-container {
+                max-width: var(--pc-max-width); 
+                box-shadow: 0 0 30px rgba(0, 0, 0, 0.05); /* PC에서 컨테이너 구분을 위해 그림자 추가 */
+            }
+            .header {
+                padding: 1rem 3rem; /* PC에서 더 넓은 패딩 */
+            }
+            
+            .nav-item i.material-icons {
+                font-size: 20px; /* PC에서 아이콘 작게 */
+                margin-bottom: 0;
+            }
+            .nav-item {
+                flex-direction: row;
+                gap: 8px;
+                font-size: 0.9rem;
+            }
+            .view {
+                /* PC 뷰 패딩. 하단에 고정된 내비게이션 바 높이를 고려 */
+                padding: 2rem 3rem; 
+                padding-bottom: calc(2rem + var(--bottom-nav-height)); 
+            }
+        }
+        
+        /* ------------------ Mobile Layout ------------------ */
+        @media (max-width: 639px) {
+            #app-container {
+                max-width: 420px;
+                box-shadow: none;
+            }
+            .header {
+                padding: 1rem 1.5rem;
+            }
+            .nav-item i.material-icons {
+                font-size: 28px;
+                margin-bottom: 2px;
+            }
+            .nav-item {
+                flex-direction: column;
+                font-size: 0.75rem;
+                line-height: 1.2;
+            }
+            .view {
+                /* Mobile 뷰 패딩. 하단에 고정된 내비게이션 바 높이를 고려 */
+                padding: 1.5rem 1.5rem;
+                padding-bottom: calc(1.5rem + var(--bottom-nav-height));
+            }
+        }
+
+
+        /* 공통 헤더 스타일 */
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid var(--color-border);
             background-color: var(--color-white);
             position: sticky;
             top: 0;
@@ -75,7 +128,7 @@
             padding: 0.5rem 1rem;
             background-color: transparent;
             color: var(--color-accent);
-            border: none; 
+            border: none;
             font-size: 0.9rem;
             font-weight: 600;
             cursor: pointer;
@@ -86,22 +139,20 @@
             transform: scale(0.97); 
             opacity: 0.8;
         }
+        .nav-item.interactive:active {
+            transform: scale(0.95);
+        }
 
         /* 메인 뷰 컨테이너 */
         .view {
-            padding: 1.5rem 1.5rem;
             flex-grow: 1;
-            overflow-y: auto; 
-            padding-bottom: calc(1.5rem + var(--bottom-nav-height)); 
-            display: none; 
-        }
-        .view.active {
-            display: block;
+            overflow-y: auto;
+            display: block; /* index.html은 home-view만 가짐 */
         }
         
-        /* 프로필 카드 */
+        /* 챌린지 카드 목록 (스타일 유지) */
         .profile-card {
-            background: linear-gradient(45deg, var(--color-accent), #4F9FFF); 
+            background: linear-gradient(45deg, var(--color-accent), #4F9FFF);
             color: var(--color-white);
             padding: 1.5rem;
             border-radius: 16px;
@@ -110,157 +161,71 @@
         }
         .profile-greeting { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.25rem; }
         .profile-user-id { font-size: 0.8rem; opacity: 0.9; }
-
-        /* 챌린지 카드 목록 */
         .challenge-list {
-            display: flex;
-            flex-direction: column;
+            display: grid;
             gap: 1.2rem;
+            /* PC: 2열 레이아웃 */
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
         }
 
         .challenge-card {
             background-color: var(--color-white);
             padding: 1.25rem;
             border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); 
-            border: 1px solid var(--color-border); 
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--color-border);
             display: flex;
             flex-direction: column;
             transition: all 0.2s ease;
         }
         
-        /* ------------------ 하단 내비게이션 바 ------------------ */
+        /* ------------------ 하단 내비게이션 바 (공통: PC 포함 고정 하단) ------------------ */
         .bottom-nav {
-            position: fixed;
-            bottom: 0;
             width: 100%;
-            max-width: 768px; /* 메인 컨테이너 너비와 일치 */
-            height: var(--bottom-nav-height);
             background-color: var(--color-white);
-            border-top: 1px solid var(--color-border);
             display: flex;
             justify-content: space-around;
             align-items: center;
             z-index: 20;
-            padding-bottom: env(safe-area-inset-bottom, 10px); 
+            /* 고정 하단 설정 */
+            position: fixed;
+            bottom: 0;
+            top: auto;
+            height: var(--bottom-nav-height);
+            padding-bottom: env(safe-area-inset-bottom, 10px);
+            border-top: 1px solid var(--color-border);
             box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.08);
+            
+            /* PC 중앙 정렬 및 최대 너비 설정 */
+            left: 50%;
+            transform: translateX(-50%);
+            max-width: var(--pc-max-width);
+        }
+        
+        /* 모바일 환경에서만 max-width 재설정 */
+        @media (max-width: 639px) {
+            .bottom-nav {
+                max-width: 420px;
+            }
         }
 
         .nav-item {
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             color: #b0b0b0; 
             transition: color 0.2s ease, transform 0.1s ease;
-            font-size: 0.75rem;
             font-weight: 500;
-            line-height: 1.2;
+            text-decoration: none; /* a 태그 기본 스타일 제거 */
             width: 33%; 
+            padding: 10px 0; 
         }
         .nav-item.active {
-            color: var(--color-accent); 
-        }
-        .nav-item i.material-icons {
-            font-size: 28px; 
-            margin-bottom: 2px;
-        }
-        /* ------------------ 하단 내비게이션 바 끝 ------------------ */
-        
-        /* 생성 폼 (도전 뷰) */
-        .challenge-form button {
-            width: 100%;
-            padding: 1rem;
-            background-color: var(--color-accent);
-            color: var(--color-white);
-            border: none;
-            border-radius: 10px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 1.5rem;
-        }
-        .challenge-form input, .challenge-form select {
-             width: 100%;
-             padding: 1rem;
-             border: 1px solid var(--color-border);
-             border-radius: 10px;
-             margin-bottom: 1rem;
-             font-size: 1rem;
-             outline: none;
-             transition: border-color 0.2s;
-        }
-        .challenge-form input:focus, .challenge-form select:focus {
-             border-color: var(--color-accent);
-        }
-
-        /* ------------------ 로딩 오버레이 ------------------ */
-        #loading-overlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-color: var(--color-accent);
-            color: var(--color-white);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            transition: opacity 0.5s ease, visibility 0.5s ease;
-        }
-        .spinner {
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            border-top: 4px solid var(--color-white);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin-bottom: 1rem;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        /* ------------------ 로그인 필요 뷰 ------------------ */
-        #auth-required-view {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            width: 100%; max-width: 768px; /* app-container와 너비 일치 */
-            margin: 0 auto;
-            background-color: var(--color-light-gray);
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 50; 
-            text-align: center;
-            padding: 2rem;
-        }
-        #auth-required-view.active {
-            display: flex;
-        }
-        #auth-required-view h2 {
-            font-size: 2rem;
-            font-weight: 800;
             color: var(--color-accent);
-            margin-bottom: 1rem;
         }
-        #auth-required-view p {
-            color: #555;
-            margin-bottom: 2rem;
-        }
-        #auth-required-view button {
-            padding: 1rem 2rem;
-            background-color: var(--color-accent);
-            color: var(--color-white);
-            border: none;
-            border-radius: 10px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(30, 144, 255, 0.3);
-        }
-        /* ------------------ 모달 ------------------ */
+        
+        /* 모달 팝업 구조는 유지 */
         #modal {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(0, 0, 0, 0.4);
             display: none; justify-content: center; align-items: center; z-index: 100;
@@ -270,41 +235,35 @@
             text-align: center; transform: scale(0.9); opacity: 0; transition: transform 0.2s ease, opacity 0.2s ease;
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3); 
         }
-        .modal-title { font-size: 1.2rem; font-weight: 700; color: var(--color-black); margin-bottom: 0.75rem; }
-        .modal-text { color: #555; margin-bottom: 1.5rem; }
         .modal-close-button {
-            padding: 0.75rem 1.5rem; background-color: var(--color-accent); color: var(--color-white); border: none;
-            border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer;
-        }
-
-        /* 모바일 화면 높이 조정 */
-        @media (max-width: 768px) {
-            #app-container {
-                min-height: 100vh;
-                max-width: 420px;
-            }
+            margin-top: 1rem; padding: 0.5rem 1.5rem; background-color: var(--color-accent); color: var(--color-white); 
+            border: none; border-radius: 8px; font-weight: 600; cursor: pointer;
         }
     </style>
 </head>
 <body>
 
-<!-- 로딩 오버레이 (무한 흰 화면 방지) -->
-<div id="loading-overlay">
-    <div class="spinner"></div>
-    <p class="text-xl font-semibold">Doing! 로딩 중...</p>
-</div>
-
-<!-- 로그인 필요 뷰 (인증 실패 시 표시) -->
-<div id="auth-required-view">
-    <i class="material-icons" style="font-size: 4rem; color: #FF6347; margin-bottom: 1rem;">lock</i>
-    <h2>로그인 필요</h2>
-    <p>이 기능을 사용하려면 로그인이 필요합니다.<br>로그인 화면으로 이동합니다. (시뮬레이션)</p>
-    <button class="interactive" onclick="simulateLogin()">로그인 페이지로 이동</button>
-</div>
-
-
 <div id="app-container">
-    <!-- 헤더 -->
+    <!-- 하단 내비게이션 바 (PC/Mobile 모두 하단에 고정) -->
+    <div class="bottom-nav">
+        <!-- Home (index.html) - 현재 페이지이므로 active -->
+        <a class="nav-item interactive active" href="/">
+            <i class="material-icons">home</i>
+            <span>홈</span>
+        </a>
+        <!-- Challenge (/challenges.html) - 외부 파일 링크 -->
+        <a class="nav-item interactive" href="/challenges.html">
+            <i class="material-icons">directions_run</i>
+            <span>도전</span>
+        </a>
+        <!-- My (/my.html) - 외부 파일 링크로 변경 -->
+        <a class="nav-item interactive" href="/my.html">
+            <i class="material-icons">person</i>
+            <span>마이</span>
+        </a>
+    </div>
+
+    <!-- 헤더 (로고 및 로그아웃) -->
     <header class="header">
         <h1 class="header-title">Doing!</h1>
         <button class="logout-button interactive" onclick="handleLogout()">
@@ -326,7 +285,7 @@
 
         <!-- 챌린지 목록 섹션 -->
         <div class="challenge-section">
-            <h2 class="text-xl font-bold mb-4 text-gray-800">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">
                 나의 진행 중인 챌린지
             </h2>
             <div id="challenge-list" class="challenge-list">
@@ -335,57 +294,10 @@
             </div>
         </div>
     </div>
-
-    <!-- 2. 도전 뷰 (챌린지 생성/참여 시뮬레이션) -->
-    <div id="challenge-view" class="view">
-        <h2 class="text-xl font-bold mb-6 text-gray-800">새로운 도전 시작하기</h2>
-        <p class="text-gray-600 mb-6">원하는 챌린지의 제목과 기간을 선택하고 새로운 도전을 시작하세요!</p>
-        <form class="challenge-form" onsubmit="handleCreateChallenge(event)">
-            <input type="text" id="challenge-title" placeholder="챌린지 제목 (예: 매일 운동하기)" required>
-            <select id="challenge-duration" required>
-                <option value="" disabled selected>기간 선택</option>
-                <option value="7">7일 챌린지</option>
-                <option value="30">30일 챌린지</option>
-                <option value="60">60일 챌린지</option>
-                <option value="90">90일 챌린지</option>
-            </select>
-            <button type="submit" class="interactive">챌린지 시작!</button>
-        </form>
-    </div>
-
-    <!-- 3. 마이 뷰 (프로필/설정) -->
-    <div id="my-view" class="view">
-        <h2 class="text-xl font-bold mb-6 text-gray-800">마이페이지</h2>
-        <div class="p-4 bg-white rounded-xl border border-gray-200 shadow-md mb-4">
-            <p class="font-semibold mb-2 text-lg">사용자 정보</p>
-            <div class="text-sm space-y-1">
-                <p id="profile-nickname">닉네임: 로딩 중</p>
-                <p id="profile-email">이메일: 로딩 중</p>
-                <p id="profile-uid" class="text-xs text-gray-500 mt-2">UID: 로딩 중</p>
-            </div>
-        </div>
-        <button class="action-button interactive w-full mt-6 px-4 py-3 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 transition" onclick="handleLogout()">로그아웃</button>
-    </div>
+    
+    <!-- (my-view 제거됨) -->
     
     <!-- ------------------ 뷰 컨테이너 끝 ------------------ -->
-
-
-    <!-- ------------------ 하단 내비게이션 바 ------------------ -->
-    <div class="bottom-nav">
-        <div class="nav-item interactive active" data-view="home" onclick="switchView('home-view', this)">
-            <i class="material-icons">home</i>
-            <span>홈</span>
-        </div>
-        <div class="nav-item interactive" data-view="challenge" onclick="switchView('challenge-view', this)">
-            <i class="material-icons">directions_run</i>
-            <span>도전</span>
-        </div>
-        <div class="nav-item interactive" data-view="my" onclick="switchView('my-view', this)">
-            <i class="material-icons">person</i>
-            <span>마이</span>
-        </div>
-    </div>
-    <!-- ------------------ 하단 내비게이션 바 끝 ------------------ -->
 </div>
 
 <!-- 모달 팝업 구조 (메시지 박스 용도) -->
@@ -411,16 +323,16 @@
         collection, 
         query, 
         onSnapshot, 
-        addDoc,
         serverTimestamp
     } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     // --- Firebase 설정 및 초기화 ---
+    const userFirebaseConfig = { /* Placeholder configuration */ };
     
     // 환경 변수 우선 사용 (필수 조건)
-    const firebaseConfig = typeof __firebase_config !== 'undefined' 
+    const firebaseConfig = typeof __firebase_config !== 'undefined' && JSON.parse(__firebase_config).apiKey 
         ? JSON.parse(__firebase_config) 
-        : { apiKey: "MOCK_API_KEY", authDomain: "MOCK_AUTH_DOMAIN", projectId: "MOCK_PROJECT_ID" }; // 대체 값
+        : userFirebaseConfig;
         
     const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
 
@@ -430,11 +342,7 @@
     
     // 글로벌 변수
     let currentUserId = null;
-    let authListenerUnsubscribe = null;
-
-    const loadingOverlay = document.getElementById('loading-overlay');
-    const appContainer = document.getElementById('app-container');
-    const authRequiredView = document.getElementById('auth-required-view');
+    let isAuthAttempted = false; // 인증 시도 여부
 
 
     // --- UI/UX 함수 ---
@@ -442,7 +350,9 @@
     const modalTitle = document.getElementById('modal-title');
     const modalText = document.getElementById('modal-text');
     
-    /** 모달 표시 함수 */
+    /**
+     * 모달 표시 함수 (HTML onclick에서 사용 가능하도록 window에 바인딩)
+     */
     window.showModal = function(title, text) {
         modalTitle.textContent = title;
         modalText.textContent = text;
@@ -453,7 +363,9 @@
         }, 10); 
     }
 
-    /** 모달 숨김 함수 */
+    /**
+     * 모달 숨김 함수
+     */
     window.hideModal = function() {
         modal.querySelector('.modal-content').style.transform = 'scale(0.9)';
         modal.querySelector('.modal-content').style.opacity = '0';
@@ -461,101 +373,74 @@
             modal.style.display = 'none';
         }, 200); 
     }
-    
-    /**
-     * 뷰 전환 및 하단 내비게이션 활성화
-     */
-    window.switchView = function(viewId, navItem) {
-        if (!currentUserId) {
-             showModal('로그인 필요', '로그인 후 이용 가능한 서비스입니다.');
-             return;
-        }
 
-        document.querySelectorAll('.view').forEach(view => {
-            view.classList.remove('active');
-        });
-        
-        const targetView = document.getElementById(viewId);
-        if (targetView) {
-            targetView.classList.add('active');
-            targetView.scrollTop = 0; 
-        }
-
-        document.querySelectorAll('.nav-item').forEach(item => {
-            item.classList.remove('active');
-        });
-        if (navItem) {
-            navItem.classList.add('active');
-        }
-    }
-
-    /**
-     * 로그인 시뮬레이션 (실제로는 auth.html로 리디렉션)
-     */
-    window.simulateLogin = function() {
-        showModal('로그인 페이지 시뮬레이션', '이 버튼은 실제 환경에서 /auth.html로 이동합니다. 현재는 앱을 재로딩하여 인증을 시도합니다.');
-        // 실제 환경에서는 window.location.href = '/auth.html';
-        setTimeout(() => {
-            window.location.reload(); 
-        }, 1500);
-    }
 
     // --- 데이터 및 비즈니스 로직 ---
 
-    /** 챌린지 카드 렌더링 */
+    /**
+     * 챌린지 카드를 렌더링합니다.
+     */
     function renderChallenges(challenges) {
         const listContainer = document.getElementById('challenge-list');
-        listContainer.innerHTML = ''; 
+        listContainer.innerHTML = ''; // 기존 목록 초기화
         
         if (challenges.length === 0) {
-            listContainer.innerHTML = '<p class="text-center text-gray-500 p-8">아직 진행 중인 챌린지가 없습니다. 새로운 도전을 시작해보세요!</p>';
+            // col-span-full을 grid 레이아웃에 맞게 적용
+            listContainer.innerHTML = '<p class="text-center text-gray-500 p-8" style="grid-column: 1 / -1;">아직 진행 중인 챌린지가 없습니다. 새로운 도전을 시작해보세요!</p>';
             return;
         }
 
         challenges.forEach(challenge => {
+            // progress 계산
             const today = new Date().getTime();
+            // serverTimestamp()가 아직 설정되지 않은 경우를 대비하여startedAt 필드 유효성 검사
             const startedAt = challenge.startedAt?.toDate ? challenge.startedAt.toDate().getTime() : today;
             const elapsedDays = Math.ceil((today - startedAt) / (1000 * 60 * 60 * 24));
             
-            const currentProgress = Math.min(elapsedDays, challenge.durationDays);
-            const progressPercent = Math.min(100, (currentProgress / challenge.durationDays) * 100).toFixed(0);
+            // 임시 진행률 (실제로는 Daily 인증 횟수로 계산해야 함)
+            const currentProgress = Math.min(elapsedDays, challenge.durationDays || 30);
+            const durationDays = challenge.durationDays || 30;
+            const progressPercent = Math.min(100, (currentProgress / durationDays) * 100).toFixed(0);
 
             const card = document.createElement('div');
             card.className = 'challenge-card interactive';
             
-            card.setAttribute('onclick', `showModal('${challenge.title}', '총 ${challenge.durationDays}일 중 ${currentProgress}일차 진행 중입니다.')`);
+            // 챌린지 상세 정보를 모달로 표시
+            card.setAttribute('onclick', `showModal('${challenge.title}', '총 ${durationDays}일 중 ${currentProgress}일차 진행 중입니다. (ID: ${challenge.id})')`);
 
+            // 아이콘 및 색상 매핑 (임시)
             const iconMap = {
                 '30': { icon: 'brightness_5', color: '#1E90FF' }, 
                 '60': { icon: 'fitness_center', color: '#2ecc71' }, 
-                '90': { icon: 'book', color: '#e74c3c' }, 
-                default: { icon: 'auto_stories', color: '#9b59b6' } 
+                '90': { icon: 'book', color: '#e74c3c' },
+                default: { icon: 'auto_stories', color: '#9b59b6' }
             };
-            const theme = iconMap[challenge.durationDays] || iconMap.default;
+            const theme = iconMap[durationDays.toString()] || iconMap.default;
             
+            // border-left 스타일 인라인 적용
             card.style.borderLeft = `5px solid ${theme.color}`;
 
             card.innerHTML = `
-                <div class="card-header">
-                    <i class="material-icons card-icon" style="color: ${theme.color};">${theme.icon}</i>
-                    <h3 class="card-title">${challenge.title}</h3>
-                    <span class="card-days">${currentProgress}/${challenge.durationDays}일</span>
+                <div class="card-header flex items-center justify-between mb-3">
+                    <div class="flex items-center">
+                        <i class="material-icons card-icon mr-2" style="color: ${theme.color}; font-size: 28px;">${theme.icon}</i>
+                        <h3 class="card-title font-semibold text-lg text-gray-800">${challenge.title}</h3>
+                    </div>
+                    <span class="card-days text-sm font-medium text-gray-500">${currentProgress}/${durationDays}일</span>
                 </div>
-                <div class="progress-bar-container">
-                    <div class="progress-bar" style="width: ${progressPercent}%; background-color: ${theme.color};"></div>
+                <div class="progress-bar-wrap h-2 bg-gray-200 rounded-full overflow-hidden">
+                    <div class="progress-bar h-full transition-all duration-500" style="width: ${progressPercent}%; background-color: ${theme.color};"></div>
                 </div>
-                <p class="progress-text" style="color: ${theme.color};">${progressPercent}% 완료</p>
+                <p class="progress-text text-right text-sm font-semibold mt-2" style="color: ${theme.color};">${progressPercent}% 완료</p>
             `;
             listContainer.appendChild(card);
         });
     }
 
-    /** Firestore에서 사용자 챌린지 목록을 실시간으로 가져옵니다. */
-    let challengeListenerUnsubscribe = null;
+    /**
+     * Firestore에서 사용자 챌린지 목록을 실시간으로 가져옵니다.
+     */
     function fetchUserChallenges() {
-        if (challengeListenerUnsubscribe) {
-            challengeListenerUnsubscribe(); // 기존 리스너 해제
-        }
         if (!currentUserId) return;
 
         const path = `/artifacts/${appId}/users/${currentUserId}/challenges`;
@@ -563,69 +448,36 @@
         
         const q = query(challengesRef); 
 
-        challengeListenerUnsubscribe = onSnapshot(q, (snapshot) => {
+        const unsubscribe = onSnapshot(q, (snapshot) => {
             const challenges = [];
             snapshot.forEach((doc) => {
                 challenges.push({ id: doc.id, ...doc.data() });
             });
             renderChallenges(challenges);
             document.getElementById('loading-message')?.remove(); 
+            console.log("Firestore Challenges Updated:", challenges.length);
 
         }, (error) => {
             console.error("Firestore Error:", error);
             showModal('데이터 오류', '챌린지 목록을 불러오는 중 오류가 발생했습니다.');
         });
-    }
-
-    /** 새로운 챌린지를 Firestore에 추가합니다. */
-    window.handleCreateChallenge = async function(event) {
-        event.preventDefault();
-        if (!currentUserId) {
-            showModal('오류', '로그인이 필요합니다.');
-            return;
-        }
-
-        const title = document.getElementById('challenge-title').value.trim();
-        const durationDays = parseInt(document.getElementById('challenge-duration').value, 10);
         
-        if (!title || isNaN(durationDays)) {
-            showModal('오류', '제목과 기간을 모두 입력/선택해주세요.');
-            return;
-        }
-
-        try {
-            const path = `/artifacts/${appId}/users/${currentUserId}/challenges`;
-            await addDoc(collection(db, path), {
-                title: title,
-                durationDays: durationDays,
-                startedAt: serverTimestamp(),
-                isCompleted: false
-            });
-            
-            showModal('성공!', `${title} 챌린지가 시작되었습니다.`);
-            // 성공 후 홈 뷰로 이동
-            switchView('home-view', document.querySelector('.nav-item[data-view="home"]'));
-
-        } catch (error) {
-            console.error("Challenge Creation Error:", error);
-            showModal('생성 오류', '챌린지 생성에 실패했습니다.');
-        }
+        // 실제 환경에서는 리스너 해제 로직이 필요합니다.
+        // 이 예제에서는 단순화를 위해 반환만 합니다.
+        return unsubscribe;
     }
 
 
     // --- 인증 및 초기화 ---
 
-    /** 로그아웃 처리 */
+    /**
+     * 로그아웃 처리
+     */
     window.handleLogout = async function() {
         try {
-            if (challengeListenerUnsubscribe) {
-                 challengeListenerUnsubscribe(); // 리스너 해제
-            }
             await signOut(auth);
-            showModal('로그아웃 성공', '성공적으로 로그아웃되었습니다. 다시 로그인해주세요.');
-            // 로그아웃 후 UI 초기화 및 로그인 필요 화면 표시
-            currentUserId = null;
-            updateUI(null);
+            // 로그아웃 후 로그인 페이지로 리디렉션
+            window.location.href = "/auth.html";
         } catch (error) {
             console.error("Logout Error:", error);
             showModal('로그아웃 오류', '로그아웃 중 오류가 발생했습니다.');
@@ -633,83 +485,78 @@
     }
     
     /**
-     * 인증 상태에 따라 UI를 업데이트합니다.
+     * 사용자 인증 상태 확인 및 UI 업데이트
      */
-    function updateUI(user) {
-        if (user) {
-            // 1. 로그인 상태
-            currentUserId = user.uid;
-            const displayName = user.displayName || '도전러';
-            const email = user.email || '익명 사용자 (인증됨)';
+    onAuthStateChanged(auth, async (user) => {
+        if (!isAuthAttempted) {
+            const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+            isAuthAttempted = true; // 인증 시도 플래그 설정
 
-            // UI 표시
-            appContainer.style.display = 'flex';
-            authRequiredView.classList.remove('active');
+            if (!user && initialAuthToken) {
+                // 커스텀 토큰이 있지만 아직 로그인되지 않은 경우
+                try {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                    // signInWithCustomToken 성공하면 onAuthStateChanged가 다시 호출됨
+                    return; 
+                } catch (error) {
+                    console.error("Custom token login failed. Forcing redirect to /auth.html", error);
+                    // 토큰으로 로그인 실패 시 로그인 페이지로 리디렉션
+                    window.location.href = "/auth.html";
+                    return;
+                }
+            } else if (!user) {
+                // 커스텀 토큰도 없고 현재 사용자도 없는 경우
+                console.warn("User not authenticated. Redirecting to /auth.html");
+                window.location.href = "/auth.html";
+                return; 
+            }
+        }
+
+        if (user) {
+            currentUserId = user.uid;
+            // 익명 사용자 방지 (토큰 기반 인증을 가정)
+            if (user.isAnonymous) {
+                 console.warn("Anonymous user detected. Forcing redirect to /auth.html");
+                 window.location.href = "/auth.html";
+                 return;
+            }
+
+            // displayName이 없는 경우 userId의 처음 8자리를 임시 닉네임으로 사용
+            const displayName = user.displayName || `사용자-${user.uid.substring(0, 8)}`;
+            const email = user.email || '제공된 이메일 없음';
             
-            // 프로필 정보 업데이트
+            // UI 업데이트
             document.getElementById('user-nickname').textContent = displayName;
             document.getElementById('user-id-display').textContent = `UID: ${currentUserId}`;
-            
-            document.getElementById('profile-nickname').textContent = `닉네임: ${displayName}`;
-            document.getElementById('profile-email').textContent = `이메일: ${email}`;
-            document.getElementById('profile-uid').textContent = `UID: ${currentUserId}`;
             
             // 챌린지 데이터 로드 시작
             fetchUserChallenges();
 
-        } else {
-            // 2. 로그아웃 상태
-            currentUserId = null;
-            appContainer.style.display = 'none'; // 앱 컨테이너 숨김
-            authRequiredView.classList.add('active'); // 로그인 필요 화면 표시
-        }
-    }
-    
-    /**
-     * 초기 인증 및 앱 시작 로직
-     */
-    async function initializeApp() {
-         // Canvas 환경의 초기 인증 토큰 사용 (익명 로그인 방지)
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-        let initialAuthCompleted = false;
-
-        if (initialAuthToken) {
-            try {
-                // 토큰으로 강제 로그인 시도 (실패 시 에러 발생)
-                await signInWithCustomToken(auth, initialAuthToken);
-                initialAuthCompleted = true;
-            } catch (error) {
-                console.warn("Custom Token Sign-In Failed (Token might be expired/invalid):", error);
-                // 실패해도 onAuthStateChanged에서 처리
-            }
+        } else if (isAuthAttempted) {
+             // onAuthStateChanged가 user=null로 호출되었고, 이미 인증을 시도했으며, 리디렉션이 아직 발생하지 않은 경우
+             console.warn("Authentication failed or logged out. Redirecting to /auth.html");
+             window.location.href = "/auth.html";
+             return;
         }
         
-        // onAuthStateChanged 리스너 설정
-        authListenerUnsubscribe = onAuthStateChanged(auth, (user) => {
-            updateUI(user);
-            
-            // 폰트 로드 및 앱 표시
-            document.fonts.ready.then(() => {
-                 // 로딩 오버레이 숨기기 (폰트 로드 후)
-                 loadingOverlay.style.opacity = '0';
-                 loadingOverlay.style.visibility = 'hidden';
-                 appContainer.classList.add('ready');
-            });
+        // 폰트 로드 확인 후 앱 컨테이너 표시 (인증 상태와 관계없이 폰트 로드 후 보여주기)
+        // 만약 인증이 실패했다면 이미 위에서 리디렉션이 발생했을 것입니다.
+        document.fonts.ready.then(() => {
+             document.getElementById('app-container').classList.add('font-loaded');
         });
-        
-        // 초기 로드 시 높이 설정
-        const setHeight = () => {
-            appContainer.style.minHeight = `${window.innerHeight}px`;
-            authRequiredView.style.height = `${window.innerHeight}px`;
-        };
-        setHeight();
-        window.addEventListener('resize', setHeight);
-    }
-    
-    // 앱 시작
-    initializeApp();
+    });
 
-    // 초기화 시 로딩 상태를 보여주기 위해 DOMContentLoaded는 사용하지 않고 바로 시작
+
+    // --- 초기화 로직 ---
+    window.addEventListener('load', () => {
+        const appContainer = document.getElementById('app-container');
+        // 모바일 화면 높이 조정
+        appContainer.style.minHeight = `${window.innerHeight}px`;
+        
+        window.addEventListener('resize', () => {
+            appContainer.style.minHeight = `${window.innerHeight}px`;
+        });
+    });
 </script>
 </body>
 </html>
