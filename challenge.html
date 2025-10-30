@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Doing! - 나의 도전 중심</title>
+    <title>Doing! - 나의 도전</title>
     <!-- Pretendard 폰트 CDN 적용 -->
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
     <!-- Google Material Icons (필수적인 내비게이션 및 UI 요소에만 사용) -->
@@ -80,7 +80,7 @@
             .nav-item { flex-direction: column; font-size: 0.75rem; line-height: 1.2; }
         }
 
-        /* 공통 헤더 스타일 (그림자 제거됨) */
+        /* 공통 헤더 스타일 (1px 선 유지) */
         .header {
             display: flex;
             justify-content: space-between;
@@ -99,15 +99,15 @@
             letter-spacing: -0.5px;
         }
         
-        /* 로그아웃 버튼 스타일 */
+        /* 로그아웃 버튼 스타일: Doing! - 홈 파일 기준으로 굵기 및 테두리 수정 */
         .logout-button {
             padding: 0.5rem 1.2rem; 
             background-color: transparent;
             color: var(--color-accent); 
-            border: 1px solid var(--color-accent); 
+            border: 2px solid var(--color-accent); /* 2px 테두리로 수정 */
             border-radius: 9999px; 
             font-size: 0.9rem;
-            font-weight: 500; 
+            font-weight: 600; /* 굵기를 600으로 수정 */
             cursor: pointer;
             transition: all 0.2s ease;
         }
@@ -130,7 +130,7 @@
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
         }
 
-        /* 챌린지 카드 스타일: 깔끔한 디자인 */
+        /* 챌린지 카드 스타일: 1px 선 유지 */
         .challenge-card {
             background-color: var(--color-content-bg);
             padding: 1.5rem;
@@ -146,7 +146,7 @@
             border-color: var(--color-accent);
         }
         
-        /* 나의 챌린지 카드 강조 스타일: 미니멀하게 변경 */
+        /* 나의 챌린지 카드 강조 스타일: 2px 선 유지 (특수 목적) */
         .my-challenge-card {
             border: 2px solid var(--color-my-challenge-border) !important; 
             background-color: #fcfcfc;
@@ -195,7 +195,7 @@
             background-color: rgba(30, 144, 255, 0.1); 
         }
 
-        /* 하단 내비게이션 바: 상단 그림자만 유지 */
+        /* 하단 내비게이션 바: Doing! - 홈 파일 기준으로 그림자 세기 수정 */
         .bottom-nav {
             width: 100%;
             background-color: var(--color-content-bg);
@@ -208,8 +208,9 @@
             top: auto;
             padding-bottom: env(safe-area-inset-bottom); 
             border-top: 1px solid var(--color-border); 
-            /* X축 오프셋 0으로 상단 그림자만 적용 */
-            box-shadow: 0 -3px 10px rgba(0, 0, 0, 0.05); 
+            
+            box-shadow: 0 -1px 8px rgba(0, 0, 0, 0.03); /* 그림자 약화 (수정됨) */
+            
             left: 50%;
             transform: translateX(-50%);
             max-width: var(--pc-max-width);
@@ -254,13 +255,13 @@
 <body>
 
 <div id="app-container">
-    <!-- 하단 내비게이션 바 (상단 그림자만 적용됨) -->
+    <!-- 하단 내비게이션 바 -->
     <div class="bottom-nav">
         <a class="nav-item interactive" href="/">
             <i class="material-icons">home</i>
             <span>홈</span>
         </a>
-        <a class="nav-item interactive active" href="/challenges.html">
+        <a class="nav-item interactive active" href="/challenge.html">
             <i class="material-icons">local_fire_department</i> 
             <span>도전</span>
         </a>
@@ -449,7 +450,7 @@
     function fetchMyChallenges() {
         if (!currentUserId) return;
         // Private data path: /artifacts/{appId}/users/{userId}/myChallenges
-        const path = `/artifacts/${appId}/users/${currentUserId}/myChallenges`;
+        const path = `/artifacts/${appId}/users/${currentUserId}/challenges`; // myChallenges -> challenges로 수정
         const challengesRef = collection(db, path);
         
         const unsubscribe = onSnapshot(challengesRef, (snapshot) => {
