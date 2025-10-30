@@ -327,7 +327,15 @@
     } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     // --- Firebase 설정 및 초기화 ---
-    const userFirebaseConfig = { /* Placeholder configuration */ };
+    const userFirebaseConfig = { 
+        apiKey: "AIzaSyBMowSIHMdz69dYY-mAW8l6VjKxBW54SfU",
+        authDomain: "doing-a.firebaseapp.com",
+        projectId: "doing-a",
+        storageBucket: "doing-a.firebasestorage.app",
+        messagingSenderId: "24279439955",
+        appId: "1:24279439955:web:2bf5c965de1b0a236884a6",
+        measurementId: "G-VJ5YQRGNE3"
+    };
     
     // 환경 변수 우선 사용 (필수 조건)
     const firebaseConfig = typeof __firebase_config !== 'undefined' && JSON.parse(__firebase_config).apiKey 
