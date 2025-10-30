@@ -99,15 +99,15 @@
             letter-spacing: -0.5px;
         }
         
-        /* 로그아웃 버튼 스타일: Doing! - 홈 파일 기준으로 굵기 및 테두리 수정 */
+        /* 로그아웃 버튼 스타일: 굵기 1px로 수정 */
         .logout-button {
             padding: 0.5rem 1.2rem; 
             background-color: transparent;
             color: var(--color-accent); 
-            border: 2px solid var(--color-accent); /* 2px 테두리로 수정 */
+            border: 1px solid var(--color-accent); /* 1px 테두리로 수정 */
             border-radius: 9999px; 
             font-size: 0.9rem;
-            font-weight: 600; /* 굵기를 600으로 수정 */
+            font-weight: 500; /* 굵기를 500으로 수정 */
             cursor: pointer;
             transition: all 0.2s ease;
         }
@@ -261,11 +261,11 @@
             <i class="material-icons">home</i>
             <span>홈</span>
         </a>
-        <a class="nav-item interactive active" href="/challenge.html">
+        <a class='nav-item interactive active' href='/challenge'>
             <i class="material-icons">local_fire_department</i> 
             <span>도전</span>
         </a>
-        <a class="nav-item interactive" href="/my.html">
+        <a class="nav-item interactive" href="/my"> <!-- .html 확장자 제거 -->
             <i class="material-icons">person</i>
             <span>마이</span>
         </a>
@@ -394,7 +394,7 @@
         }, 200); 
     }
 
-    // 새 챌린지 생성 버튼 핸들러 (요청에 따라 /challenge/creat.html로 이동하도록 수정)
+    // 새 챌린지 생성 버튼 핸들러 (요청에 따라 /challenge/create로 이동하도록 수정)
     window.handleCreateChallenge = function() {
         if (!currentUserId) {
             showModal('인증 필요', '로그인이 필요합니다.');
@@ -402,7 +402,7 @@
         }
 
         // Firestore 챌린지 생성 로직을 제거하고 페이지 이동으로 대체
-        window.location.href = "/challenge/creat.html";
+        window.location.href = "/challenge/create"; // 경로 수정: /challenge/creat.html -> /challenge/create
     }
 
 
@@ -550,7 +550,7 @@
     window.handleLogout = async function() {
         try {
             await signOut(auth);
-            window.location.href = "/auth.html";
+            window.location.href = "/auth"; // .html 확장자 제거
         } catch (error) {
             console.error("Logout Error:", error);
             showModal('로그아웃 오류', '로그아웃 중 오류가 발생했습니다.');
@@ -570,13 +570,13 @@
                     await signInWithCustomToken(auth, initialAuthToken);
                     return; 
                 } catch (error) {
-                    console.error("Custom token login failed. Forcing redirect to /auth.html", error);
-                    window.location.href = "/auth.html";
+                    console.error("Custom token login failed. Forcing redirect to /auth", error);
+                    window.location.href = "/auth"; // .html 확장자 제거
                     return;
                 }
             } else if (!user) {
-                console.warn("User not authenticated. Redirecting to /auth.html");
-                window.location.href = "/auth.html";
+                console.warn("User not authenticated. Redirecting to /auth");
+                window.location.href = "/auth"; // .html 확장자 제거
                 return; 
             }
         }
@@ -584,8 +584,8 @@
         if (user) {
             currentUserId = user.uid;
             if (user.isAnonymous) {
-                 console.warn("Anonymous user detected. Forcing redirect to /auth.html");
-                 window.location.href = "/auth.html";
+                 console.warn("Anonymous user detected. Forcing redirect to /auth");
+                 window.location.href = "/auth"; // .html 확장자 제거
                  return;
             }
             
@@ -594,8 +594,8 @@
             fetchPublicChallenges(); 
 
         } else if (isAuthAttempted) {
-             console.warn("Authentication failed or logged out. Redirecting to /auth.html");
-             window.location.href = "/auth.html";
+             console.warn("Authentication failed or logged out. Redirecting to /auth");
+             window.location.href = "/auth"; // .html 확장자 제거
              return;
         }
         
