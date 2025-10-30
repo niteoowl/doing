@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Doing! - 챌린지 대시보드</title>
+    <!-- Favicon 경로 설정 -->
+    <link rel="icon" type="image/x-icon" href="/image/favicon.ico">
     <!-- Pretendard 폰트 CDN 적용 -->
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
     <!-- Google Material Icons (Google Fonts Icons) 추가 -->
@@ -153,8 +155,11 @@
             overflow: hidden; 
         }
         /* 상단 텍스트 컴팩트화 */
-        .profile-greeting { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.1rem; } 
-        .profile-user-id { font-size: 0.75rem; opacity: 0.7; margin-bottom: 0.8rem; } 
+        .profile-greeting { 
+            font-size: 1.2rem; 
+            font-weight: 700; 
+            margin-bottom: 0.8rem; /* UID 라인 제거로 인해 마진 조정 */
+        } 
         
         /* 핵심 지표 섹션 */
         .profile-metrics {
@@ -354,9 +359,9 @@
         <!-- 프로필 섹션 -->
         <div class="profile-card-section">
             <div class="profile-card">
-                <!-- 상단 인사말 섹션: user-nickname에 디스플레이 네임 표시 -->
+                <!-- 상단 인사말 섹션: UID 정보 삭제 -->
+                <!-- DOM 기본값은 '도전러'로 유지 -->
                 <p class="profile-greeting">안녕하세요, <span id="user-nickname">도전러</span>님!</p>
-                <p class="profile-user-id" id="user-id-display">UID: loading...</p>
 
                 <!-- 핵심 지표 섹션 (연한 회색 배경으로 대비) - 아이콘 삭제 유지 -->
                 <div class="profile-metrics">
@@ -486,7 +491,7 @@
         const today = new Date().getTime();
         let totalChallenges = challenges.length;
         let inProgressChallenges = 0;
-        let maxSuccessDays = 0; // 이 값은 실제 구현 시 Daily 인증 기록을 조회해야 합니다.
+        let maxSuccessDays = 0; 
 
         challenges.forEach(challenge => {
             const startedAt = challenge.startedAt?.toDate ? challenge.startedAt.toDate().getTime() : today;
@@ -584,7 +589,7 @@
     window.handleLogout = async function() {
         try {
             await signOut(auth);
-            window.location.href = "/auth"; // .html 확장자 제거
+            window.location.href = "/auth";
         } catch (error) {
             console.error("Logout Error:", error);
             showModal('로그아웃 오류', '로그아웃 중 오류가 발생했습니다.');
@@ -604,13 +609,13 @@
                     await signInWithCustomToken(auth, initialAuthToken);
                     return; 
                 } catch (error) {
-                    console.error("Custom token login failed. Forcing redirect to /auth", error); // .html 확장자 제거
-                    window.location.href = "/auth"; // .html 확장자 제거
+                    console.error("Custom token login failed. Forcing redirect to /auth", error);
+                    window.location.href = "/auth";
                     return;
                 }
             } else if (!user) {
-                console.warn("User not authenticated. Redirecting to /auth"); // .html 확장자 제거
-                window.location.href = "/auth"; // .html 확장자 제거
+                console.warn("User not authenticated. Redirecting to /auth");
+                window.location.href = "/auth";
                 return; 
             }
         }
@@ -618,24 +623,23 @@
         if (user) {
             currentUserId = user.uid;
             if (user.isAnonymous) {
-                 console.warn("Anonymous user detected. Forcing redirect to /auth"); // .html 확장자 제거
-                 window.location.href = "/auth"; // .html 확장자 제거
+                 console.warn("Anonymous user detected. Forcing redirect to /auth");
+                 window.location.href = "/auth";
                  return;
             }
 
-            // 회원가입 시 기입한 디스플레이 네임 (user.displayName) 사용
-            const displayName = user.displayName || `사용자-${user.uid.substring(0, 8)}`;
+            // [수정] user.displayName이 없을 경우 UID 대신 '도전자'로 대체합니다.
+            const displayName = user.displayName || '도전자';
             
             // UI 업데이트
             document.getElementById('user-nickname').textContent = displayName;
-            document.getElementById('user-id-display').textContent = `UID: ${currentUserId}`;
             
             // 챌린지 데이터 로드 시작
             fetchUserChallenges();
 
         } else if (isAuthAttempted) {
-             console.warn("Authentication failed or logged out. Redirecting to /auth"); // .html 확장자 제거
-             window.location.href = "/auth"; // .html 확장자 제거
+             console.warn("Authentication failed or logged out. Redirecting to /auth");
+             window.location.href = "/auth";
              return;
         }
         
