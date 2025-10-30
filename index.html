@@ -9,17 +9,19 @@
     <!-- Google Material Icons (Google Fonts Icons) 추가 -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
-    <!-- 공통 및 메인 페이지 스타일 -->
+    <!-- 공통 및 메인 페이지 스타일 (iOS 스타일 및 컴팩트화 개선) -->
     <style>
         /* 기본 스타일 및 iOS 안전 영역 지원 */
         :root {
             --color-white: #ffffff;
             --color-black: #000000;
             --color-accent: #1E90FF; /* 포인트 블루 (Dodger Blue) */
-            --color-light-gray: #f0f4f8; /* 배경색을 더 밝게 */
+            --color-app-bg: #ffffff; /* 앱 배경 흰색 */
+            --color-content-bg: #ffffff; /* 컨텐츠 카드 및 헤더 배경 */
             --color-border: #e0e0e0;
-            --bottom-nav-height: 80px;
-            --pc-max-width: 1200px; /* PC 환경 최대 콘텐츠 너비 */
+            --bottom-nav-height-mobile: 80px;
+            --bottom-nav-height-pc: 60px; /* PC 환경 내비게이션 바 높이 축소 */
+            --pc-max-width: 1200px; 
         }
 
         * { box-sizing: border-box; }
@@ -28,7 +30,7 @@
             font-family: 'Pretendard Variable', Pretendard, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: var(--color-light-gray);
+            background-color: var(--color-white); 
             display: flex;
             justify-content: center;
             min-height: 100vh;
@@ -39,7 +41,7 @@
 
         #app-container {
             width: 100%;
-            background-color: var(--color-white);
+            background-color: var(--color-app-bg); 
             display: flex;
             flex-direction: column;
             position: relative;
@@ -52,218 +54,290 @@
 
         /* ------------------ PC/Desktop Layout ------------------ */
         @media (min-width: 640px) {
-            body {
-                align-items: flex-start; 
-                justify-content: center;
-            }
-            #app-container {
-                max-width: var(--pc-max-width); 
-                box-shadow: 0 0 30px rgba(0, 0, 0, 0.05); /* PC에서 컨테이너 구분을 위해 그림자 추가 */
-            }
-            .header {
-                padding: 1rem 3rem; /* PC에서 더 넓은 패딩 */
-            }
+            body { align-items: flex-start; justify-content: center; }
+            #app-container { max-width: var(--pc-max-width); box-shadow: 0 0 40px rgba(0, 0, 0, 0.05); }
             
-            .nav-item i.material-icons {
-                font-size: 20px; /* PC에서 아이콘 작게 */
-                margin-bottom: 0;
-            }
-            .nav-item {
-                flex-direction: row;
-                gap: 8px;
-                font-size: 0.9rem;
-            }
+            /* PC 뷰 패딩 조정 */
             .view {
-                /* PC 뷰 패딩. 하단에 고정된 내비게이션 바 높이를 고려 */
-                padding: 2rem 3rem; 
-                padding-bottom: calc(2rem + var(--bottom-nav-height)); 
+                padding: 1.5rem 3rem; 
+                padding-bottom: calc(1.5rem + var(--bottom-nav-height-pc)); 
             }
+            /* PC 내비게이션 높이 적용 */
+            .bottom-nav { height: var(--bottom-nav-height-pc); }
+            .nav-item i.material-icons { font-size: 20px; margin-bottom: 0; }
+            .nav-item { flex-direction: row; gap: 8px; font-size: 0.9rem; }
+            
+            /* PC 헤더 패딩 조정 (더 컴팩트하게) */
+            .header { padding: 0.5rem 3rem; }
         }
         
         /* ------------------ Mobile Layout ------------------ */
         @media (max-width: 639px) {
-            #app-container {
-                max-width: 420px;
-                box-shadow: none;
-            }
-            .header {
-                padding: 1rem 1.5rem;
-            }
-            .nav-item i.material-icons {
-                font-size: 28px;
-                margin-bottom: 2px;
-            }
-            .nav-item {
-                flex-direction: column;
-                font-size: 0.75rem;
-                line-height: 1.2;
-            }
+            #app-container { max-width: 100%; box-shadow: none; }
+            .bottom-nav { height: var(--bottom-nav-height-mobile); } /* 모바일 높이 유지 */
+            /* 모바일 헤더 패딩 조정 (더 컴팩트하게) */
+            .header { padding: 0.5rem 1.5rem; } 
             .view {
-                /* Mobile 뷰 패딩. 하단에 고정된 내비게이션 바 높이를 고려 */
                 padding: 1.5rem 1.5rem;
-                padding-bottom: calc(1.5rem + var(--bottom-nav-height));
+                padding-bottom: calc(1.5rem + var(--bottom-nav-height-mobile));
             }
+            .nav-item i.material-icons { font-size: 28px; margin-bottom: 2px; }
+            .nav-item { flex-direction: column; font-size: 0.75rem; line-height: 1.2; }
         }
 
 
-        /* 공통 헤더 스타일 */
+        /* 공통 헤더 스타일 (컴팩트 버전) */
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background-color: var(--color-white);
+            background-color: var(--color-content-bg);
+            border-bottom: 1px solid var(--color-border); /* 구분선 유지 */
             position: sticky;
             top: 0;
             z-index: 10;
         }
 
         .header-title {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: var(--color-accent);
-            letter-spacing: -1px;
+            font-size: 1.4rem; 
+            font-weight: 700; 
+            /* ********** 수정된 부분: Doing! 글자색 포인트 블루로 변경 ********** */
+            color: var(--color-accent); 
+            letter-spacing: -0.5px;
         }
-
+        
+        /* ********** 수정된 부분: 로그아웃 버튼 스타일 변경 ********** */
         .logout-button {
-            padding: 0.5rem 1rem;
+            padding: 0.5rem 1.2rem; /* 패딩 늘려 버튼 영역 확보 */
             background-color: transparent;
-            color: var(--color-accent);
-            border: none;
+            color: var(--color-accent); /* 텍스트 색상 유지 */
+            border: 2px solid var(--color-accent); /* 파란색 외곽선 */
+            border-radius: 9999px; /* 완전히 둥근 테두리 */
             font-size: 0.9rem;
-            font-weight: 600;
+            font-weight: 600; 
             cursor: pointer;
+            transition: all 0.2s ease;
         }
-
-        /* 사용자 상호작용 스타일 */
-        .interactive:active {
-            transform: scale(0.97); 
-            opacity: 0.8;
-        }
-        .nav-item.interactive:active {
-            transform: scale(0.95);
+        .logout-button:hover {
+            background-color: rgba(30, 144, 255, 0.05); /* 마우스 오버 시 연하게 */
         }
 
         /* 메인 뷰 컨테이너 */
         .view {
             flex-grow: 1;
             overflow-y: auto;
-            display: block; /* index.html은 home-view만 가짐 */
+            display: block; 
+            background-color: var(--color-app-bg); 
         }
         
-        /* 챌린지 카드 목록 (스타일 유지) */
+        /* 프로필 카드 스타일 (지표 영역 분리/컴팩트화) */
         .profile-card {
-            background: linear-gradient(45deg, var(--color-accent), #4F9FFF);
+            /* 상단은 파란색 그라데이션 유지 */
+            background: linear-gradient(135deg, #4F9FFF 0%, #1E90FF 100%);
             color: var(--color-white);
-            padding: 1.5rem;
-            border-radius: 16px;
-            margin-bottom: 2rem;
-            box-shadow: 0 8px 20px rgba(30, 144, 255, 0.4);
+            padding: 1rem 1.5rem 0; /* 상단 패딩 축소 */
+            border-radius: 20px; 
+            
+            /* 지표 섹션과 다음 챌린지 섹션 간격 */
+            margin-bottom: 3.5rem; 
+            
+            box-shadow: none; 
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; 
         }
-        .profile-greeting { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.25rem; }
-        .profile-user-id { font-size: 0.8rem; opacity: 0.9; }
+        /* 상단 텍스트 컴팩트화 */
+        .profile-greeting { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.1rem; } 
+        .profile-user-id { font-size: 0.75rem; opacity: 0.7; margin-bottom: 0.8rem; } 
+        
+        /* 핵심 지표 섹션 */
+        .profile-metrics {
+            /* ********** 수정된 부분: 배경색을 더 밝게 (거의 흰색) 변경 ********** */
+            background-color: #fcfcfc; 
+            
+            /* 카드 하단까지 꽉 채우기 위한 음수 마진 */
+            margin-top: 0.8rem; 
+            margin-left: -1.5rem; 
+            margin-right: -1.5rem; 
+            margin-bottom: -1rem; 
+            
+            /* ********** 수정된 부분: 상하단 패딩을 늘려서 잘림 현상 방지 및 여백 확보 ********** */
+            padding: 1rem 1.5rem 1.5rem; 
+            
+            border-radius: 0 0 20px 20px; /* 카드 하단 라운딩과 일치 */
+            
+            display: flex;
+            justify-content: space-around;
+        }
+        .metric-item {
+            text-align: center;
+            width: 33%; /* 공간 균등 분배 */
+        }
+        
+        /* 값 스타일 */
+        .metric-value {
+            font-size: 1.4rem;
+            font-weight: 800;
+            line-height: 1.3; 
+            margin-bottom: 2px; /* 간격 축소 */
+            margin-top: 0; 
+            color: var(--color-black); 
+        }
+        .metric-label {
+            font-size: 0.75rem; 
+            opacity: 0.9;
+            font-weight: 500;
+            color: #666; 
+        }
+
+        /* 챌린지 목록 (스타일 유지) */
+        .challenge-section h2 {
+            font-weight: 800;
+        }
         .challenge-list {
             display: grid;
-            gap: 1.2rem;
-            /* PC: 2열 레이아웃 */
+            gap: 1rem;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
         }
 
         .challenge-card {
-            background-color: var(--color-white);
+            background-color: var(--color-content-bg);
             padding: 1.25rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            border: 1px solid var(--color-border);
+            border-radius: 16px; 
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); 
+            border: none; 
             display: flex;
             flex-direction: column;
             transition: all 0.2s ease;
         }
+        .challenge-card:hover {
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+        }
         
-        /* ------------------ 하단 내비게이션 바 (공통: PC 포함 고정 하단) ------------------ */
+        /* 하단 내비게이션 바 수정 */
         .bottom-nav {
             width: 100%;
-            background-color: var(--color-white);
+            background-color: var(--color-content-bg);
             display: flex;
             justify-content: space-around;
             align-items: center;
             z-index: 20;
-            /* 고정 하단 설정 */
             position: fixed;
             bottom: 0;
             top: auto;
-            height: var(--bottom-nav-height);
-            padding-bottom: env(safe-area-inset-bottom, 10px);
-            border-top: 1px solid var(--color-border);
-            box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.08);
-            
-            /* PC 중앙 정렬 및 최대 너비 설정 */
+            padding-bottom: env(safe-area-inset-bottom); 
+            border-top: 1px solid var(--color-border); /* 깔끔한 상단 선 추가 */
+            box-shadow: 0 -1px 8px rgba(0, 0, 0, 0.03); /* 그림자 약화 */
             left: 50%;
             transform: translateX(-50%);
             max-width: var(--pc-max-width);
         }
         
-        /* 모바일 환경에서만 max-width 재설정 */
-        @media (max-width: 639px) {
-            .bottom-nav {
-                max-width: 420px;
-            }
+        .nav-item {
+            color: #999; /* 비활성 상태는 회색 */
+            text-decoration: none;
+            display: flex;
+            align-items: center; 
+            justify-content: center; 
+            padding: 0.5rem;
+            border-radius: 12px;
+            transition: color 0.2s ease, background-color 0.2s ease;
         }
 
-        .nav-item {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: #b0b0b0; 
-            transition: color 0.2s ease, transform 0.1s ease;
-            font-weight: 500;
-            text-decoration: none; /* a 태그 기본 스타일 제거 */
-            width: 33%; 
-            padding: 10px 0; 
-        }
+        /* Nav Item - 활성 상태 (배열/파란줄 문제 해결) */
         .nav-item.active {
-            color: var(--color-accent);
+            color: var(--color-accent); /* 활성 상태는 파란색 아이콘/텍스트만 사용 */
+            font-weight: 600;
         }
         
-        /* 모달 팝업 구조는 유지 */
+        @media (max-width: 639px) {
+            .bottom-nav { max-width: 100%; }
+            .nav-item { padding: 0.5rem 0.25rem; } /* 모바일에서 좁게 만듦 */
+        }
+        
+        /* 모달 스타일 */
         #modal {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(0, 0, 0, 0.4);
-            display: none; justify-content: center; align-items: center; z-index: 100;
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4); 
+            justify-content: center;
+            align-items: center;
         }
+
         .modal-content {
-            background-color: var(--color-white); padding: 1.5rem; border-radius: 16px; width: 90%; max-width: 300px;
-            text-align: center; transform: scale(0.9); opacity: 0; transition: transform 0.2s ease, opacity 0.2s ease;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3); 
+            background-color: var(--color-content-bg);
+            padding: 30px;
+            padding-bottom: 20px; 
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            transform: scale(0.9);
+            opacity: 0;
+            transition: all 0.2s ease-out;
         }
-        .modal-close-button {
-            margin-top: 1rem; padding: 0.5rem 1.5rem; background-color: var(--color-accent); color: var(--color-white); 
-            border: none; border-radius: 8px; font-weight: 600; cursor: pointer;
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--color-black); /* 검정색 유지 */
         }
+
+        .modal-text {
+            font-size: 1rem;
+            margin-bottom: 20px; 
+            line-height: 1.4;
+            color: #333;
+        }
+        
+        /* 모달 확인 버튼 스타일 */
+        #modal-close-button {
+            width: 100%;
+            padding: 0.75rem;
+            margin-top: 10px;
+            background-color: var(--color-accent);
+            color: var(--color-white);
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        #modal-close-button:hover {
+            background-color: #0d79e6; 
+        }
+
     </style>
 </head>
 <body>
 
 <div id="app-container">
-    <!-- 하단 내비게이션 바 (PC/Mobile 모두 하단에 고정) -->
+    <!-- 하단 내비게이션 바 -->
     <div class="bottom-nav">
-        <!-- Home (index.html) - 현재 페이지이므로 active -->
         <a class="nav-item interactive active" href="/">
             <i class="material-icons">home</i>
             <span>홈</span>
         </a>
-        <!-- Challenge (/challenges.html) - 외부 파일 링크 -->
         <a class="nav-item interactive" href="/challenges.html">
-            <i class="material-icons">directions_run</i>
+            <i class="material-icons">local_fire_department</i> <!-- 도전 아이콘: 불꽃 유지 -->
             <span>도전</span>
         </a>
-        <!-- My (/my.html) - 외부 파일 링크로 변경 -->
         <a class="nav-item interactive" href="/my.html">
             <i class="material-icons">person</i>
             <span>마이</span>
         </a>
     </div>
 
-    <!-- 헤더 (로고 및 로그아웃) -->
+    <!-- 컴팩트 헤더 -->
     <header class="header">
         <h1 class="header-title">Doing!</h1>
         <button class="logout-button interactive" onclick="handleLogout()">
@@ -272,14 +346,29 @@
     </header>
 
     <!-- ------------------ 뷰 컨테이너 ------------------ -->
-
-    <!-- 1. 홈/대시보드 뷰 (기본 활성) -->
     <div id="home-view" class="view active">
         <!-- 프로필 섹션 -->
         <div class="profile-card-section">
             <div class="profile-card">
+                <!-- 상단 인사말 섹션 -->
                 <p class="profile-greeting">안녕하세요, <span id="user-nickname">도전러</span>님!</p>
                 <p class="profile-user-id" id="user-id-display">UID: loading...</p>
+
+                <!-- 핵심 지표 섹션 (연한 회색 배경으로 대비) - 아이콘 삭제 유지 -->
+                <div class="profile-metrics">
+                    <div class="metric-item">
+                        <div class="metric-value" id="metric-total">0</div>
+                        <div class="metric-label">전체 도전</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-value" id="metric-progress">0</div>
+                        <div class="metric-label">진행중 도전</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-value" id="metric-max-success">0</div>
+                        <div class="metric-label">최대 성공일</div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -290,22 +379,20 @@
             </h2>
             <div id="challenge-list" class="challenge-list">
                 <!-- Firestore data will be injected here -->
-                <p id="loading-message" style="text-align: center; color: #777;">챌린지 목록을 불러오는 중...</p>
+                <p id="loading-message" style="text-align: center; color: #777; grid-column: 1 / -1;">챌린지 목록을 불러오는 중...</p>
             </div>
         </div>
     </div>
     
-    <!-- (my-view 제거됨) -->
-    
-    <!-- ------------------ 뷰 컨테이너 끝 ------------------ -->
 </div>
 
-<!-- 모달 팝업 구조 (메시지 박스 용도) -->
+<!-- 모달 팝업 구조 (메시지 박스 용도) - 확인 버튼 복원 -->
 <div id="modal">
     <div class="modal-content">
         <h3 class="modal-title" id="modal-title"></h3>
         <p class="modal-text" id="modal-text"></p>
-        <button class="modal-close-button interactive" onclick="hideModal()">확인</button>
+        <!-- 명시적인 확인 버튼 복원 -->
+        <button id="modal-close-button" class="interactive" onclick="hideModal()">확인</button>
     </div>
 </div>
 
@@ -350,8 +437,7 @@
     
     // 글로벌 변수
     let currentUserId = null;
-    let isAuthAttempted = false; // 인증 시도 여부
-
+    let isAuthAttempted = false; 
 
     // --- UI/UX 함수 ---
     const modal = document.getElementById('modal');
@@ -359,7 +445,7 @@
     const modalText = document.getElementById('modal-text');
     
     /**
-     * 모달 표시 함수 (HTML onclick에서 사용 가능하도록 window에 바인딩)
+     * 모달 표시 함수 
      */
     window.showModal = function(title, text) {
         modalTitle.textContent = title;
@@ -386,37 +472,41 @@
     // --- 데이터 및 비즈니스 로직 ---
 
     /**
-     * 챌린지 카드를 렌더링합니다.
+     * 챌린지 카드를 렌더링하고, 프로필 지표를 업데이트합니다.
      */
     function renderChallenges(challenges) {
         const listContainer = document.getElementById('challenge-list');
-        listContainer.innerHTML = ''; // 기존 목록 초기화
+        listContainer.innerHTML = ''; 
         
-        if (challenges.length === 0) {
-            // col-span-full을 grid 레이아웃에 맞게 적용
-            listContainer.innerHTML = '<p class="text-center text-gray-500 p-8" style="grid-column: 1 / -1;">아직 진행 중인 챌린지가 없습니다. 새로운 도전을 시작해보세요!</p>';
-            return;
-        }
+        // --- 프로필 지표 계산 ---
+        const today = new Date().getTime();
+        let totalChallenges = challenges.length;
+        let inProgressChallenges = 0;
+        let maxSuccessDays = 0; // 이 값은 실제 구현 시 Daily 인증 기록을 조회해야 합니다.
 
         challenges.forEach(challenge => {
-            // progress 계산
-            const today = new Date().getTime();
-            // serverTimestamp()가 아직 설정되지 않은 경우를 대비하여startedAt 필드 유효성 검사
             const startedAt = challenge.startedAt?.toDate ? challenge.startedAt.toDate().getTime() : today;
-            const elapsedDays = Math.ceil((today - startedAt) / (1000 * 60 * 60 * 24));
-            
-            // 임시 진행률 (실제로는 Daily 인증 횟수로 계산해야 함)
-            const currentProgress = Math.min(elapsedDays, challenge.durationDays || 30);
             const durationDays = challenge.durationDays || 30;
+            // 경과일 계산
+            const elapsedDays = Math.max(0, Math.ceil((today - startedAt) / (1000 * 60 * 60 * 24))); 
+
+            // 진행중 도전 (만료되지 않은 도전)
+            if (elapsedDays <= durationDays) {
+                inProgressChallenges++;
+            }
+            
+            // 임시 진행률 (Daily 인증 횟수가 없으므로, 경과일 기준)
+            const currentProgress = Math.min(elapsedDays, durationDays);
             const progressPercent = Math.min(100, (currentProgress / durationDays) * 100).toFixed(0);
+
+            // 최대 성공일 (임시: 경과일 중 최대값 사용)
+            maxSuccessDays = Math.max(maxSuccessDays, currentProgress); 
 
             const card = document.createElement('div');
             card.className = 'challenge-card interactive';
             
-            // 챌린지 상세 정보를 모달로 표시
             card.setAttribute('onclick', `showModal('${challenge.title}', '총 ${durationDays}일 중 ${currentProgress}일차 진행 중입니다. (ID: ${challenge.id})')`);
 
-            // 아이콘 및 색상 매핑 (임시)
             const iconMap = {
                 '30': { icon: 'brightness_5', color: '#1E90FF' }, 
                 '60': { icon: 'fitness_center', color: '#2ecc71' }, 
@@ -425,7 +515,6 @@
             };
             const theme = iconMap[durationDays.toString()] || iconMap.default;
             
-            // border-left 스타일 인라인 적용
             card.style.borderLeft = `5px solid ${theme.color}`;
 
             card.innerHTML = `
@@ -443,6 +532,16 @@
             `;
             listContainer.appendChild(card);
         });
+        
+        // --- 지표 UI 업데이트 ---
+        document.getElementById('metric-total').textContent = totalChallenges;
+        document.getElementById('metric-progress').textContent = inProgressChallenges;
+        document.getElementById('metric-max-success').textContent = maxSuccessDays;
+        
+        if (challenges.length === 0) {
+            listContainer.innerHTML = '<p class="text-center text-gray-500 p-8" style="grid-column: 1 / -1;">아직 진행 중인 챌린지가 없습니다. 새로운 도전을 시작해보세요!</p>';
+        }
+        document.getElementById('loading-message')?.remove(); 
     }
 
     /**
@@ -462,7 +561,6 @@
                 challenges.push({ id: doc.id, ...doc.data() });
             });
             renderChallenges(challenges);
-            document.getElementById('loading-message')?.remove(); 
             console.log("Firestore Challenges Updated:", challenges.length);
 
         }, (error) => {
@@ -470,8 +568,6 @@
             showModal('데이터 오류', '챌린지 목록을 불러오는 중 오류가 발생했습니다.');
         });
         
-        // 실제 환경에서는 리스너 해제 로직이 필요합니다.
-        // 이 예제에서는 단순화를 위해 반환만 합니다.
         return unsubscribe;
     }
 
@@ -484,7 +580,6 @@
     window.handleLogout = async function() {
         try {
             await signOut(auth);
-            // 로그아웃 후 로그인 페이지로 리디렉션
             window.location.href = "/auth.html";
         } catch (error) {
             console.error("Logout Error:", error);
@@ -498,22 +593,18 @@
     onAuthStateChanged(auth, async (user) => {
         if (!isAuthAttempted) {
             const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-            isAuthAttempted = true; // 인증 시도 플래그 설정
+            isAuthAttempted = true; 
 
             if (!user && initialAuthToken) {
-                // 커스텀 토큰이 있지만 아직 로그인되지 않은 경우
                 try {
                     await signInWithCustomToken(auth, initialAuthToken);
-                    // signInWithCustomToken 성공하면 onAuthStateChanged가 다시 호출됨
                     return; 
                 } catch (error) {
                     console.error("Custom token login failed. Forcing redirect to /auth.html", error);
-                    // 토큰으로 로그인 실패 시 로그인 페이지로 리디렉션
                     window.location.href = "/auth.html";
                     return;
                 }
             } else if (!user) {
-                // 커스텀 토큰도 없고 현재 사용자도 없는 경우
                 console.warn("User not authenticated. Redirecting to /auth.html");
                 window.location.href = "/auth.html";
                 return; 
@@ -522,16 +613,14 @@
 
         if (user) {
             currentUserId = user.uid;
-            // 익명 사용자 방지 (토큰 기반 인증을 가정)
             if (user.isAnonymous) {
                  console.warn("Anonymous user detected. Forcing redirect to /auth.html");
                  window.location.href = "/auth.html";
                  return;
             }
 
-            // displayName이 없는 경우 userId의 처음 8자리를 임시 닉네임으로 사용
+            // 회원가입 시 기입한 디스플레이 네임 (user.displayName) 사용
             const displayName = user.displayName || `사용자-${user.uid.substring(0, 8)}`;
-            const email = user.email || '제공된 이메일 없음';
             
             // UI 업데이트
             document.getElementById('user-nickname').textContent = displayName;
@@ -541,14 +630,12 @@
             fetchUserChallenges();
 
         } else if (isAuthAttempted) {
-             // onAuthStateChanged가 user=null로 호출되었고, 이미 인증을 시도했으며, 리디렉션이 아직 발생하지 않은 경우
              console.warn("Authentication failed or logged out. Redirecting to /auth.html");
              window.location.href = "/auth.html";
              return;
         }
         
-        // 폰트 로드 확인 후 앱 컨테이너 표시 (인증 상태와 관계없이 폰트 로드 후 보여주기)
-        // 만약 인증이 실패했다면 이미 위에서 리디렉션이 발생했을 것입니다.
+        // 폰트 로드 확인 후 앱 컨테이너 표시
         document.fonts.ready.then(() => {
              document.getElementById('app-container').classList.add('font-loaded');
         });
@@ -558,11 +645,17 @@
     // --- 초기화 로직 ---
     window.addEventListener('load', () => {
         const appContainer = document.getElementById('app-container');
-        // 모바일 화면 높이 조정
         appContainer.style.minHeight = `${window.innerHeight}px`;
         
         window.addEventListener('resize', () => {
             appContainer.style.minHeight = `${window.innerHeight}px`;
+        });
+        
+        // 모달 배경 클릭 시 닫기 기능 추가 (확인 버튼과 함께 작동)
+        modal.addEventListener('click', (event) => {
+            if (event.target === modal) {
+                hideModal();
+            }
         });
     });
 </script>
