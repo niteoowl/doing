@@ -85,12 +85,13 @@
 
         /* Category */
         .cat-grp { margin-bottom: 20px; }
-        .cat-grp-title { font-size: 1.1rem; font-weight: 700; color: var(--c-acc); margin-bottom: 10px; padding-bottom: 5px; border-bottom: 1px solid var(--c-lite); }
+        .cat-grp-title { font-size: 1.1rem; font-weight: 700; color: #333; margin-bottom: 10px; padding-bottom: 5px; border-bottom: 1px solid var(--c-lite); }
         .cat-chips { display: flex; flex-wrap: wrap; gap: 8px; }
         .cat-chip { padding: 8px 15px; border-radius: 20px; border: 1px solid var(--c-bord); background-color: #fcfcfc; font-size: 0.95rem; font-weight: 500; }
         .cat-chip.selected { background-color: var(--c-acc); color: #fff; border-color: var(--c-acc); font-weight: 600; }
         .cat-sel-list { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px; margin-bottom: 10px; background-color: #f7f7f7; border-radius: 12px; }
         .cat-sel-item { padding: 4px 10px; background-color: var(--c-lite); color: var(--c-acc); border-radius: 16px; font-size: 0.85rem; font-weight: 600; }
+        .no-results { text-align: center; color: #888; padding: 20px 0; }
 
         /* Message Modal */
         #modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.4); justify-content: center; align-items: center; }
@@ -161,9 +162,9 @@
             </div>
             
             <div class="f-grp">
-                <label class="f-lbl">분류 (카테고리)</label>
+                <label class="f-lbl">카테고리</label>
                 <div class="sum-box i" onclick="showCatMdl()">
-                    <span id="catSumTxt">분류를 선택해 주세요 (최대 3개)</span>
+                    <span id="catSumTxt">카테고리를 선택해 주세요 (최대 3개)</span>
                     <i class="material-icons">chevron_right</i>
                 </div>
                 <input type="hidden" id="catsHidden" value="[]" required>
@@ -194,21 +195,24 @@
     <div class="bs-cont">
         <div class="h-bar"></div>
         <div class="bs-head">
-            <h3 class="bs-title">분류 선택 (카테고리)</h3>
+            <h3 class="bs-title">카테고리 선택</h3>
             <button class="bs-close i" onclick="hideCatMdl()"><i class="material-icons">close</i></button>
         </div>
         <div class="bs-area">
-            <p style="font-size: 0.9rem; color: #555; margin-top: 0; margin-bottom: 15px;">챌린지를 대표할 분류를 최대 3개까지 선택해 주세요.</p>
+            <div class="f-grp">
+                <input type="text" id="catSearchInp" class="f-inp" placeholder="카테고리 검색 (예: 코딩, 다이어트, 주식)" style="margin-bottom: 15px;">
+            </div>
+            <p style="font-size: 0.9rem; color: #555; margin-top: 0; margin-bottom: 15px;">챌린지를 대표할 카테고리를 최대 3개까지 선택해 주세요.</p>
             <div class="cat-grp">
-                <h4 class="cat-grp-title">선택된 분류: <span id="catCountDisp">0</span>/3</h4>
+                <h4 class="cat-grp-title">선택된 카테고리: <span id="catCountDisp">0</span>/3</h4>
                 <div id="selCatList" class="cat-sel-list">
-                    <p id="noCatSel" style="font-size: 0.85rem; color: #888; margin: 0;">선택된 분류가 없습니다.</p>
+                    <p id="noCatSel" style="font-size: 0.85rem; color: #888; margin: 0;">선택된 카테고리가 없습니다.</p>
                 </div>
             </div>
             <div id="catsListCont"></div>
         </div>
         <div class="bs-foot">
-            <button class="s-btn i" id="confCatBtn" onclick="confCatSel()">분류 선택 완료</button>
+            <button class="s-btn i" id="confCatBtn" onclick="confCatSel()">카테고리 선택 완료</button>
         </div>
     </div>
 </div>
@@ -286,15 +290,16 @@
     
     // 글로벌 상태
     let uId = null;
+    let dName = null; 
     let isAuth = false; 
     let gs = []; // Goals (목표)
     let ts = []; // Tags (태그)
-    let cs = []; // Categories (분류)
+    let cs = []; // Categories (카테고리)
     let selDate = new Date(); // Selected Start Date
     let calDate = new Date(); // Current Calendar Month
     let mdlCb = null; // Modal Callback
 
-    // DOM 요소
+    // DOM 요소 (일부만 정의)
     const mdl = document.getElementById('modal');
     const sBtn = document.getElementById('submit-button');
     const rGrp = document.getElementById('reward-grp');
@@ -311,8 +316,6 @@
     const curMY = document.getElementById('curMY');
     const modalDurInp = document.getElementById('modalDurInp');
     const excWkndChk = document.getElementById('excWkndChk');
-    const modalEndDisp = document.getElementById('modalEndDisp');
-    const actualDurDisp = document.getElementById('actualDurDisp');
     const dateSumTxt = document.getElementById('dateSumTxt');
     const startDH = document.getElementById('startDH');
     const durationDH = document.getElementById('durationDH');
@@ -325,17 +328,50 @@
     const selCatList = document.getElementById('selCatList');
     const catCountDisp = document.getElementById('catCountDisp');
     const noCatSel = document.getElementById('noCatSel');
+    const catSearchInp = document.getElementById('catSearchInp'); // 카테고리 검색 input
 
-    // 카테고리 정의
+    // **정제된 카테고리 정의 (사용자 요청 반영: 스터디, 인터넷 강의 등 포괄적인 의미 강조)**
     const CATS = {
-        '성장/자기계발': ['독서', '외국어 학습', '글쓰기', '자격증 준비', '강의 수강'],
-        '건강/운동': ['러닝/조깅', '홈트레이닝', '요가/필라테스', '헬스/웨이트', '식단 관리'],
-        '재테크/금전': ['가계부 작성', '절약/소비 통제', '투자 공부', '재테크 독서'],
-        '업무/생산성': ['업무 시간 확보', '기획/보고서 작성', '시간 관리', '퇴근 후 자기계발'],
-        '취미/여가': ['악기 연습', '그림 그리기', '사진 찍기', '영상 편집'],
-        '생활/습관': ['아침 일찍 일어나기', '청소/정리', '물 마시기', '명상', '일기 쓰기'],
+        '직무/기술 역량 강화': [
+            '프론트엔드 개발 (웹)', '백엔드 개발 (서버)', 'AI/머신러닝 심화', '데이터 분석 마스터', '코딩 알고리즘 연습',
+            'IT 자격증 취득', '전문직 자격증 준비', '실무 툴(엑셀/PPT) 마스터', '기획서/보고서 작성 훈련', '발표 스킬 강화'
+        ],
+        '외국어 및 심층 학습': [
+            '영어 회화 (매일)', 'TOEIC/TOEFL 집중', '제2외국어 (일본어)', '제2외국어 (중국어)', '학술 논문 분석/작성',
+            '원서 읽기 도전', '온라인 강의 완강 (인터넷 강의)', '지식 공유 강의 제작'
+        ],
+        '시험 및 스터디 그룹': [
+            '자격증 시험 스터디', '공무원 시험 준비', '대학원 입시 준비', '모의 투자 스터디', '책 리뷰/토론 스터디',
+            '외국어 시험 합격 스터디', '공모전 팀 프로젝트', '사이드 프로젝트 개발', '팀 목표 달성 챌린지'
+        ],
+        '독서 및 인문 지식': [
+            '인문학 고전 독파', '소설/문학 정독', '경제/경영 서적 이해', '과학/기술 지식 학습', '매일 30분 독서 습관',
+            '역사/철학 공부', '시사/뉴스 스크랩', '교양서적 읽기', '서평 쓰기 루틴'
+        ],
+        '재테크 및 금융': [
+            '가계부 매일 작성', '지출 예산 통제', '부동산 지식 스터디', '주식 기본 분석/실전', '경제 뉴스 큐레이션',
+            '재무 설계 및 목표 설정', '소액 투자 습관', '비상금 모으기'
+        ],
+        '건강 및 운동': [
+            '헬스장 주 4회 출석', '맨몸 근력 운동', '매일 1시간 러닝', '자전거 라이딩 (장거리)', '요가/필라테스 루틴',
+            '스트레칭 및 유연성', '마라톤/대회 준비', '스포츠 기술 향상', '걷기/만보 달성'
+        ],
+        '식단 및 영양': [
+            '하루 2L 물 마시기', '클린 식단 유지', '다이어트 식단 기록', '저염식/건강식 요리', '영양제 꾸준히 섭취',
+            '밀가루/설탕 줄이기', '과식/야식 금지', '식단 분석 및 개선'
+        ],
+        '정신 건강 및 휴식': [
+            '매일 10분 명상', '취침 전 디지털 디톡스', '충분한 수면 시간 확보', '스트레스 해소법 실천', '혼자만의 시간 갖기'
+        ],
+        '생활 습관 개선': [
+            '미라클 모닝 (새벽 기상)', '주간 대청소 (환경 정리)', '미니멀 라이프 실천', '규칙적인 식사 시간', '반려동물 건강 관리'
+        ],
+        '창작 및 취미 심화': [
+            '악기 (기타/피아노) 연습', '노래/보컬 트레이닝', '영상 편집 (유튜브)', '포토샵/일러스트 연습', '드로잉/그림 그리기',
+            '사진 촬영 및 보정', 'DIY 수공예품 제작', '글쓰기 (소설/시)', '블로그/SNS 꾸준히 업로드'
+        ],
+        '기타 및 자유 주제': ['자유 주제 챌린지', '기타 개인 목표', '새로운 목표 시도']
     };
-
     // --- UI/UX & 유틸리티 ---
 
     window.showModal = function(title, text, cb = null) {
@@ -367,6 +403,7 @@
     }
     
     window.showCatMdl = function() {
+        catSearchInp.value = ''; // 검색창 초기화
         renderCatsList();
         renderSelCatSum();
         catMdl.style.display = 'flex';
@@ -428,17 +465,17 @@
             const { eDate, aDur } = calcPeriod(start, dur, excWknd);
             
             if (eDate) {
-                modalEndDisp.textContent = fmtDisp(eDate);
-                actualDurDisp.textContent = aDur;
+                document.getElementById('modalEndDisp').textContent = fmtDisp(eDate);
+                document.getElementById('actualDurDisp').textContent = aDur;
                 startDH.value = fmtIso(start);
                 endDH.value = fmtIso(eDate);
                 durationDH.value = dur;
                 excludeWH.value = excWknd;
             } else {
-                modalEndDisp.textContent = '기간 계산 오류'; actualDurDisp.textContent = 0;
+                document.getElementById('modalEndDisp').textContent = '기간 계산 오류'; document.getElementById('actualDurDisp').textContent = 0;
             }
         } else {
-            modalEndDisp.textContent = '시작일과 유효한 기간을 설정해 주세요'; actualDurDisp.textContent = 0;
+            document.getElementById('modalEndDisp').textContent = '시작일과 유효한 기간을 설정해 주세요'; document.getElementById('actualDurDisp').textContent = 0;
             startDH.value = endDH.value = durationDH.value = ''; excludeWH.value = false;
         }
     }
@@ -486,19 +523,34 @@
     }
     
     // --- Category Logic ---
-    function renderCatsList() {
+    function renderCatsList(searchTerm = '') {
         catsListCont.innerHTML = '';
+        const term = searchTerm.toLowerCase().trim();
         let html = '';
+        let matchCount = 0;
+
         for (const mainCat in CATS) {
-            html += `<div class="cat-grp"><h4 class="cat-grp-title">${mainCat}</h4><div class="cat-chips">`;
-            CATS[mainCat].forEach(subCat => {
-                const sel = cs.includes(subCat) ? 'selected' : '';
-                html += `<div class="cat-chip i ${sel}" data-cat="${subCat}">${subCat}</div>`;
-            });
-            html += `</div></div>`;
+            const filteredSubCats = CATS[mainCat].filter(subCat => 
+                subCat.toLowerCase().includes(term) || mainCat.toLowerCase().includes(term)
+            );
+
+            if (filteredSubCats.length > 0) {
+                html += `<div class="cat-grp"><h4 class="cat-grp-title">${mainCat}</h4><div class="cat-chips">`;
+                filteredSubCats.forEach(subCat => {
+                    const sel = cs.includes(subCat) ? 'selected' : '';
+                    html += `<div class="cat-chip i ${sel}" data-cat="${subCat}">${subCat}</div>`;
+                    matchCount++;
+                });
+                html += `</div></div>`;
+            }
         }
-        catsListCont.innerHTML = html;
-        catsListCont.querySelectorAll('.cat-chip').forEach(el => el.addEventListener('click', (e) => toggleCatSel(e.target.getAttribute('data-cat'))));
+        
+        if (matchCount === 0 && term.length > 0) {
+            catsListCont.innerHTML = `<p class="no-results">검색어 "${term}"와 일치하는 카테고리가 없습니다.</p>`;
+        } else {
+            catsListCont.innerHTML = html;
+            catsListCont.querySelectorAll('.cat-chip').forEach(el => el.addEventListener('click', (e) => toggleCatSel(e.target.getAttribute('data-cat'))));
+        }
     }
 
     function toggleCatSel(cat) {
@@ -508,7 +560,7 @@
         } else {
             cs.splice(idx, 1);
         }
-        renderCatsList(); 
+        renderCatsList(catSearchInp.value); // 검색어 유지하며 목록 업데이트
         renderSelCatSum(); 
     }
     
@@ -532,7 +584,7 @@
     }
     
     window.confCatSel = function() {
-        if (cs.length === 0) return showModal('분류 선택 필요', '최소 1개 이상의 분류를 선택해 주세요.');
+        if (cs.length === 0) return showModal('카테고리 선택 필요', '최소 1개 이상의 카테고리를 선택해 주세요.');
         catSumTxt.textContent = `${cs.join(', ')} (${cs.length}개 선택)`;
         catsH.value = JSON.stringify(cs);
         hideCatMdl();
@@ -612,7 +664,8 @@
 
     // --- Submission ---
     window.hdlCrt = async function() {
-        if (!uId) return showModal('인증 오류', '사용자 정보가 없습니다.');
+        // UID와 DisplayName이 모두 있어야 합니다.
+        if (!uId || !dName) return showModal('인증 오류', '사용자 정보(UID/디스플레이 이름)가 없습니다.');
 
         const title = document.getElementById('title').value.trim();
         const reward = document.getElementById('reward').value.trim();
@@ -620,12 +673,12 @@
         const sD = startDH.value, eD = endDH.value, dur = parseInt(durationDH.value, 10);
         const excW = excludeWH.value === 'true';
         
-        // 요청 4 반영: 디스플레이네임 (UID 기반 간소화)
-        const creatorName = `User_${uId.substring(0, 8)}`; 
+        // 실제 DisplayName 사용
+        const creatorName = dName; 
         let maxP = isP ? parseInt(mPInp.value, 10) : 0; 
         
         if (gs.length === 0) return showModal('필수 정보 누락', '최소 1개 이상의 목표를 추가해 주세요.');
-        if (cs.length === 0) return showModal('필수 정보 누락', '최소 1개 이상의 분류(카테고리)를 선택해 주세요.');
+        if (cs.length === 0) return showModal('필수 정보 누락', '최소 1개 이상의 카테고리를 선택해 주세요.');
         if (!title || !sD || !eD || isNaN(dur)) return showModal('필수 정보 누락', '제목 및 기간 설정은 필수 입력 사항입니다.');
         if (isP && (isNaN(maxP) || maxP < 2 || maxP > 100)) return showModal('최대 인원 오류', '팀 챌린지는 최소 2명 이상, 100명 이하로 설정해야 합니다.');
 
@@ -637,14 +690,14 @@
 
             let data = {
                 title: title,
-                goalsList: gs, // 요청 1 반영: 배열로 저장
+                goalsList: gs,
                 description: "",
                 creatorId: uId, creatorName: creatorName, 
                 createdAt: Date.now(), updatedAt: Date.now(), 
                 startDate: sD, endDate: eD, durationDays: dur, excludeWeekends: excW, 
                 isPublic: isP, status: 'active',
                 participants: 1, participantIds: [uId], 
-                tags: ts, categories: cs, // 요청 2 반영: 분류 배열 저장
+                tags: ts, categories: cs,
             };
 
             if (isP) data = { ...data, maxParticipants: maxP };
@@ -656,7 +709,6 @@
             
             const dRef = await addDoc(collection(db, cPath), data);
 
-            // 요청 3 반영: 즉시 리디렉션
             window.location.href = `/challenge/view.html?uid=${dRef.id}`;
 
         } catch (err) {
@@ -677,12 +729,13 @@
                 try { await signInWithCustomToken(auth, tkn); return; } catch (e) { console.error("Login failed.", e); return; }
             } else if (!user) {
                 // Not authenticated, but allowing anonymous sign-in for canvas setup 
-                // In a real app, this should redirect to auth
                 return;
             }
         }
         if (user) {
             uId = user.uid;
+            // 사용자 객체에서 displayName을 가져옴
+            dName = user.displayName || `User_${user.uid.substring(0, 8)}`; 
             document.fonts.ready.then(() => document.getElementById('app-container').classList.add('font-loaded'));
         }
     });
@@ -699,6 +752,9 @@
         dateMdl.addEventListener('click', (e) => { if (e.target === dateMdl) hideDateMdl(); });
         catMdl.addEventListener('click', (e) => { if (e.target === catMdl) hideCatMdl(); });
         
+        // 카테고리 검색 기능 리스너 추가
+        catSearchInp.addEventListener('input', (e) => renderCatsList(e.target.value));
+
         setupTypeToggle();
         
         document.getElementById('prevMonth').addEventListener('click', () => {
@@ -728,7 +784,7 @@
         renderCal(today.getFullYear(), today.getMonth());
         updMdlDateUI();
         
-        catSumTxt.textContent = `분류를 선택해 주세요 (최대 3개)`; 
+        catSumTxt.textContent = `카테고리를 선택해 주세요 (최대 3개)`; 
         catsH.value = JSON.stringify(cs); 
     });
 </script>
