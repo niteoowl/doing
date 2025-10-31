@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Doing! - 단계별 인증 (버튼 고정)</title>
+    <title>Doing! - 단계별 인증 (Firebase Config 업데이트)</title>
     <!-- Pretendard 폰트 CDN 적용 -->
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
     <!-- Google Material Icons (Google Fonts Icons) 추가 -->
@@ -18,7 +18,7 @@
             --color-gray: #777;
             --color-light-gray: #f5f5f5;
             --padding-x: 2rem; /* 전체 화면 좌우 패딩을 2rem으로 통일 */
-            /* 고정 버튼 높이를 고려한 패딩값 - 100px -> 75px로 조정 */
+            /* 고정 버튼 높이를 고려한 패딩값 */
             --fixed-button-area-height: 75px; 
         }
 
@@ -277,7 +277,6 @@
         .fixed-action-button {
             width: 100%;
             /* max-width 제거하여 너비를 더 길게 확장 */
-            /* max-width: 500px; */ 
             padding: 1rem;
             background-color: var(--color-accent);
             color: var(--color-white);
@@ -374,7 +373,8 @@
             <form id="form-step-1" onsubmit="event.preventDefault(); handleEmailCheck()">
                 <div class="input-group">
                     <div class="input-label">이메일 주소</div>
-                    <input type="email" id="input-email" class="auth-input" placeholder="이메일 주소 입력" required oninput="checkInputValidity()">
+                    <!-- autocomplete="email" 추가 -->
+                    <input type="email" id="input-email" class="auth-input" placeholder="이메일 주소 입력" required oninput="checkInputValidity()" autocomplete="email">
                 </div>
             </form>
         </div>
@@ -389,13 +389,15 @@
                 <!-- 1. 사용자 이름 (회원가입 시에만 표시됨) -->
                 <div id="input-group-nickname" class="input-group" style="display: none;">
                     <div class="input-label">사용자 이름</div>
-                    <input type="text" id="input-nickname" class="auth-input" placeholder="이름 또는 닉네임 입력" required oninput="checkInputValidity()">
+                    <!-- autocomplete="username" 추가 -->
+                    <input type="text" id="input-nickname" class="auth-input" placeholder="이름 또는 닉네임 입력" required oninput="checkInputValidity()" autocomplete="username">
                 </div>
 
                 <!-- 2. 비밀번호 그룹 (로그인/회원가입 공통) -->
                 <div class="input-group">
                     <div class="input-label">비밀번호</div>
-                    <input type="password" id="input-password" class="auth-input" placeholder="비밀번호 입력 (6자 이상)" required oninput="checkInputValidity()">
+                    <!-- autocomplete="new-password" 추가 -->
+                    <input type="password" id="input-password" class="auth-input" placeholder="비밀번호 입력 (6자 이상)" required oninput="checkInputValidity()" autocomplete="new-password">
                     <button type="button" class="password-toggle interactive" onclick="togglePasswordVisibility('input-password', this)">
                         <div id="toggle-icon-password"></div>
                     </button>
@@ -405,7 +407,8 @@
                 <div id="input-group-confirm-password" style="display: none;">
                     <div class="input-group">
                         <div class="input-label">비밀번호 확인</div>
-                        <input type="password" id="input-confirm-password" class="auth-input" placeholder="비밀번호 재입력" oninput="checkInputValidity()">
+                        <!-- autocomplete="new-password" 추가 -->
+                        <input type="password" id="input-confirm-password" class="auth-input" placeholder="비밀번호 재입력" oninput="checkInputValidity()" autocomplete="new-password">
                         <button type="button" class="password-toggle interactive" onclick="togglePasswordVisibility('input-confirm-password', this)">
                             <div id="toggle-icon-confirm-password"></div>
                         </button>
@@ -492,19 +495,21 @@
 
     // --- Firebase 설정 및 초기화 (로그인 지속성 포함) ---
     
-    const DUMMY_FIREBASE_CONFIG = {
-        apiKey: "DUMMY_API_KEY_FOR_LOCAL_TESTING",
+    // 사용자가 제공한 Firebase 설정입니다.
+    const USER_PROVIDED_FIREBASE_CONFIG = {
+        apiKey: "AIzaSyBMowSIHMdz69dYY-mAW8l6VjKxBW54SfU",
         authDomain: "doing-a.firebaseapp.com",
         projectId: "doing-a",
         storageBucket: "doing-a.firebasestorage.app",
         messagingSenderId: "24279439955",
         appId: "1:24279439955:web:2bf5c965de1b0a236884a6",
-        measurementId: "G-VJ5YQRGNE1"
+        measurementId: "G-VJ5YQRGNE3"
     };
 
+    // 환경 변수 __firebase_config가 있다면 그것을 사용하고, 없다면 위에 정의된 값을 사용합니다.
     const firebaseConfig = typeof __firebase_config !== 'undefined' && __firebase_config
         ? JSON.parse(__firebase_config) 
-        : DUMMY_FIREBASE_CONFIG; 
+        : USER_PROVIDED_FIREBASE_CONFIG; 
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
@@ -732,11 +737,7 @@
             
         } catch (error) {
             console.error("Email check error:", error);
-            if (error.code === 'auth/api-key-not-valid') {
-                window.showModal('Firebase 오류', '인증 API 키가 유효하지 않습니다. 개발 환경 설정을 확인해주세요.');
-            } else {
-                window.showModal('오류', '이메일 확인 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
-            }
+            window.showModal('오류', '이메일 확인 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
         } finally {
             // 실패하더라도 다음 단계로 가지 않으면 버튼을 다시 활성화
             if (currentStep === 1) {
@@ -765,8 +766,6 @@
                 console.error("Firebase Login Error:", error.code, error.message);
                 if (error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
                     errorMessage = '이메일 또는 비밀번호가 일치하지 않습니다.';
-                } else if (error.code === 'auth/api-key-not-valid') {
-                    errorMessage = '인증 API 키가 유효하지 않습니다. 개발 환경 설정을 확인해주세요.';
                 }
                 window.showModal('로그인 오류', errorMessage);
             } finally {
@@ -828,8 +827,6 @@
             console.error("Firebase Register Error:", error.code, error.message);
             if (error.code === 'auth/email-already-in-use') {
                 errorMessage = '이미 사용 중인 이메일 주소입니다.';
-            } else if (error.code === 'auth/api-key-not-valid') {
-                errorMessage = '인증 API 키가 유효하지 않습니다. 개발 환경 설정을 확인해주세요.';
             }
             window.showModal('회원가입 오류', errorMessage);
         } finally {
