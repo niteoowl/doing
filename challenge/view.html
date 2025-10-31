@@ -599,8 +599,6 @@
     function calculateChallengeDates(days, startDate) {
         const dateKeys = [];
         // Date 객체는 문자열 'YYYY-MM-DD'를 기반으로 UTC가 아닌 로컬 시간대로 해석되어야 합니다.
-        // new Date(startDate) 대신 new Date(startDate + 'T00:00:00')를 사용하거나, 
-        // Date.parse를 사용하지 않고 년/월/일을 직접 전달하여 생성하는 것이 안전합니다.
         // 현재 코드에서는 startDate가 'YYYY-MM-DD' 형태라고 가정하고 진행합니다.
         let currentDate = new Date(startDate);
         
@@ -739,10 +737,13 @@
 
         challengeData = data;
         isPublicChallenge = currentIsPublicChallenge;
-        const participants = data.participants || [];
         
-        // 참여 상태 업데이트
-        isParticipant = !isPublicChallenge || participants.includes(currentUserId);
+        // --- [수정] participants가 배열인지 확인하여 includes() 오류 방지 ---
+        const participants = data.participants;
+        const validParticipants = Array.isArray(participants) ? participants : [];
+        
+        // 참여 상태 업데이트: validParticipants 사용
+        isParticipant = !isPublicChallenge || validParticipants.includes(currentUserId);
 
         const todayKey = getTodayDateKey();
         
@@ -764,7 +765,7 @@
         const startDateFormatted = displayStartDate.toLocaleDateString('ko-KR');
 
         document.querySelector('#meta-duration span').textContent = `${data.durationDays || 30}일 기간 (${startDateFormatted} 시작)`;
-        document.querySelector('#meta-participants span').textContent = `${participants.length || 1}명 참여 중 (${isPublicChallenge ? '팀원' : '나만'})`;
+        document.querySelector('#meta-participants span').textContent = `${validParticipants.length || 1}명 참여 중 (${isPublicChallenge ? '팀원' : '나만'})`;
         
         // 2. 액션 카드 및 인증 상태 업데이트
         const proofCardEl = document.getElementById('proof-card');
