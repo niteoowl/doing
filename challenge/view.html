@@ -541,7 +541,8 @@
     // 글로벌 상태
     let currentUserId = null;
     let isAuthAttempted = false; 
-    let challengeId = new URLSearchParams(window.location.search).get('id');
+    // **수정: URL에서 'uid' 파라미터로 챌린지 ID를 가져옵니다.**
+    let challengeId = new URLSearchParams(window.location.search).get('uid');
     let challengeData = null;
     let isTeamChallenge = false;
     let userName = "사용자" + (Math.random() * 1000).toFixed(0); // 임시 사용자명
@@ -631,9 +632,9 @@
             return;
         }
         
-        // Mocking logic based on ID for demo purposes
+        // Mocking logic based on ID for demo purposes (C-TEAM-456 or C-SOLO-123)
         let mockData;
-        if (challengeId === 'C-TEAM-456') {
+        if (challengeId && challengeId.includes('TEAM')) {
              mockData = {
                 id: challengeId,
                 title: "매일 코딩 1시간! 💻",
@@ -676,7 +677,7 @@
         }
         
         try {
-            // Private data path: /artifacts/{appId}/users/{userId}/progress_logs
+            // Private data path: /artifacts/${appId}/users/${userId}/progress_logs
             const path = `/artifacts/${appId}/users/${currentUserId}/progress_logs`;
             await addDoc(collection(db, path), {
                 challengeId: challengeId,
@@ -699,7 +700,7 @@
     function fetchProgressLogs() {
         if (!currentUserId || !challengeId) return;
 
-        // Private data path: /artifacts/{appId}/users/{userId}/progress_logs
+        // Private data path: /artifacts/${appId}/users/${userId}/progress_logs
         const path = `/artifacts/${appId}/users/${currentUserId}/progress_logs`; 
         const logsRef = collection(db, path);
         
@@ -707,9 +708,6 @@
         const q = query(
             logsRef, 
             // Note: orderBy is used for simple querying but for large datasets, sort in client-side to avoid index issues.
-            // For demo, we are showing the intent.
-            // You may need to remove orderBy in production if performance degrades.
-            // where('challengeId', '==', challengeId), // 챌린지ID 필터링 (Firestore Rule에서 처리할 수도 있음)
             orderBy('timestamp', 'desc')
         );
         
@@ -723,7 +721,7 @@
             
             snapshot.forEach((doc) => {
                 const log = doc.data();
-                if (log.challengeId === challengeId) { // 클라이언트 측 필터링 추가
+                if (log.challengeId === challengeId) { // 클라이언트 측 필터링
                     logsFound = true;
                     const logItem = document.createElement('div');
                     logItem.className = 'progress-log-item';
@@ -764,7 +762,7 @@
         if (!content) return;
         
         try {
-            // Public data path: /artifacts/{appId}/public/data/challenges/{challengeId}/chat
+            // Public data path: /artifacts/${appId}/public/data/challenges/{challengeId}/chat
             const path = `/artifacts/${appId}/public/data/challenges/${challengeId}/chat`; 
             await addDoc(collection(db, path), {
                 challengeId: challengeId,
@@ -796,7 +794,7 @@
     function fetchChatMessages() {
         if (!challengeId || !isTeamChallenge) return;
 
-        // Public data path: /artifacts/{appId}/public/data/challenges/{challengeId}/chat
+        // Public data path: /artifacts/${appId}/public/data/challenges/{challengeId}/chat
         const path = `/artifacts/${appId}/public/data/challenges/${challengeId}/chat`;
         const chatRef = collection(db, path);
         
@@ -892,7 +890,7 @@
     // --- 초기화 로직 ---
     window.addEventListener('load', () => {
         if (!challengeId) {
-             showModal('오류', '접근할 챌린지 정보가 없습니다. 유효한 ID를 제공해주세요.');
+             showModal('오류', '접근할 챌린지 정보가 없습니다. URL에 uid 파라미터를 확인해주세요.');
         }
 
         const appContainer = document.getElementById('app-container');
