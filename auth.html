@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Doing! - 단계별 인증 (사용자 선택 기반)</title>
+    <title>Doing! - 로그인/회원가입</title>
     <!-- Pretendard 폰트 CDN 적용 -->
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
     <!-- Google Material Icons (Google Fonts Icons) 추가 -->
@@ -782,7 +782,9 @@
             try {
                 // 사용자가 로그인 선택을 했으므로, 계정이 없으면 오류를 띄웁니다.
                 await signInWithEmailAndPassword(auth, email, password);
-                window.showModal('로그인 성공', '서비스를 시작합니다.');
+                
+                // [수정] 로그인 성공 시 루트 경로(/)로 이동
+                window.location.href = '/';
 
             } catch (error) {
                 let errorMessage = '로그인에 실패했습니다. 이메일 또는 비밀번호를 확인해주세요.';
@@ -839,7 +841,8 @@
                 await updateProfile(userCredential.user, { displayName: nickname });
             }
 
-            window.showModal('회원가입 성공', 'Doing! 서비스 이용을 환영합니다.');
+            // [수정] 회원가입 성공 시 루트 경로(/)로 이동
+            window.location.href = '/';
             
         } catch (error) {
             let errorMessage = '회원가입에 실패했습니다. 잠시 후 다시 시도해주세요.';
