@@ -3,17 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Doing! - 로그인/회원가입</title>
-    <!-- Pretendard 폰트 CDN 적용 --><link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
-    <!-- Google Material Icons (Google Fonts Icons) 추가 --><link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <!-- 모바일 앱의 깔끔함을 위해 시스템 폰트 사용 --><style>
+    <title>Doing! - 단계별 인증</title>
+    <!-- Pretendard 폰트 CDN 적용 -->
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
+    <!-- Google Material Icons (Google Fonts Icons) 추가 -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <style>
         /* 기본 스타일 및 제약 조건 반영 */
         :root {
             --color-white: #ffffff;
             --color-black: #000000;
             --color-accent: #1E90FF; /* 포인트 블루 (Dodger Blue) */
-            --color-light-gray: #f5f5f5; /* 탭 버튼 배경 등 미묘한 구분을 위한 아주 연한 회색 */
-            --color-medium-gray: #cccccc;
+            --color-gray: #777;
+            --color-light-gray: #f5f5f5;
+            --padding-x: 2rem; /* 전체 화면 좌우 패딩을 2rem으로 통일 */
         }
 
         * {
@@ -21,219 +25,293 @@
         }
 
         body {
-            /* === 수정: Pretendard 폰트 적용 === */
             font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: var(--color-white); /* 전체 배경 흰색 */
+            background-color: var(--color-white);
             display: flex;
             justify-content: center;
-            align-items: center; /* 세로 중앙 정렬 */
+            align-items: flex-start; /* 콘텐츠를 상단에 정렬 */
             min-height: 100vh;
             color: var(--color-black);
             -webkit-tap-highlight-color: transparent;
-            /* 스크롤바 공간을 항상 예약하여 레이아웃 밀림 방지 */
-            overflow-y: scroll; 
+            /* body 전체에서 세로 스크롤은 숨기고 가로 스크롤만 확실히 차단 */
+            overflow: hidden; 
         }
 
         #app-container {
-            width: 100%; /* 화면 전체 너비 사용 */
-            max-width: 420px; /* 콘텐츠 최대 너비 유지 (모바일 앱 느낌) */
-            background-color: var(--color-white); /* 컨테이너 배경 흰색 */
+            width: 100%;
+            min-height: 100vh; 
+            background-color: var(--color-white);
             display: flex;
             flex-direction: column;
-            overflow: hidden;
             position: relative;
-            min-height: 100vh; /* 전체 화면 채우기 */
-            padding: 2rem 1.5rem; /* 상하 여백, 좌우는 조금 남김 */
-            justify-content: center; /* 내부 콘텐츠 중앙 정렬 */
             
-            /* === FOUT 방지를 위해 초기 투명도 설정 === */
+            /* 가로 스크롤바 방지 */
+            overflow-x: hidden; 
+            
             opacity: 0;
             transition: opacity 0.5s ease;
         }
         
-        /* === 폰트 로드 완료 후 표시 === */
+        /* 폰트 로드 완료 후 표시 */
         #app-container.font-loaded {
             opacity: 1;
         }
 
-
-        /* 헤더 스타일 (로고) */
-        .header-title {
-            font-size: 3rem;
-            font-weight: 800;
-            color: var(--color-accent);
-            letter-spacing: -2px;
-            text-align: center;
-            margin-bottom: 2.5rem;
-        }
-
-        /* 탭 토글 버튼 컨테이너 */
-        .tab-toggle-container {
+        /* 헤더 (토스 스타일) - 2rem 패딩 유지 */
+        #app-header {
             display: flex;
-            background-color: var(--color-light-gray); /* 탭 배경만 연한 회색 */
-            border-radius: 12px;
-            padding: 4px;
-            margin-bottom: 2rem;
-            position: relative;
+            align-items: center;
+            padding: 1rem var(--padding-x); 
+            min-height: 3.5rem; 
         }
 
-        .tab-toggle-button {
-            flex: 1;
-            padding: 0.75rem 0;
+        #back-button {
+            background: none;
             border: none;
-            background-color: transparent;
-            font-size: 1rem;
-            font-weight: 600;
-            color: #777;
             cursor: pointer;
-            transition: color 0.3s ease;
-            z-index: 2;
-            position: relative;
+            color: var(--color-black);
+            padding: 0.5rem;
+            margin-left: -0.5rem; 
         }
 
-        .tab-toggle-button.active {
+        #back-button i.material-icons {
+            font-size: 28px;
+            line-height: 1;
+        }
+
+        /* 메인 콘텐츠 영역 */
+        #main-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+            position: relative;
+            overflow: hidden; 
+        }
+        
+        /* 단계별 화면 (Step Screen) 스타일 */
+        .step-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            /* UPDATED: 모든 콘텐츠의 좌우 패딩을 여기서 일괄 적용 (var(--padding-x) = 2rem) */
+            padding: 1rem var(--padding-x) 0 var(--padding-x); 
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+            overflow-y: auto; /* 화면 자체의 세로 스크롤 허용 (필요시) */
+        }
+        
+        /* 기본 숨김 상태 */
+        .step-screen.hidden {
+            display: none;
+        }
+
+        /* 전환 효과 */
+        .step-screen.step-enter {
+            transform: translateX(100%);
+        }
+        .step-screen.step-exit {
+            transform: translateX(-100%);
+        }
+
+        /* 단계별 제목 */
+        .step-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 2.5rem;
+            line-height: 1.4;
+            /* 이중 패딩 방지를 위해 내부 패딩 제거 */
+            padding: 0; 
+        }
+
+        /* 입력 필드 그룹 */
+        .input-group {
+            position: relative;
+            margin-bottom: 2rem;
+            flex-shrink: 0;
+            /* 이중 패딩 방지를 위해 내부 패딩 제거 */
+            padding: 0; 
+        }
+        
+        /* 약관 동의 그룹 (Step 3) */
+        .terms-container {
+            flex-grow: 1;
+            overflow-y: auto; /* 약관 내용이 많을 경우 스크롤 허용 */
+            padding: 0; /* 이중 패딩 방지를 위해 내부 패딩 제거 */
+            margin-bottom: 0; 
+        }
+        
+        /* 전체 동의 박스 스타일 */
+        .all-agree-box {
+            display: flex;
+            align-items: center;
+            padding: 1.2rem; /* 상하좌우 패딩 통일 */
+            background-color: #f7f7f7; /* UPDATED: 회색을 더 연하게 변경 */
+            border-radius: 16px; 
+            margin-bottom: 1.5rem; 
+            box-shadow: none; /* UPDATED: 그림자 삭제 */
+            
+            /* 좌우 마진 0으로 설정하여 step-screen의 패딩을 꽉 채우고 모서리가 보이게 함 */
+            margin-left: 0; 
+            margin-right: 0;
+        }
+
+        .all-agree-box label {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        /* 개별 약관 항목 스타일 */
+        .term-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 0; 
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08); 
+        }
+        
+        .term-item:last-child {
+            border-bottom: none;
+        }
+
+        .term-label-group {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+        }
+
+        .term-label {
+            font-size: 1rem;
+            font-weight: 500;
             color: var(--color-black);
         }
 
-        /* 토글 애니메이션을 위한 슬라이더 */
-        #tab-slider {
-            position: absolute;
-            top: 4px;
-            left: 4px;
-            height: calc(100% - 8px);
-            width: calc(50% - 4px);
-            background-color: var(--color-white); /* 슬라이더 배경 흰색 */
-            border-radius: 8px;
-            transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 1;
+        .term-detail-link {
+            font-size: 0.85rem;
+            color: var(--color-gray);
+            text-decoration: none;
+            cursor: pointer;
+            margin-left: 1rem;
+            flex-shrink: 0; /* 링크가 줄어들지 않도록 */
         }
         
-        /* 폼 컨테이너 */
-        .form-container {
-            transition: opacity 0.3s ease, transform 0.3s ease;
+        /* 체크박스 공통 스타일 (크기 조정 및 색상) */
+        .custom-checkbox {
+            width: 24px;
+            height: 24px;
+            margin-right: 12px; 
+            accent-color: var(--color-accent);
+            flex-shrink: 0;
+            cursor: pointer;
+            border-radius: 8px; 
         }
 
-        .form-container.hidden {
-            display: none;
-            opacity: 0;
-            height: 0;
-            overflow: hidden;
-        }
-        
-        /* 입력 필드 스타일 */
-        .input-group {
-            position: relative; /* 비밀번호 토글 버튼을 위한 기준점 */
-            margin-bottom: 1.25rem;
-        }
-
+        /* 토스 스타일 입력 필드 (하단 경계선만) */
         .auth-input {
             width: 100%;
-            padding: 1rem;
-            border: 1px solid var(--color-medium-gray);
-            border-radius: 10px;
-            font-size: 1rem;
-            transition: border-color 0.2s ease;
+            padding: 0.5rem 0;
+            border: none;
+            border-bottom: 2px solid var(--color-light-gray); 
+            font-size: 1.5rem; 
+            font-weight: 600;
+            transition: border-bottom-color 0.2s ease;
             outline: none;
+            border-radius: 0; 
         }
 
         .auth-input:focus {
-            border-color: var(--color-accent);
+            border-bottom-color: var(--color-accent); 
         }
 
+        /* 사용자 요청에 맞게 레이블이 입력 필드의 왼쪽 시작점에 정렬되도록 함 */
+        .input-label {
+            position: absolute;
+            top: -1rem;
+            left: 0; /* 왼쪽 정렬 유지 */
+            font-size: 0.85rem;
+            color: var(--color-gray);
+            transition: color 0.2s ease;
+        }
+        
         /* 비밀번호 토글 버튼 스타일 */
         .password-toggle {
             position: absolute;
-            right: 0.2rem; /* 입력 필드 안쪽으로 더 넣기 */
+            right: 0; /* input-group 내부에서 오른쪽 끝에 위치 */
             top: 50%;
             transform: translateY(-50%);
             background: none;
             border: none;
             cursor: pointer;
-            padding: 0.75rem; /* 더 큰 터치 영역 확보 */
-            color: #777;
+            padding: 0.75rem 0.5rem; 
+            color: var(--color-gray);
             line-height: 1;
             z-index: 5;
-            /* transition 제거: 클릭 시 어떠한 시각적 효과도 없도록 */
         }
         
-        /* Material Icon 스타일 */
         .password-toggle i.material-icons {
-            font-size: 24px; /* 아이콘 크기 */
+            font-size: 24px;
             line-height: 1;
             display: block;
-            color: currentColor; /* 부모 버튼의 색상을 따르도록 설정 */
+            color: currentColor;
         }
 
-        .password-toggle:hover {
-            color: var(--color-black);
-        }
-
-        /* 액션 버튼 (로그인/회원가입) */
-        .action-button {
+        /* 액션 버튼 (화면 하단 고정) */
+        .fixed-action-button {
             width: 100%;
             padding: 1rem;
             background-color: var(--color-accent);
             color: var(--color-white);
             border: none;
-            border-radius: 10px;
+            border-radius: 16px; 
             font-size: 1.1rem;
             font-weight: 600;
             cursor: pointer;
             transition: transform 0.1s ease, background-color 0.1s ease;
-            margin-top: 1rem;
-        }
-
-        /* [일반 버튼] '누르면 크기 변화 효과' (사용자 요청에 따라 scale(0.97) 유지) */
-        .interactive:active {
-            transform: scale(0.97); /* 누르면 작아지는 효과 */
-            opacity: 0.9; /* 투명도를 0.9로 설정하여 깔끔한 시각적 피드백 유지 */
         }
         
-        /* [비밀번호 토글 버튼] '크기 변화 효과' 및 '색상 변화 효과' 완전히 제거 */
-        .password-toggle.interactive:active {
-            /* 어떠한 transform 또는 color 변화도 없이 원래 상태 유지 */
-            transform: translateY(-50%) scale(1); /* 위치/크기 고정 */
-            opacity: 1; /* 투명도 고정 */
-            color: #777; /* 기본 색상 고정 (hover 시 검정으로) */
+        /* 비활성화 버튼 스타일 */
+        .fixed-action-button:disabled {
+            background-color: #bbdefb; 
+            cursor: not-allowed;
         }
         
-        /* 모바일 화면 높이 조정 */
-        @media (max-width: 420px) {
-            #app-container {
-                min-height: 100vh;
-                height: 100%;
-                padding-left: 1.5rem; /* 좌우 패딩 유지 */
-                padding-right: 1.5rem;
-            }
+        /* 하단 버튼 컨테이너 */
+        .button-footer {
+            margin-top: auto; 
+            /* step-screen의 패딩을 따르기 위해 padding-x 통일 */
+            padding: 2rem 0; 
+            flex-shrink: 0; 
         }
 
-        /* 모달 팝업 구조 수정 */
+        /* 모달 스타일 */
         #modal {
-            position: fixed; /* 화면에 고정 */
+            position: fixed;
             top: 0; 
             left: 0; 
-            width: 100vw; /* 뷰포트 전체 너비 */
-            height: 100vh; /* 뷰포트 전체 높이 */
-            background-color: rgba(0, 0, 0, 0.4); /* 반투명 검정색 오버레이 */
-            display: none; /* 기본 숨김 */
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.4);
+            display: none;
             justify-content: center; 
             align-items: center; 
-            z-index: 100; /* 다른 콘텐츠 위에 표시 */
+            z-index: 100;
         }
         .modal-content {
             background-color: var(--color-white); 
             padding: 1.5rem; 
-            border-radius: 16px; 
-            width: 90%; /* 모달 콘텐츠의 너비 */
-            max-width: 300px; /* 최대 너비 제한 */
+            border-radius: 20px; 
+            width: 90%;
+            max-width: 300px;
             text-align: center; 
             transform: scale(0.9); 
             opacity: 0; 
             transition: transform 0.2s ease, opacity 0.2s ease;
-            /* 그림자 강화: 더 블러하고 색상 진하게 */
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3); 
+            box-shadow: 0 8px 30px rgba(0 0 0 / 30%); 
         }
         .modal-title {
             font-size: 1.2rem; 
@@ -255,65 +333,136 @@
             font-weight: 600; 
             cursor: pointer;
         }
+        
+        /* 상호작용 효과 */
+        .interactive:active {
+            transform: scale(0.97); 
+            opacity: 0.9;
+        }
+        /* 비밀번호 토글 버튼의 위치 조정에 따른 active 효과 수정 */
+        .password-toggle.interactive:active {
+            transform: translateY(-50%) scale(0.95);
+            opacity: 0.9;
+        }
+
     </style>
 </head>
 <body>
 
 <div id="app-container">
-    <h1 class="header-title">Doing!</h1>
-
-    <!-- 탭 토글 버튼 --><div class="tab-toggle-container">
-        <div id="tab-slider"></div>
-        <button id="login-tab" class="tab-toggle-button active" onclick="switchTab('login')">로그인</button>
-        <button id="register-tab" class="tab-toggle-button" onclick="switchTab('register')">회원가입</button>
-    </div>
-
-    <!-- 로그인 폼 --><div id="login-form" class="form-container">
-        <div class="input-group">
-            <input type="email" id="login-email" class="auth-input" placeholder="이메일 주소" required>
-        </div>
-        
-        <!-- 비밀번호 입력 그룹 (토글 버튼 추가) --><div class="input-group">
-            <input type="password" id="login-password" class="auth-input" placeholder="비밀번호" required>
-            <button type="button" class="password-toggle interactive" onclick="togglePasswordVisibility('login-password', this)">
-                <!-- 아이콘은 JS에서 초기화됩니다. --><div id="toggle-icon-login"></div>
-            </button>
-        </div>
-        
-        <button id="login-button" class="action-button interactive" onclick="handleAuth('login')">
-            로그인
+    
+    <!-- 1. 헤더 (이전 버튼) -->
+    <header id="app-header">
+        <button id="back-button" class="interactive" onclick="prevStep()">
+            <i class="material-icons">arrow_back_ios</i>
         </button>
-    </div>
+    </header>
 
-    <!-- 회원가입 폼 --><div id="register-form" class="form-container hidden">
-        <div class="input-group">
-            <input type="email" id="register-email" class="auth-input" placeholder="이메일 주소" required>
-        </div>
-        <div class="input-group">
-            <input type="text" id="register-nickname" class="auth-input" placeholder="사용자 이름 (닉네임)" required>
-        </div>
+    <!-- 2. 메인 콘텐츠 영역 (단계별 스크린 컨테이너) -->
+    <div id="main-content">
         
-        <!-- 비밀번호 입력 그룹 (토글 버튼 추가) --><div class="input-group">
-            <input type="password" id="register-password" class="auth-input" placeholder="비밀번호 (6자 이상)" required>
-            <button type="button" class="password-toggle interactive" onclick="togglePasswordVisibility('register-password', this)">
-                <div id="toggle-icon-register"></div>
-            </button>
+        <!-- 단계 1: 이메일 입력 -->
+        <div id="step-1" class="step-screen">
+            <h1 class="step-title">로그인 또는<br>회원가입을 진행합니다.</h1>
+            
+            <div class="input-group">
+                <div class="input-label">이메일 주소</div>
+                <input type="email" id="input-email" class="auth-input" placeholder="이메일 주소 입력" required oninput="checkInputValidity()">
+            </div>
+            
+            <div class="button-footer">
+                <button id="btn-next-step" class="fixed-action-button interactive" onclick="handleEmailCheck()" disabled>
+                    다음
+                </button>
+            </div>
         </div>
-        
-        <!-- 비밀번호 확인 입력 그룹 (토글 버튼 추가) --><div class="input-group">
-            <input type="password" id="register-confirm-password" class="auth-input" placeholder="비밀번호 확인" required>
-            <button type="button" class="password-toggle interactive" onclick="togglePasswordVisibility('register-confirm-password', this)">
-                <div id="toggle-icon-confirm"></div>
-            </button>
+
+        <!-- 단계 2: 정보 입력 (로그인 또는 회원가입) -->
+        <div id="step-2" class="step-screen hidden">
+            <!-- 제목은 JS에서 동적으로 업데이트됨 -->
+            <h1 id="step-2-title" class="step-title"></h1> 
+            
+            <!-- 1. 사용자 이름 (회원가입 시에만 표시됨) -->
+            <div id="input-group-nickname" class="input-group" style="display: none;">
+                <div class="input-label">사용자 이름</div>
+                <input type="text" id="input-nickname" class="auth-input" placeholder="이름 또는 닉네임 입력" required oninput="checkInputValidity()">
+            </div>
+
+            <!-- 2. 비밀번호 그룹 (로그인/회원가입 공통) -->
+            <div class="input-group">
+                <div class="input-label">비밀번호</div>
+                <input type="password" id="input-password" class="auth-input" placeholder="비밀번호 입력 (6자 이상)" required oninput="checkInputValidity()">
+                <button type="button" class="password-toggle interactive" onclick="togglePasswordVisibility('input-password', this)">
+                    <div id="toggle-icon-password"></div>
+                </button>
+            </div>
+
+            <!-- 3. 비밀번호 확인 (회원가입 시에만 표시됨) -->
+            <div id="input-group-confirm-password" style="display: none;">
+                <div class="input-group">
+                    <div class="input-label">비밀번호 확인</div>
+                    <input type="password" id="input-confirm-password" class="auth-input" placeholder="비밀번호 재입력" oninput="checkInputValidity()">
+                    <button type="button" class="password-toggle interactive" onclick="togglePasswordVisibility('input-confirm-password', this)">
+                        <div id="toggle-icon-confirm-password"></div>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="button-footer">
+                <!-- 로그인 시: 로그인 처리 / 회원가입 시: Step 3로 이동 -->
+                <button id="btn-step-2-action" class="fixed-action-button interactive" onclick="handleStep2Action()" disabled>
+                    로그인
+                </button>
+            </div>
         </div>
-        
-        <button id="register-button" class="action-button interactive" onclick="handleAuth('register')">
-            회원가입
-        </button>
+
+        <!-- 단계 3: 약관 동의 (회원가입 시에만 거침) -->
+        <div id="step-3" class="step-screen hidden">
+            <h1 class="step-title">서비스 이용 약관에<br>동의해주세요.</h1>
+            
+            <!-- .terms-container에 내부 패딩이 없으므로, step-screen의 2rem 패딩을 따름 -->
+            <div class="terms-container">
+                
+                <!-- 전체 동의 박스 (좌우 마진 0으로 설정하여 꽉 채우고 둥글기 보이게 함) -->
+                <div class="all-agree-box">
+                    <input type="checkbox" id="input-all-agree" class="custom-checkbox" onchange="handleAgreeAll()">
+                    <label for="input-all-agree">전체 동의</label>
+                </div>
+
+                <!-- 개별 약관 항목 - 필수 1: 이용 약관 -->
+                <div class="term-item">
+                    <div class="term-label-group">
+                        <input type="checkbox" id="input-terms-agree" class="custom-checkbox" onchange="updateAgreeAllCheckbox(); checkInputValidity();">
+                        <label for="input-terms-agree" class="term-label">(필수) 이용 약관 동의</label>
+                    </div>
+                    <a href="javascript:void(0);" class="term-detail-link">자세히 보기</a>
+                </div>
+
+                <!-- 개별 약관 항목 - 필수 2: 개인정보 처리방침 -->
+                <div class="term-item">
+                    <div class="term-label-group">
+                        <input type="checkbox" id="input-privacy-agree" class="custom-checkbox" onchange="updateAgreeAllCheckbox(); checkInputValidity();">
+                        <label for="input-privacy-agree" class="term-label">(필수) 개인정보 처리방침 동의</label>
+                    </div>
+                    <a href="javascript:void(0);" class="term-detail-link">자세히 보기</a>
+                </div>
+                
+                <!-- 사용자 요청에 따라 모든 선택 약관 항목(dummy 포함)이 삭제됨 -->
+                
+            </div>
+
+            <div class="button-footer">
+                <button id="btn-final-signup" class="fixed-action-button interactive" onclick="handleFinalSignup()" disabled>
+                    회원가입 완료하고 시작하기
+                </button>
+            </div>
+        </div>
+
     </div>
 </div>
 
-<!-- 모달 팝업 구조 (메시지 박스 용도) --><div id="modal">
+<!-- 모달 팝업 구조 (메시지 박스 용도) -->
+<div id="modal">
     <div class="modal-content">
         <h3 class="modal-title" id="modal-title"></h3>
         <p class="modal-text" id="modal-text"></p>
@@ -328,21 +477,24 @@
         getAuth, 
         signInWithEmailAndPassword, 
         createUserWithEmailAndPassword,
+        fetchSignInMethodsForEmail, // 이메일 존재 여부 확인용
         setPersistence,
-        browserSessionPersistence
+        browserLocalPersistence, // 로그인 지속성 유지
+        updateProfile // 닉네임 설정을 위해 추가
     } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-    // --- Google Material Icon HTML 정의 ---
-    // Eye Icon (비밀번호 보이기): Material Icon 'visibility'
+    // --- 상수 및 초기 상태 ---
     const EYE_ICON_HTML = '<i class="material-icons">visibility</i>';
-
-    // Eye Off Icon (비밀번호 숨기기): Material Icon 'visibility_off'
     const EYE_OFF_ICON_HTML = '<i class="material-icons">visibility_off</i>';
-    
-    // --- Firebase 설정 및 초기화 ---
-    // 사용자 제공 설정 또는 환경 변수 사용
+
+    let currentStep = 1;
+    let isRegistering = false;
+    let isTransitioning = false; // 단계 전환 중 중복 클릭 방지
+
+    // --- Firebase 설정 및 초기화 (로그인 지속성 포함) ---
+    // 실제 환경에서는 __firebase_config 변수를 사용해야 하지만, 로컬 개발을 위해 기본 설정 제공
     const userFirebaseConfig = {
-        apiKey: "AIzaSyBMowSIHMdz69dYY-mAW8l6VjKxBW54SfU",
+        apiKey: "AIzaSyBMowSIHMdz69dYY-mAW8l6VzKxBW54SfU",
         authDomain: "doing-a.firebaseapp.com",
         projectId: "doing-a",
         storageBucket: "doing-a.firebasestorage.app",
@@ -351,7 +503,6 @@
         measurementId: "G-VJ5YQRGNE3"
     };
 
-    // 환경 변수 우선 사용 (필수 조건)
     const firebaseConfig = typeof __firebase_config !== 'undefined' && JSON.parse(__firebase_config).apiKey 
         ? JSON.parse(__firebase_config) 
         : userFirebaseConfig;
@@ -359,48 +510,333 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     
-    // 인증 세션 지속성 설정 (선택 사항이지만 권장)
-    setPersistence(auth, browserSessionPersistence);
+    // 로그인 지속성 설정: 브라우저를 닫아도 로그인이 유지되도록 합니다.
+    setPersistence(auth, browserLocalPersistence);
 
+    // --- DOM 요소 접근 ---
+    const appContainer = document.getElementById('app-container');
+    const backButton = document.getElementById('back-button');
+    const emailInput = document.getElementById('input-email');
+    const btnNextStep = document.getElementById('btn-next-step');
 
-    // --- UI 로직 (Firebase 함수와 연결) ---
-    const loginForm = document.getElementById('login-form');
-    const registerForm = document.getElementById('register-form');
-    const loginTab = document.getElementById('login-tab');
-    const registerTab = document.getElementById('register-tab');
-    const tabSlider = document.getElementById('tab-slider');
-    const appContainer = document.getElementById('app-container'); // 앱 컨테이너 요소
+    // Step 2 (정보 입력) 요소
+    const step2Title = document.getElementById('step-2-title');
+    // 순서 변경에 따라 닉네임과 비밀번호 확인 필드 컨테이너 추가
+    const inputGroupNickname = document.getElementById('input-group-nickname');
+    const inputGroupConfirmPassword = document.getElementById('input-group-confirm-password');
+
+    const passwordInput = document.getElementById('input-password');
+    const confirmPasswordInput = document.getElementById('input-confirm-password');
+    const nicknameInput = document.getElementById('input-nickname');
+    const btnStep2Action = document.getElementById('btn-step-2-action');
     
-    // 모달 관련 요소
+    // Step 3 (약관 동의) 요소
+    const agreeAllCheckbox = document.getElementById('input-all-agree');
+    const privacyAgreeCheckbox = document.getElementById('input-privacy-agree');
+    const termsAgreeCheckbox = document.getElementById('input-terms-agree');
+    const btnFinalSignup = document.getElementById('btn-final-signup');
+
+    // 모달 요소
     const modal = document.getElementById('modal');
     const modalTitle = document.getElementById('modal-title');
     const modalText = document.getElementById('modal-text');
 
+    // --- 단계 전환 로직 ---
+
     /**
-     * 로그인/회원가입 폼 전환 및 슬라이더 이동
-     * @param {string} tabName - 'login' 또는 'register'
+     * 지정된 단계로 전환하고 애니메이션을 적용합니다.
+     * @param {number} newStep - 이동할 단계 번호 (1, 2 또는 3)
+     * @param {string} direction - 'next' (오른쪽에서 진입) 또는 'prev' (왼쪽에서 진입)
      */
-    window.switchTab = function(tabName) {
-        if (tabName === 'login') {
-            loginForm.classList.remove('hidden');
-            registerForm.classList.add('hidden');
-            loginTab.classList.add('active');
-            registerTab.classList.remove('active');
-            tabSlider.style.left = '4px';
-        } else {
-            loginForm.classList.add('hidden');
-            registerForm.classList.remove('hidden');
-            loginTab.classList.remove('active');
-            registerTab.classList.add('active');
-            // 슬라이더가 컨테이너 너비의 정확히 50% 위치에서 시작하도록 수정
-            tabSlider.style.left = `50%`;
+    // ReferenceError 해결을 위해 window에 바인딩
+    window.goToStep = function(newStep, direction) {
+        if (isTransitioning || newStep === currentStep) return;
+
+        isTransitioning = true;
+        const currentScreen = document.getElementById(`step-${currentStep}`);
+        const nextScreen = document.getElementById(`step-${newStep}`);
+
+        if (!currentScreen || !nextScreen) {
+            isTransitioning = false;
+            return;
+        }
+
+        // 1. 현재 화면 제거 애니메이션 시작
+        currentScreen.classList.add(direction === 'next' ? 'step-exit' : 'step-enter');
+        
+        // 2. 다음 화면 표시 및 진입 애니메이션 시작
+        nextScreen.classList.remove('hidden');
+        nextScreen.classList.add(direction === 'next' ? 'step-enter' : 'step-exit');
+        
+        // 애니메이션이 시작되도록 잠시 대기
+        setTimeout(() => {
+            nextScreen.classList.remove('step-enter', 'step-exit');
+            currentScreen.classList.add('hidden');
+            currentScreen.classList.remove('step-exit', 'step-enter');
+            currentStep = newStep;
+            updateUI();
+            isTransitioning = false;
+        }, 300); // CSS transition 시간과 일치
+
+        // 입력 필드 초기화 및 포커스
+        if (newStep === 2) {
+            // Step 2 (정보 입력) 초기화
+            passwordInput.value = '';
+            confirmPasswordInput.value = '';
+            nicknameInput.value = '';
+            
+            // 회원가입 시 닉네임에 포커스, 로그인 시 비밀번호에 포커스
+            if (isRegistering) {
+                nicknameInput.focus();
+            } else {
+                passwordInput.focus();
+            }
+        } else if (newStep === 3) {
+            // Step 3 (약관 동의) 초기화
+            if (agreeAllCheckbox) agreeAllCheckbox.checked = false;
+            privacyAgreeCheckbox.checked = false;
+            termsAgreeCheckbox.checked = false;
+        } else if (newStep === 1) {
+            emailInput.focus();
         }
     }
 
     /**
+     * 현재 상태에 따라 UI를 업데이트합니다 (제목, 버튼 텍스트, 백버튼 표시 등).
+     */
+    function updateUI() {
+        // Step 1에서만 백버튼 숨김
+        backButton.style.opacity = currentStep === 1 ? '0' : '1';
+        backButton.disabled = currentStep === 1;
+        
+        if (currentStep === 2) {
+            // Step 2 (정보 입력) 전용 UI 설정
+            if (isRegistering) {
+                // 회원가입 흐름: 닉네임, 비밀번호 확인 표시
+                step2Title.innerHTML = '회원가입에 필요한<br>정보를 입력해주세요.'; 
+                btnStep2Action.textContent = '다음';
+                
+                // 닉네임, 비밀번호 확인 필드 표시
+                inputGroupNickname.style.display = 'block';
+                inputGroupConfirmPassword.style.display = 'block';
+            } else {
+                // 로그인 흐름: 닉네임, 비밀번호 확인 숨김
+                step2Title.innerHTML = '비밀번호를 입력하여<br>로그인을 완료합니다.'; 
+                btnStep2Action.textContent = '로그인';
+                
+                // 닉네임, 비밀번호 확인 필드 숨김
+                inputGroupNickname.style.display = 'none';
+                inputGroupConfirmPassword.style.display = 'none';
+            }
+        } else if (currentStep === 3) {
+             // Step 3 UI 업데이트 (전체 동의 상태 재확인)
+            window.updateAgreeAllCheckbox();
+        }
+        
+        // 각 단계에서 입력 유효성을 다시 확인하여 버튼 활성화 상태 업데이트
+        window.checkInputValidity();
+    }
+    
+    // --- 유효성 검사 및 버튼 활성화 ---
+    
+    /**
+     * 입력 필드 유효성을 검사하여 버튼 활성화 상태를 토글합니다.
+     */
+    window.checkInputValidity = function() {
+        if (currentStep === 1) {
+            // Step 1: 이메일 유효성 검사
+            const email = emailInput.value.trim();
+            const isValid = /\S+@\S+\.\S+/.test(email);
+            btnNextStep.disabled = !isValid;
+        } else if (currentStep === 2) {
+            // Step 2: 비밀번호 및 회원가입 필드 유효성 검사
+            const password = passwordInput.value.trim();
+            let isValid = password.length >= 6; // 비밀번호 최소 6자
+            
+            if (isRegistering) {
+                const confirmPassword = confirmPasswordInput.value.trim();
+                const nickname = nicknameInput.value.trim(); // 닉네임은 이제 필수
+                
+                // 회원가입 시: 닉네임 필수, 비밀번호 일치 및 최소 길이 검사
+                isValid = isValid && 
+                          (nickname.length > 0) && // Nickname is now mandatory
+                          (password === confirmPassword);
+            }
+            btnStep2Action.disabled = !isValid;
+        } else if (currentStep === 3) {
+            // Step 3: 약관 동의 확인 (두 항목 모두 필수)
+            const isPrivacyAgreed = privacyAgreeCheckbox.checked;
+            const isTermsAgreed = termsAgreeCheckbox.checked;
+            btnFinalSignup.disabled = !(isPrivacyAgreed && isTermsAgreed);
+        }
+    }
+    
+    // --- 단계별 액션 핸들러 ---
+
+    /**
+     * 이전 단계로 돌아갑니다.
+     */
+    window.prevStep = function() {
+        if (currentStep > 1) {
+            let targetStep = currentStep - 1;
+
+            if (currentStep === 3) {
+                // Step 3 (Terms) -> Step 2 (Info)
+                targetStep = 2;
+            } else if (currentStep === 2) {
+                // Step 2 (Info) -> Step 1 (Email)
+                targetStep = 1;
+                // isRegistering 상태도 Step 1로 돌아가면 재설정
+                isRegistering = false; 
+            }
+            
+            window.goToStep(targetStep, 'prev');
+        }
+    }
+    
+    /**
+     * Step 1: 이메일 입력 후, 해당 이메일이 등록되었는지 확인합니다.
+     */
+    window.handleEmailCheck = async function() {
+        const email = emailInput.value.trim();
+        if (!/\S+@\S+\.\S+/.test(email)) {
+            window.showModal('오류', '유효한 이메일 주소를 입력해주세요.');
+            return;
+        }
+
+        try {
+            const methods = await fetchSignInMethodsForEmail(auth, email);
+            
+            if (methods.length > 0) {
+                // 이미 존재하는 계정 -> 로그인
+                isRegistering = false;
+            } else {
+                // 새 계정 -> 회원가입
+                isRegistering = true;
+            }
+            
+            // 다음 단계 (Step 2: 정보 입력)로 이동
+            window.goToStep(2, 'next');
+            
+        } catch (error) {
+            console.error("Email check error:", error);
+            window.showModal('오류', '이메일 확인 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+        }
+    }
+
+    /**
+     * Step 2: 로그인 처리 또는 Step 3로 이동합니다.
+     */
+    window.handleStep2Action = async function() {
+        if (!isRegistering) {
+            // --- 로그인 로직 ---
+            const email = emailInput.value.trim();
+            const password = passwordInput.value.trim();
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                window.showModal('로그인 성공', '서비스를 시작합니다.');
+                // 성공 시 리디렉션
+                // setTimeout(() => { window.location.href = '/'; }, 1500);
+
+            } catch (error) {
+                let errorMessage = '로그인에 실패했습니다. 비밀번호를 확인해주세요.';
+                console.error("Firebase Login Error:", error.code, error.message);
+                if (error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
+                    errorMessage = '이메일 또는 비밀번호가 일치하지 않습니다.';
+                }
+                window.showModal('로그인 오류', errorMessage);
+            }
+        } else {
+            // --- 회원가입 흐름 -> Step 3 (약관 동의)로 이동 ---
+            const password = passwordInput.value.trim();
+            const confirmPassword = confirmPasswordInput.value.trim();
+            const nickname = nicknameInput.value.trim();
+
+            if (nickname.length === 0) {
+                 window.showModal('오류', '사용자 이름을 입력해주세요.');
+                return;
+            }
+            if (password !== confirmPassword) {
+                window.showModal('오류', '비밀번호 확인이 일치하지 않습니다.');
+                return;
+            }
+            if (password.length < 6) {
+                window.showModal('오류', '비밀번호는 6자 이상이어야 합니다.');
+                return;
+            }
+            
+            window.goToStep(3, 'next');
+        }
+    }
+
+    /**
+     * Step 3: 최종 회원가입을 실행합니다. (Registering=true일 때만 호출됨)
+     */
+    window.handleFinalSignup = async function() {
+        const email = emailInput.value.trim();
+        const password = passwordInput.value.trim();
+        const nickname = nicknameInput.value.trim();
+        
+        // 마지막으로 필수 약관 동의 확인 (checkInputValidity()에서 확인하지만 안전을 위해)
+        if (!privacyAgreeCheckbox.checked || !termsAgreeCheckbox.checked) {
+             window.showModal('오류', '필수 약관에 모두 동의해야 합니다.');
+            return;
+        }
+
+        try {
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            
+            // 닉네임 설정 (필수 항목으로 변경됨)
+            if (nickname) {
+                await updateProfile(userCredential.user, { displayName: nickname });
+            }
+
+            window.showModal('회원가입 성공', 'Doing! 서비스 이용을 환영합니다.');
+            // 성공 시 리디렉션
+            // setTimeout(() => { window.location.href = '/'; }, 1500);
+
+        } catch (error) {
+            let errorMessage = '회원가입에 실패했습니다. 잠시 후 다시 시도해주세요.';
+            console.error("Firebase Register Error:", error.code, error.message);
+            if (error.code === 'auth/email-already-in-use') {
+                errorMessage = '이미 사용 중인 이메일 주소입니다.';
+            }
+            window.showModal('회원가입 오류', errorMessage);
+        }
+    }
+    
+    // --- Step 3 약관 동의 로직 ---
+
+    /**
+     * '전체 동의' 체크박스 상태에 따라 개별 필수 약관 동의를 토글합니다.
+     */
+    window.handleAgreeAll = function() {
+        const isChecked = agreeAllCheckbox.checked;
+        // 필수 약관만 토글
+        privacyAgreeCheckbox.checked = isChecked;
+        termsAgreeCheckbox.checked = isChecked;
+        
+        // 선택 약관 항목이 삭제되었으므로 추가적인 체크박스 처리는 필요 없음.
+        
+        window.checkInputValidity();
+    }
+
+    /**
+     * 개별 필수 약관 상태에 따라 '전체 동의' 체크박스를 업데이트합니다.
+     */
+    window.updateAgreeAllCheckbox = function() {
+        const allRequiredChecked = privacyAgreeCheckbox.checked && termsAgreeCheckbox.checked;
+        if (agreeAllCheckbox) {
+             // '전체 동의'는 모든 필수 항목이 체크되었을 때만 체크됨
+            agreeAllCheckbox.checked = allRequiredChecked; 
+        }
+    }
+    
+    // --- UI/유틸리티 함수 (기존 유지) ---
+
+    /**
      * 비밀번호 입력 필드의 가시성을 토글합니다.
-     * @param {string} inputId - 비밀번호 입력 필드의 ID
-     * @param {HTMLElement} buttonElement - 토글 버튼 요소
      */
     window.togglePasswordVisibility = function(inputId, buttonElement) {
         const input = document.getElementById(inputId);
@@ -408,140 +844,68 @@
         
         if (input.type === 'password') {
             input.type = 'text';
-            iconContainer.innerHTML = EYE_OFF_ICON_HTML; // 숨김 아이콘
+            iconContainer.innerHTML = EYE_OFF_ICON_HTML;
         } else {
             input.type = 'password';
-            iconContainer.innerHTML = EYE_ICON_HTML; // 보임 아이콘
+            iconContainer.innerHTML = EYE_ICON_HTML;
         }
     }
-
-    // --- 인증 처리 로직 (Firebase 연동) ---
 
     /**
-     * 인증 처리 (로그인 또는 회원가입)
-     * @param {string} type - 'login' 또는 'register'
+     * 모달 표시
      */
-    window.handleAuth = async function(type) {
-        // ... (인증 로직은 변경 없음)
-        if (type === 'login') {
-            const email = document.getElementById('login-email').value.trim();
-            const password = document.getElementById('login-password').value.trim();
-
-            if (!email || !password) {
-                showModal('오류', '이메일과 비밀번호를 모두 입력해주세요.');
-                return;
-            }
-            
-            try {
-                // Firebase 로그인
-                await signInWithEmailAndPassword(auth, email, password);
-                showModal('로그인 성공', '메인 페이지로 이동합니다.');
-                // 로그인 성공 시 /로 이동
-                setTimeout(() => { window.location.href = '/'; }, 1000);
-
-            } catch (error) {
-                let errorMessage = '로그인에 실패했습니다. 이메일 또는 비밀번호를 확인해주세요.';
-                console.error("Firebase Login Error:", error.code, error.message);
-                if (error.code === 'auth/user-not-found') {
-                    errorMessage = '존재하지 않는 사용자입니다.';
-                } else if (error.code === 'auth/wrong-password') {
-                    errorMessage = '비밀번호가 일치하지 않습니다.';
-                } else if (error.code === 'auth/invalid-email') {
-                    errorMessage = '유효하지 않은 이메일 주소 형식입니다.';
-                }
-                showModal('로그인 오류', errorMessage);
-            }
-
-        } else if (type === 'register') {
-            const email = document.getElementById('register-email').value.trim();
-            const nickname = document.getElementById('register-nickname').value.trim(); // 닉네임은 현재 Firebase Auth에서는 직접 사용되지 않지만 입력받음
-            const password = document.getElementById('register-password').value.trim();
-            const confirmPassword = document.getElementById('register-confirm-password').value.trim();
-            
-            if (!email || !nickname || !password || !confirmPassword) {
-                showModal('오류', '모든 필수 정보를 입력해주세요.');
-                return;
-            }
-
-            if (password.length < 6) {
-                showModal('오류', '비밀번호는 6자 이상이어야 합니다.');
-                return;
-            }
-
-            if (password !== confirmPassword) {
-                showModal('오류', '비밀번호 확인이 일치하지 않습니다.');
-                return;
-            }
-
-            try {
-                // Firebase 회원가입
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                
-                // 회원가입 성공 후 닉네임 설정 (선택 사항)
-                // await updateProfile(userCredential.user, { displayName: nickname });
-                
-                showModal('회원가입 성공', '회원가입이 완료되었습니다. 메인 페이지로 이동합니다.');
-                // 회원가입 성공 시 /로 이동
-                setTimeout(() => { window.location.href = '/'; }, 1000);
-
-            } catch (error) {
-                let errorMessage = '회원가입에 실패했습니다.';
-                console.error("Firebase Register Error:", error.code, error.message);
-                if (error.code === 'auth/email-already-in-use') {
-                    errorMessage = '이미 사용 중인 이메일 주소입니다.';
-                } else if (error.code === 'auth/invalid-email') {
-                    errorMessage = '유효하지 않은 이메일 주소 형식입니다.';
-                }
-                showModal('회원가입 오류', errorMessage);
-            }
-        }
-    }
-
-    // --- 모달 팝업 함수 (window에 바인딩되어 HTML onclick 접근 가능) ---
     window.showModal = function(title, text) {
         modalTitle.textContent = title;
         modalText.textContent = text;
         modal.style.display = 'flex';
-        // 애니메이션 클래스 추가
         setTimeout(() => {
             modal.querySelector('.modal-content').style.transform = 'scale(1)';
             modal.querySelector('.modal-content').style.opacity = '1';
         }, 10); 
     }
 
+    /**
+     * 모달 숨김
+     */
     window.hideModal = function() {
-        // 애니메이션 클래스 제거
         modal.querySelector('.modal-content').style.transform = 'scale(0.9)';
         modal.querySelector('.modal-content').style.opacity = '0';
-        // 애니메이션 완료 후 display: none 처리
         setTimeout(() => {
             modal.style.display = 'none';
         }, 200); 
     }
     
-    // --- 초기화 로직 ---
+    // --- 초기화 ---
+
     function initializeIcons() {
-        // SVG 대신 Material Icon HTML 사용
-        document.getElementById('toggle-icon-login').innerHTML = EYE_ICON_HTML;
-        document.getElementById('toggle-icon-register').innerHTML = EYE_ICON_HTML;
-        document.getElementById('toggle-icon-confirm').innerHTML = EYE_ICON_HTML;
+        const passwordIcon = document.getElementById('toggle-icon-password');
+        const confirmPasswordIcon = document.getElementById('toggle-icon-confirm-password');
+
+        if(passwordIcon) passwordIcon.innerHTML = EYE_ICON_HTML;
+        if(confirmPasswordIcon) confirmPasswordIcon.innerHTML = EYE_ICON_HTML;
     }
 
     // 초기 로드 시 실행
     window.addEventListener('load', () => {
         initializeIcons();
+        // 뷰포트 높이 설정 (모바일 환경 대응)
         appContainer.style.minHeight = `${window.innerHeight}px`;
         
-        // === FOUT 방지 로직: 폰트 로드 확인 후 컨테이너 표시 ===
+        // 초기 UI 상태 업데이트 (Step 1)
+        updateUI();
+        emailInput.focus();
+
+        // FOUT 방지 로직: 폰트 로드 확인 후 컨테이너 표시
         document.fonts.ready.then(() => {
-             // 폰트 로드 확인 후 opacity 1로 전환 (CSS transition 적용됨)
              appContainer.classList.add('font-loaded');
         });
     });
+
     // 화면 크기 변경 시 높이 조정
     window.addEventListener('resize', () => {
         appContainer.style.minHeight = `${window.innerHeight}px`;
     });
+
 </script>
 </body>
 </html>
