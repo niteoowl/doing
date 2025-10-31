@@ -19,7 +19,7 @@
             --color-app-bg: #ffffff; 
             --color-content-bg: #ffffff; 
             --color-border: #e8e8e8; 
-            --color-success: #4CAF50; /* 녹색 */
+            --color-success: #4CAF50; /* 성공 녹색 */
             --color-missed: #FF6347; /* 놓친 날짜 (Tomato) */
             --color-pending: #CCCCCC; /* 예정된 날짜 (Light Gray) */
             --bottom-nav-height-mobile: 80px;
@@ -136,6 +136,7 @@
         
         .detail-meta {
             display: flex;
+            flex-wrap: wrap;
             gap: 15px;
             font-size: 0.95rem;
             color: #555;
@@ -144,6 +145,7 @@
         .meta-item {
             display: flex;
             align-items: center;
+            white-space: nowrap;
         }
         .meta-item i {
             font-size: 18px;
@@ -155,29 +157,33 @@
             font-size: 1rem;
             color: #444;
             line-height: 1.6;
-            border-left: 3px solid var(--color-border);
+            border-left: 3px solid var(--color-accent);
             padding-left: 10px;
+            background-color: #f5faff; /* Light accent background */
+            padding: 10px;
+            border-radius: 8px;
         }
         
-        /* 오늘의 인증 카드 */
-        .proof-card {
+        /* 오늘의 인증/참여 카드 */
+        .action-card {
             background-color: #f9f9f9;
             padding: 1.5rem;
             margin-bottom: 2rem;
             border-radius: 16px;
             margin-left: var(--padding-x-mobile);
             margin-right: var(--padding-x-mobile);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--color-border);
         }
 
-        .proof-status {
+        .action-status {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 1rem;
         }
 
-        .proof-button {
+        .action-button {
             width: 100%;
             padding: 1rem;
             font-size: 1.1rem;
@@ -185,30 +191,32 @@
             border-radius: 12px;
             cursor: pointer;
             transition: all 0.2s ease;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        
-        .proof-button.ready {
-            background-color: var(--color-accent);
-            color: var(--color-white);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             border: none;
         }
-        .proof-button.ready:hover {
-            background-color: #0d79e6;
+        
+        .action-button.ready {
+            background: linear-gradient(135deg, var(--color-accent), #0d79e6);
+            color: var(--color-white);
+        }
+        .action-button.ready:hover {
+            opacity: 0.9;
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
         }
         
-        .proof-button.done {
+        .action-button.done {
             background-color: var(--color-success);
             color: var(--color-white);
-            border: none;
             opacity: 0.85;
             cursor: default;
+            box-shadow: none;
         }
-        
-        /* ------------------ 도장판 섹션 스타일 ------------------ */
+
+        /* ------------------ 도장판 섹션 스타일 (개선됨) ------------------ */
         .stamp-plate-section {
             padding: 0 var(--padding-x-mobile);
             margin-bottom: 3rem;
+            position: relative; /* 오버레이를 위해 필요 */
         }
         .stamp-plate-section h3 {
             font-size: 1.4rem;
@@ -219,11 +227,11 @@
         .stamp-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr); /* 모바일: 5열 */
-            gap: 8px;
-            padding: 10px;
-            background-color: #f7f7f7;
-            border-radius: 12px;
-            border: 1px solid var(--color-border);
+            gap: 10px;
+            padding: 15px;
+            background-color: #EFEFEF; /* 배경색 대비 강조 */
+            border-radius: 16px;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
         }
         
         .stamp-item {
@@ -231,63 +239,104 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            aspect-ratio: 1 / 1; /* 정사각형 유지 */
-            border-radius: 8px;
+            aspect-ratio: 1 / 1; 
+            border-radius: 12px;
             font-size: 0.75rem;
             font-weight: 500;
-            transition: transform 0.1s;
+            transition: all 0.2s;
             cursor: default;
             user-select: none;
             position: relative;
+            background-color: var(--color-white); /* 기본 배경 */
+            border: 2px solid var(--color-border);
+            color: #555;
+            overflow: hidden;
         }
 
         .stamp-item .day-number {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 2px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            line-height: 1;
+            z-index: 1;
+        }
+        
+        .stamp-item .date-label {
+            font-size: 0.6rem;
+            margin-top: 3px;
+            color: #888;
+            z-index: 1;
         }
         
         .stamp-item .stamp-icon {
-            font-size: 28px;
+            font-size: 36px;
             line-height: 1;
             position: absolute;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%) scale(0.8);
             opacity: 0;
-            transition: opacity 0.3s;
+            transition: all 0.3s;
+            z-index: 2;
         }
 
-        /* 상태별 스타일: 완료 */
+        /* 상태별 스타일: 완료 (PREMIUM LOOK) */
         .stamp-item.stamped {
-            background-color: var(--color-success);
+            background: linear-gradient(135deg, var(--color-success), #66BB6A);
             color: var(--color-white);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border: 2px solid #388E3C;
+            box-shadow: 0 4px 10px rgba(76, 175, 80, 0.4);
+            transform: translateY(-2px);
         }
-        .stamp-item.stamped .day-number { color: var(--color-white); }
-        .stamp-item.stamped .stamp-icon { opacity: 1; color: var(--color-white); font-size: 32px; }
+        .stamp-item.stamped .day-number, .stamp-item.stamped .date-label { color: var(--color-white); }
+        .stamp-item.stamped .stamp-icon { opacity: 1; color: rgba(255, 255, 255, 0.9); transform: translate(-50%, -50%) scale(1); }
 
-        /* 상태별 스타일: 놓침 (오늘 이전 & 인증 안 됨) */
+        /* 상태별 스타일: 놓침 */
         .stamp-item.missed {
-            background-color: #F0F0F0;
-            color: #777;
-            border: 1px solid var(--color-missed);
+            background-color: #F8F8F8;
+            color: #A9A9A9;
+            border: 2px dashed var(--color-missed);
         }
-        .stamp-item.missed .stamp-icon { opacity: 1; color: var(--color-missed); font-size: 18px; }
+        .stamp-item.missed .stamp-icon { opacity: 1; color: var(--color-missed); font-size: 24px; transform: translate(-50%, -50%) scale(1); }
 
-        /* 상태별 스타일: 예정 (오늘 이후) */
+        /* 상태별 스타일: 예정 */
         .stamp-item.pending {
             background-color: var(--color-white);
-            color: var(--color-pending);
-            border: 1px solid var(--color-pending);
+            color: #333;
+            border: 2px solid var(--color-pending);
         }
-        .stamp-item.pending .day-number { color: var(--color-black); }
         
-        /* 상태별 스타일: 오늘 (오늘 인증 전) */
+        /* 상태별 스타일: 오늘 (미인증) */
         .stamp-item.today:not(.stamped) {
-            background-color: #FFFACD; /* Light Yellow */
+            background-color: #E6F3FF; /* Light Blue */
             border: 2px solid var(--color-accent);
-            transform: scale(1.05);
+            box-shadow: 0 0 8px rgba(30, 144, 255, 0.4);
+        }
+        .stamp-item.today:not(.stamped) .stamp-icon { opacity: 0.5; color: var(--color-accent); font-size: 20px; }
+
+
+        /* 참여 필요 오버레이 */
+        .participation-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            z-index: 5;
+            transition: opacity 0.3s;
+        }
+        .participation-overlay p {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--color-accent);
+            margin-bottom: 10px;
         }
 
 
@@ -305,7 +354,7 @@
                 padding-left: var(--padding-x-pc);
                 padding-right: var(--padding-x-pc);
             }
-            .proof-card {
+            .action-card {
                 margin-left: var(--padding-x-pc);
                 margin-right: var(--padding-x-pc);
             }
@@ -405,7 +454,7 @@
             
             <!-- 챌린지 요약 정보 -->
             <section class="challenge-summary">
-                <p id="challenge-type" style="color: var(--color-accent);"></p>
+                <p id="challenge-type" style="color: var(--color-accent); font-weight: 700;"></p>
                 <h2 id="challenge-title" class="detail-title"></h2>
                 
                 <div class="detail-meta">
@@ -426,25 +475,45 @@
                 <p id="challenge-description" class="detail-description"></p>
             </section>
             
-            <!-- 오늘의 인증 카드 -->
-            <section class="proof-card interactive">
-                <div class="proof-status">
-                    <h3 class="font-bold text-lg">오늘의 목표 달성 확인</h3>
-                    <span id="daily-proof-status" class="font-semibold text-sm">
-                        <!-- '미인증' 또는 '인증 완료' 상태 표시 -->
-                    </span>
-                </div>
-                <button id="proof-button" class="proof-button ready" onclick="handleProofSubmission()">
-                    오늘의 인증하기
-                </button>
-                <p id="proof-message" class="text-xs mt-2 text-center text-gray-500"></p>
-            </section>
+            <!-- 인증 및 참여 카드 컨테이너 -->
+            <div id="action-card-container">
+                <!-- 1. 참여하기 카드 (팀 챌린지 미참여시) -->
+                <section id="participation-card" class="action-card hidden">
+                    <h3 class="font-bold text-lg mb-2">팀 챌린지 참여하기</h3>
+                    <p class="text-gray-600 mb-4">이 챌린지는 팀으로 진행됩니다. 참여하여 도장판을 활성화하세요.</p>
+                    <button class="action-button ready interactive" onclick="handleParticipation()">
+                        <i class="material-icons mr-1">person_add</i> 팀 챌린지 참여하기
+                    </button>
+                    <p class="text-xs mt-2 text-center text-gray-500">참여 후부터 도장 찍기가 가능해집니다.</p>
+                </section>
+
+                <!-- 2. 오늘의 인증 카드 (참여중일 경우) -->
+                <section id="proof-card" class="action-card hidden">
+                    <div class="action-status">
+                        <h3 class="font-bold text-lg">오늘의 목표 달성 확인</h3>
+                        <span id="daily-proof-status" class="font-semibold text-sm">
+                            <!-- '미인증' 또는 '인증 완료' 상태 표시 -->
+                        </span>
+                    </div>
+                    <button id="proof-button" class="action-button ready interactive" onclick="handleProofSubmission()">
+                        오늘의 인증하기
+                    </button>
+                    <p id="proof-message" class="text-xs mt-2 text-center text-gray-500"></p>
+                </section>
+            </div>
+
 
             <!-- 도장판 섹션 -->
             <section class="stamp-plate-section">
                 <h3>도장판 인증 현황</h3>
                 <div id="stamp-grid" class="stamp-grid">
                     <!-- 도장판 아이템이 여기에 삽입됩니다 -->
+                </div>
+                <!-- 참여 필요 시 도장판 위에 오버레이 -->
+                <div id="stamp-plate-overlay" class="participation-overlay hidden">
+                    <i class="material-icons text-6xl" style="color: var(--color-accent); opacity: 0.8;">lock</i>
+                    <p>챌린지에 참여해야 도장판을 사용할 수 있습니다.</p>
+                    <span class="text-sm text-gray-500">위의 '팀 챌린지 참여하기' 버튼을 눌러주세요.</span>
                 </div>
             </section>
         </div>
@@ -477,11 +546,12 @@
         getDoc,
         updateDoc,
         onSnapshot,
-        setDoc, // setDoc for safety if doc doesn't exist
+        arrayUnion
     } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     // --- Firebase 설정 및 초기화 ---
     const userFirebaseConfig = { 
+        // Dummy config - replace with actual in deployment
         apiKey: "AIzaSyBMowSIHMdz69dYY-mAW8l6VjKxBW54SfU",
         authDomain: "doing-a.firebaseapp.com",
         projectId: "doing-a",
@@ -502,26 +572,22 @@
     const db = getFirestore(app);
     const auth = getAuth(app);
     
-    // 글로벌 변수
+    // 글로벌 상태 변수
     let currentUserId = null;
     let challengeId = null;
     let challengeData = null;
     let isTodayVerified = false;
+    let isParticipant = false; // 새로 추가된 참여 상태 플래그
+    let isPublicChallenge = false; // 챌린지 유형 플래그
     let unsubscribeChallenge = null;
 
     // --- 유틸리티 함수 ---
     
-    /**
-     * URL에서 챌린지 ID (uid)를 추출합니다.
-     */
     function getChallengeIdFromUrl() {
         const urlParams = new URLSearchParams(window.location.search);
         return urlParams.get('uid');
     }
     
-    /**
-     * 오늘의 날짜를 YYYY-MM-DD 형식으로 반환합니다.
-     */
     function getTodayDateKey() {
         const now = new Date();
         const year = now.getFullYear();
@@ -530,12 +596,6 @@
         return `${year}-${month}-${day}`;
     }
     
-    /**
-     * 특정 시작 날짜로부터 N일 동안의 모든 날짜(YYYY-MM-DD) 배열을 반환합니다.
-     * @param {number} days - 챌린지 총 기간 (일)
-     * @param {Date} startDate - 챌린지 시작 날짜
-     * @returns {Array<string>} 날짜 키 배열
-     */
     function calculateChallengeDates(days, startDate) {
         const dateKeys = [];
         let currentDate = new Date(startDate);
@@ -547,7 +607,6 @@
             const day = String(date.getDate()).padStart(2, '0');
             dateKeys.push(`${year}-${month}-${day}`);
             
-            // 다음 날짜로 이동
             currentDate.setDate(currentDate.getDate() + 1);
         }
         return dateKeys;
@@ -590,13 +649,7 @@
 
     // --- 데이터 및 비즈니스 로직 ---
     
-    /**
-     * 챌린지 도장판을 렌더링합니다.
-     * @param {number} days - 총 기간
-     * @param {Date} startDate - 챌린지 시작 날짜 (Date 객체)
-     * @param {Object} history - { 'YYYY-MM-DD': true/false } 형태의 인증 기록
-     */
-    function renderStampPlate(days, startDate, history) {
+    function renderStampPlate(days, startDate, history, isAvailable) {
         const gridEl = document.getElementById('stamp-grid');
         gridEl.innerHTML = '';
         
@@ -613,24 +666,22 @@
             // 날짜 비교 (시간 무시)
             const isToday = itemDate.getTime() === todayDate.getTime();
             const isPast = itemDate.getTime() < todayDate.getTime();
-            const isFuture = itemDate.getTime() > todayDate.getTime();
             
             let statusClass = 'pending';
-            let iconHtml = '<i class="material-icons stamp-icon">lock</i>'; // 예정된 날 기본 아이콘
+            let iconHtml = '<i class="material-icons stamp-icon">lock_open</i>'; 
             
             if (isStamped) {
                 statusClass = 'stamped';
-                iconHtml = '<i class="material-icons stamp-icon">check_circle</i>'; // 도장
+                iconHtml = '<i class="material-icons stamp-icon">auto_fix_high</i>'; // 멋진 도장 아이콘
                 stampedCount++;
             } else if (isPast) {
                 statusClass = 'missed';
-                iconHtml = '<i class="material-icons stamp-icon">close</i>'; // 놓침
+                iconHtml = '<i class="material-icons stamp-icon">sentiment_dissatisfied</i>'; // 놓침
             } 
             
-            // 오늘 날짜이면서 아직 인증하지 않았을 때
             if (isToday && !isStamped) {
                 statusClass = 'today';
-                iconHtml = '<i class="material-icons stamp-icon" style="color: var(--color-accent);">star_border</i>'; // 오늘의 목표
+                iconHtml = '<i class="material-icons stamp-icon">brightness_high</i>'; // 오늘의 목표
             } else if (isToday && isStamped) {
                 statusClass = 'stamped today'; // 오늘 인증 완료
             }
@@ -645,7 +696,7 @@
             item.innerHTML = `
                 <span class="day-number">${index + 1}</span>
                 ${iconHtml}
-                <span style="font-size: 0.65rem; color: #555;">${dateKey.slice(5).replace('-', '/')}</span>
+                <span class="date-label">${dateKey.slice(5).replace('-', '/')}</span>
             `;
             
             gridEl.appendChild(item);
@@ -654,76 +705,99 @@
         // 달성률 계산 및 표시
         const totalPossibleDays = pastDaysCount;
         const successRate = totalPossibleDays > 0 ? ((stampedCount / totalPossibleDays) * 100).toFixed(1) : 0;
-        document.getElementById('meta-success-rate-text').textContent = `${stampedCount}/${totalPossibleDays}일 (${successRate}%)`;
+        document.querySelector('#meta-success-rate-text').textContent = `${stampedCount}/${totalPossibleDays}일 (${successRate}%)`;
+
+        // 도장판 오버레이 처리
+        const overlayEl = document.getElementById('stamp-plate-overlay');
+        if (isAvailable) {
+            overlayEl.classList.add('hidden');
+        } else {
+            // 인증 가능 일수만 표시하고 오버레이로 덮음 (팀 챌린지 미참여 시)
+            overlayEl.classList.remove('hidden');
+        }
     }
 
     /**
-     * 챌린지 데이터를 렌더링하고 일일 인증 상태를 업데이트합니다.
+     * 챌린지 데이터를 렌더링하고 UI 상태를 결정합니다.
      */
-    function renderChallenge(data, isPublicChallenge) {
+    function renderChallenge(data, currentIsPublicChallenge) {
         if (!data) {
             document.getElementById('loading-state').textContent = '챌린지를 찾을 수 없습니다.';
             return;
         }
 
         challengeData = data;
+        isPublicChallenge = currentIsPublicChallenge;
+        const participants = data.participants || [];
+        
+        // 참여 상태 업데이트
+        isParticipant = !isPublicChallenge || participants.includes(currentUserId);
+
         const todayKey = getTodayDateKey();
         
-        // challengeData.createdAt이 없으면 오늘로 가정 (최초 생성 시 필드 추가 필요)
-        const startDateTimestamp = data.createdAt || Date.now(); 
-        const startDate = new Date(startDateTimestamp);
-        
-        // Firebase Timestamp는 toDate() 메서드를 가질 수 있지만, raw JSON에서는 아닐 수 있습니다.
-        const effectiveStartDate = startDate.getTime() < Date.now() - (data.durationDays * 24 * 60 * 60 * 1000) 
-            ? new Date(Date.now() - (data.durationDays * 24 * 60 * 60 * 1000)) // 너무 오래된 경우 30일 전으로 강제 (도장판 보기 좋게)
-            : startDate;
-
+        // 날짜 계산 (챌린지 시작일)
+        const startDate = data.createdAt ? new Date(data.createdAt) : new Date();
+        const effectiveStartDate = startDate;
 
         // 1. 기본 정보 업데이트
         document.getElementById('page-title').textContent = `Doing! - ${data.title}`;
         document.getElementById('challenge-details-content').classList.remove('hidden');
         document.getElementById('loading-state').classList.add('hidden');
         
-        document.getElementById('challenge-type').textContent = isPublicChallenge ? '팀 챌린지' : '나의 개인 챌린지';
+        document.getElementById('challenge-type').textContent = isPublicChallenge ? '✨ 팀 챌린지 (공개)' : '💪 개인 챌린지 (비공개)';
         document.getElementById('challenge-title').textContent = data.title;
         document.getElementById('challenge-description').textContent = data.description || '상세 설명이 없습니다.';
         
         document.querySelector('#meta-duration span').textContent = `${data.durationDays || 30}일 기간 (${effectiveStartDate.toLocaleDateString('ko-KR')} 시작)`;
-        document.querySelector('#meta-participants span').textContent = `${data.participants || 1}명 참여`;
+        document.querySelector('#meta-participants span').textContent = `${participants.length || 1}명 참여 중 (${isPublicChallenge ? '팀원' : '나만'})`;
         
-        // 2. 오늘의 인증 상태 확인 및 UI 업데이트
-        const history = data.proofHistory || {};
-        
-        isTodayVerified = history[todayKey] === true;
-        
-        const statusEl = document.getElementById('daily-proof-status');
-        const buttonEl = document.getElementById('proof-button');
-        const messageEl = document.getElementById('proof-message');
+        // 2. 액션 카드 및 인증 상태 업데이트
+        const proofCardEl = document.getElementById('proof-card');
+        const participationCardEl = document.getElementById('participation-card');
 
-        if (isTodayVerified) {
-            statusEl.textContent = '인증 완료';
-            statusEl.style.color = 'var(--color-success)';
-            buttonEl.textContent = '오늘의 인증 완료!';
-            buttonEl.classList.remove('ready');
-            buttonEl.classList.add('done');
-            buttonEl.disabled = true;
-            messageEl.textContent = `오늘은 ${todayKey}에 인증을 완료했습니다. 내일 다시 도전하세요.`;
+        if (isPublicChallenge && !isParticipant) {
+            // 팀 챌린지 & 미참여: 참여하기 카드 표시
+            proofCardEl.classList.add('hidden');
+            participationCardEl.classList.remove('hidden');
+            document.getElementById('proof-message').textContent = ''; // 불필요 메시지 제거
         } else {
-            statusEl.textContent = '미인증';
-            statusEl.style.color = 'var(--color-missed)';
-            buttonEl.textContent = '오늘의 인증하기';
-            buttonEl.classList.remove('done');
-            buttonEl.classList.add('ready');
-            buttonEl.disabled = false;
-            messageEl.textContent = `오늘의 목표를 달성하셨다면 버튼을 눌러 인증하세요!`;
+            // 개인 챌린지 OR 팀 챌린지 & 참여중: 인증 카드 표시
+            participationCardEl.classList.add('hidden');
+            proofCardEl.classList.remove('hidden');
+
+            const history = data.proofHistory || {};
+            isTodayVerified = history[todayKey] === true;
+            
+            const statusEl = document.getElementById('daily-proof-status');
+            const buttonEl = document.getElementById('proof-button');
+            const messageEl = document.getElementById('proof-message');
+
+            if (isTodayVerified) {
+                statusEl.textContent = '✅ 인증 완료';
+                statusEl.style.color = 'var(--color-success)';
+                buttonEl.textContent = '오늘의 인증 완료!';
+                buttonEl.classList.remove('ready');
+                buttonEl.classList.add('done');
+                buttonEl.disabled = true;
+                messageEl.textContent = `오늘은 ${todayKey}에 인증을 완료했습니다. 내일 다시 도전하세요.`;
+            } else {
+                statusEl.textContent = '❌ 미인증';
+                statusEl.style.color = 'var(--color-missed)';
+                buttonEl.textContent = '오늘의 인증하기';
+                buttonEl.classList.remove('done');
+                buttonEl.classList.add('ready');
+                buttonEl.disabled = false;
+                messageEl.textContent = `오늘의 목표를 달성하셨다면 버튼을 눌러 인증하세요!`;
+            }
         }
 
-        // 3. 도장판 렌더링
-        renderStampPlate(data.durationDays || 30, effectiveStartDate, history);
+        // 3. 도장판 렌더링 (참여 여부에 따라 도장판 사용 가능 여부 결정)
+        const history = data.proofHistory || {};
+        renderStampPlate(data.durationDays || 30, effectiveStartDate, history, isParticipant);
     }
     
     /**
-     * 챌린지 정보를 Firestore에서 실시간으로 가져옵니다. (기존과 동일 로직)
+     * 챌린지 정보를 Firestore에서 실시간으로 가져옵니다.
      */
     function fetchChallengeDetails(uid) {
         if (!currentUserId || !uid) {
@@ -732,27 +806,26 @@
         }
 
         const privatePath = `/artifacts/${appId}/users/${currentUserId}/challenges/${uid}`; 
-        const privateDocRef = doc(db, privatePath);
         const publicPath = `/artifacts/${appId}/public/data/challenges/${uid}`;
-        const publicDocRef = doc(db, publicPath);
 
-        let isPublicChallenge = false;
         let finalDocRef = null;
+        let currentIsPublicChallenge = false;
 
         // 개인 챌린지 먼저 확인
-        getDoc(privateDocRef).then(privateDocSnap => {
+        getDoc(doc(db, privatePath)).then(privateDocSnap => {
             if (privateDocSnap.exists()) {
-                finalDocRef = privateDocRef;
-                isPublicChallenge = privateDocSnap.data().isPublic || false; 
+                finalDocRef = doc(db, privatePath);
+                currentIsPublicChallenge = privateDocSnap.data().isPublic || false; 
             } else {
-                return getDoc(publicDocRef);
+                return getDoc(doc(db, publicPath));
             }
         })
         .then(publicDocSnap => {
             if (publicDocSnap && publicDocSnap.exists()) {
+                 // publicDocSnap은 getDoc(doc(db, publicPath))의 결과
                  if (!finalDocRef) {
-                    finalDocRef = publicDocRef;
-                    isPublicChallenge = true;
+                    finalDocRef = doc(db, publicPath);
+                    currentIsPublicChallenge = true;
                  }
             }
             
@@ -760,7 +833,7 @@
                 // 실시간 구독 시작
                 unsubscribeChallenge = onSnapshot(finalDocRef, (docSnapshot) => {
                     if (docSnapshot.exists()) {
-                        renderChallenge(docSnapshot.data(), isPublicChallenge);
+                        renderChallenge(docSnapshot.data(), currentIsPublicChallenge);
                     } else {
                         document.getElementById('loading-state').textContent = '챌린지를 찾을 수 없습니다.';
                         document.getElementById('challenge-details-content').classList.add('hidden');
@@ -770,13 +843,45 @@
                     document.getElementById('loading-state').textContent = '데이터를 불러오는 중 오류가 발생했습니다.';
                 });
             } else {
-                document.getElementById('loading-state').textContent = '챌리지를 찾을 수 없습니다. (경로 확인 실패)';
+                document.getElementById('loading-state').textContent = '챌리지를 찾을 수 없습니다.';
             }
         })
         .catch(error => {
             console.error("Initial Doc Check Error:", error);
             document.getElementById('loading-state').textContent = '챌린지 정보를 불러오는 중 심각한 오류가 발생했습니다.';
         });
+    }
+
+    /**
+     * 팀 챌린지 참여를 처리합니다.
+     */
+    window.handleParticipation = async function() {
+        if (!challengeData || !currentUserId || !challengeId || !isPublicChallenge) {
+            showModal('오류', '참여할 수 없는 챌린지입니다.');
+            return;
+        }
+
+        if (isParticipant) {
+            showModal('알림', '이미 이 챌린지에 참여 중입니다.');
+            return;
+        }
+        
+        const docPath = `/artifacts/${appId}/public/data/challenges/${challengeId}`;
+        const docRef = doc(db, docPath);
+
+        try {
+            await updateDoc(docRef, {
+                participants: arrayUnion(currentUserId),
+                updatedAt: Date.now()
+            });
+
+            showModal('참여 성공', '팀 챌린지에 성공적으로 참여했습니다! 이제부터 도장을 찍을 수 있습니다.');
+            // onSnapshot 리스너가 업데이트된 데이터를 자동으로 렌더링합니다.
+            
+        } catch (error) {
+            console.error("Participation Error:", error);
+            showModal('참여 실패', `챌린지 참여 중 오류가 발생했습니다: ${error.message}.`);
+        }
     }
     
     /**
@@ -788,6 +893,11 @@
             return;
         }
 
+        if (!isParticipant) {
+            showModal('알림', '먼저 팀 챌린지에 참여해야 인증할 수 있습니다.');
+            return;
+        }
+
         if (isTodayVerified) {
             showModal('알림', '이미 오늘 인증을 완료했습니다. 내일 다시 도전하세요!');
             return;
@@ -796,15 +906,10 @@
         const todayKey = getTodayDateKey();
         
         try {
-            // Firestore에 저장된 `challengeData.isPublic`을 사용하여 저장 경로 결정
-            let docPath;
-            let isPublic = challengeData.isPublic || false;
-
-            if (isPublic) {
-                 docPath = `/artifacts/${appId}/public/data/challenges/${challengeId}`;
-            } else {
-                 docPath = `/artifacts/${appId}/users/${currentUserId}/challenges/${challengeId}`;
-            }
+            // isPublicChallenge 상태를 사용하여 저장 경로 결정
+            const docPath = isPublicChallenge 
+                ? `/artifacts/${appId}/public/data/challenges/${challengeId}`
+                : `/artifacts/${appId}/users/${currentUserId}/challenges/${challengeId}`;
             
             const docRef = doc(db, docPath);
 
@@ -818,12 +923,7 @@
             
         } catch (error) {
             console.error("Proof Submission Error:", error);
-            // 만약 문서가 아예 없다면 setDoc으로 시도 (안전성 확보)
-            if (error.code === 'not-found') {
-                 showModal('인증 실패', '문서를 찾을 수 없습니다. 이 챌린지가 삭제되었거나 권한이 없습니다.');
-            } else {
-                 showModal('인증 실패', `인증 중 오류가 발생했습니다: ${error.message}.`);
-            }
+            showModal('인증 실패', `인증 중 오류가 발생했습니다: ${error.message}.`);
         }
     }
 
@@ -865,7 +965,7 @@
         });
     });
 
-    // --- 초기화 로직 ---
+    // --- 이벤트 리스너 ---
     window.addEventListener('load', () => {
         const appContainer = document.getElementById('app-container');
         window.addEventListener('resize', () => {
