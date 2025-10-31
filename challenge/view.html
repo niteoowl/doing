@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Doing! - 도전 상세 보기</title>
+    <title>Doing! - 도전 상세</title>
     <!-- Pretendard 폰트 CDN 적용 -->
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
-    <!-- Google Material Icons (필수적인 내비게이션 및 UI 요소에만 사용) -->
+    <!-- Google Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
-    <!-- 공통 및 뷰 페이지 스타일 -->
+    <!-- 공통 및 뷰 페이지 스타일 (index.html과 일관성 유지) -->
     <style>
-        /* 기본 스타일 및 iOS 안전 영역 지원 (index.html과 동일) */
+        /* 기본 스타일 및 iOS 안전 영역 지원 */
         :root {
             --color-white: #ffffff;
             --color-black: #000000;
@@ -23,6 +23,8 @@
             --bottom-nav-height-mobile: 80px;
             --bottom-nav-height-pc: 60px; 
             --pc-max-width: 1200px; 
+            --color-certify: #28a745; /* 인증 성공 녹색 */
+            --color-abandon: #dc3545; /* 포기/삭제 빨간색 */
         }
 
         * { box-sizing: border-box; }
@@ -111,7 +113,9 @@
             cursor: pointer;
             transition: all 0.2s ease;
         }
-        .logout-button:hover { background-color: rgba(30, 144, 255, 0.05); }
+        .logout-button:hover {
+            background-color: rgba(30, 144, 255, 0.05); 
+        }
 
         /* 메인 뷰 컨테이너 */
         .view {
@@ -120,7 +124,7 @@
             display: block; 
             background-color: var(--color-app-bg); 
         }
-        
+
         /* 하단 내비게이션 바 */
         .bottom-nav {
             width: 100%;
@@ -143,95 +147,92 @@
         .nav-item { color: #999; text-decoration: none; display: flex; align-items: center; justify-content: center; padding: 0.5rem; border-radius: 12px; transition: color 0.2s ease; }
         .nav-item.active { color: var(--color-accent); font-weight: 600; }
         
-        /* ------------------ View Page Specific Styles ------------------ */
+        /* ------------------ 도전 상세 뷰 스타일 ------------------ */
 
-        /* 로딩 스피너 (간단 구현) */
-        .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--color-accent); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 3rem auto; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        /* 상세 카드 스타일 */
-        .detail-card {
+        /* 도전 정보 카드 (index.html의 my-challenge-card와 일관) */
+        .challenge-detail-card {
             background-color: var(--color-content-bg);
             padding: 2rem;
             border-radius: 16px; 
-            border: 1px solid var(--color-border); 
+            border: 2px solid var(--color-my-challenge-border); 
             margin-bottom: 2rem;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
-
-        /* 큰 인증 버튼 스타일 */
-        #certify-main-button {
-            width: 100%;
-            padding: 1.5rem 1rem;
-            font-size: 1.25rem;
-            font-weight: 700;
-            background-color: var(--color-accent);
-            color: var(--color-white);
-            border: none;
-            border-radius: 16px;
-            margin-top: 1.5rem;
-            cursor: pointer;
-            transition: background-color 0.2s ease, transform 0.1s ease;
-        }
-        #certify-main-button:active { transform: scale(0.99); }
-        #certify-main-button:disabled { background-color: #ccc; cursor: not-allowed; }
-
+        
         /* 진행률 바 스타일 */
         .progress-bar-container {
-            width: 100%;
-            background-color: #f0f0f0;
-            border-radius: 10px;
-            overflow: hidden;
             height: 12px;
-            margin-top: 10px;
-            margin-bottom: 0.5rem;
+            background-color: #e0e0e0;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-top: 0.5rem;
         }
-
         .progress-bar {
             height: 100%;
             background-color: var(--color-accent);
             transition: width 0.5s ease-out;
-            border-radius: 10px;
+        }
+
+        /* 버튼 그룹 */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        /* 인증하기 버튼 */
+        .certify-main-button {
+            flex-grow: 1;
+            padding: 1rem;
+            background-color: var(--color-certify);
+            color: var(--color-white);
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .certify-main-button:hover {
+            background-color: #1e7e34;
+        }
+
+        /* 포기하기 버튼 (작게, 20% 너비) */
+        .abandon-button {
+            width: 20%; 
+            padding: 1rem;
+            background-color: #f8d7da; /* 연한 빨강 배경 */
+            color: var(--color-abandon);
+            border: 1px solid var(--color-abandon);
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .abandon-button:hover {
+            background-color: #f5c6cb;
         }
         
-        /* 관리 버튼 (작게 우측) */
-        .management-button {
-            background: transparent;
-            color: #777;
-            border: none;
-            font-size: 1rem;
-            font-weight: 500;
-            padding: 0.5rem;
-            cursor: pointer;
-            transition: color 0.2s;
+        /* 인증 기록 목록 */
+        .certification-log-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #f0f0f0;
         }
-        .management-button:hover { color: var(--color-black); }
+        .certification-log-item:last-child {
+            border-bottom: none;
+        }
 
-        /* 모달 스타일 (index.html과 동일) */
+        /* 모달 스타일 유지 */
         #modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0, 0, 0, 0.4); justify-content: center; align-items: center; }
         .modal-content { background-color: var(--color-content-bg); padding: 30px; padding-bottom: 20px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2); width: 90%; max-width: 400px; text-align: center; transform: scale(0.9); opacity: 0; transition: all 0.2s ease-out; }
         .modal-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 10px; color: var(--color-black); }
         .modal-text { font-size: 1rem; margin-bottom: 20px; line-height: 1.4; color: #333; }
         #modal-close-button { width: 100%; padding: 0.75rem; margin-top: 10px; background-color: var(--color-accent); color: var(--color-white); border: none; border-radius: 12px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s; }
         #modal-close-button:hover { background-color: #0d79e6; }
-        
-        /* 추가: 인증 모달 버튼 레이아웃 */
-        .modal-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-        .modal-actions button {
-            flex-grow: 1;
-        }
-        #modal-secondary-button {
-             background-color: #eee;
-             color: #333;
-        }
-        #modal-secondary-button:hover {
-            background-color: #ddd;
-        }
-        
     </style>
 </head>
 <body>
@@ -261,61 +262,54 @@
         </button>
     </header>
 
-    <!-- ------------------ 메인 뷰 컨테이너 ------------------ -->
-    <div id="view-container" class="view active">
+    <!-- ------------------ 도전 상세 뷰 컨테이너 ------------------ -->
+    <div id="challenge-detail-view" class="view active">
         
-        <!-- 로딩 상태 표시 -->
-        <div id="loading-state" class="text-center p-8">
-            <div class="loader"></div>
-            <p style="color: #777;">도전 정보를 불러오는 중...</p>
-        </div>
-
-        <!-- 도전 상세 내용 (데이터 로드 후 여기에 렌더링) -->
-        <div id="challenge-details" style="display: none;">
+        <p id="loading-indicator" style="text-align: center; color: #777; margin-top: 3rem; font-size: 1.1rem;">도전 정보를 불러오는 중입니다...</p>
+        
+        <div id="challenge-content" style="display: none;">
             
-            <!-- 섹션 1: 제목 및 진행률 -->
-            <div class="detail-card">
-                <div class="flex justify-between items-start mb-4">
-                    <h2 id="challenge-title" style="font-size: 2rem; font-weight: 700; line-height: 1.3; color: var(--color-black);">챌린지 제목</h2>
-                    <button class="management-button interactive" onclick="handleManagement()">
-                        <i class="material-icons" style="font-size: 20px;">more_vert</i>
-                    </button>
+            <!-- 도전 핵심 정보 카드 -->
+            <div class="challenge-detail-card">
+                <h2 id="challenge-title" style="font-weight: 800; font-size: 2rem; margin-bottom: 0.5rem;">도전 제목</h2>
+                <p id="challenge-description" class="text-gray-600 mb-4" style="font-size: 1.1rem; color: #555;">도전 설명이 여기에 표시됩니다.</p>
+                
+                <hr style="border: 0; border-top: 1px solid #f0f0f0; margin: 1.5rem 0;">
+                
+                <!-- 진행 상황 -->
+                <div class="flex justify-between items-end mb-2">
+                    <span class="text-lg font-bold" style="color: var(--color-black);">진행 상황</span>
+                    <span id="challenge-status-text" class="text-sm font-semibold text-gray-500">0/30일 (0%)</span>
                 </div>
-
-                <p id="challenge-description" class="text-gray-600 mb-6" style="color: #444; line-height: 1.5;">챌린지에 대한 설명입니다.</p>
-
-                <h3 class="font-bold text-lg mb-2">나의 도전 진행률</h3>
                 <div class="progress-bar-container">
                     <div id="progress-bar" class="progress-bar" style="width: 0%;"></div>
                 </div>
-                <div class="flex justify-between text-sm text-gray-600">
-                    <span id="progress-text" class="font-semibold">0% (0/30회)</span>
-                    <span id="days-remaining">D-30</span>
+
+                <!-- 기간/참여자 정보 -->
+                <div class="mt-4 flex justify-between text-sm text-gray-500">
+                    <span id="challenge-duration">기간: 30일</span>
+                    <span id="challenge-participants">참여자: 1명 (나만)</span>
                 </div>
             </div>
-
-            <!-- 섹션 2: 인증 버튼 (가장 중요한 기능) -->
-            <div class="detail-card text-center" style="padding-top: 1.5rem; padding-bottom: 1.5rem;">
-                <p id="certify-status-text" class="text-md font-medium text-gray-700">오늘의 인증이 필요합니다!</p>
-                <button id="certify-main-button" class="interactive" onclick="handleCertify()">
+            
+            <!-- 액션 버튼 -->
+            <div class="action-buttons">
+                <button id="certify-button" class="certify-main-button interactive" onclick="handleCertify()">
+                    <i class="material-icons" style="font-size: 1.3rem; margin-right: 8px; vertical-align: middle;">done_all</i>
                     오늘 인증하기
                 </button>
-            </div>
-            
-            <!-- 섹션 3: 상세 정보 및 규칙 -->
-            <div class="detail-card">
-                 <h3 class="font-bold text-xl mb-4" style="color: #333;">챌린지 세부 정보</h3>
-                 <div class="space-y-3 text-sm" style="color: #555;">
-                     <p><strong>🗓️ 기간:</strong> <span id="info-duration">30일 도전</span></p>
-                     <p><strong>⭐ 성공 조건:</strong> <span id="info-success-rate">총 25회 이상 인증 (80%)</span></p>
-                     <p><strong>👥 참여 인원:</strong> <span id="info-participants">10명</span></p>
-                     <p><strong>📝 인증 방법:</strong> <span id="info-method">매일 밤 12시 전 인증샷 업로드</span></p>
-                 </div>
+                <button id="abandon-button" class="abandon-button interactive" onclick="showAbandonConfirmation()">
+                    포기
+                </button>
             </div>
 
-            <!-- 섹션 4: (TODO: 인증 피드 - 생략하고 메시지로 대체) -->
-            <div class="text-center text-gray-500 mt-6 mb-8" style="color: #999;">
-                <p>다른 사람들의 인증 피드는 추후 업데이트될 예정입니다. (데모)</p>
+            <!-- 인증 기록 섹션 -->
+            <h3 style="font-weight: 700; font-size: 1.3rem; margin-top: 3rem; margin-bottom: 1rem; color: #333;">
+                인증 기록
+            </h3>
+            <div id="certification-log-container" class="bg-white p-4 rounded-xl border border-gray-100 mb-10">
+                <!-- 인증 기록 아이템들이 여기에 삽입됩니다. -->
+                <p id="no-certifications" class="text-center text-gray-400 p-2">아직 인증 기록이 없습니다.</p>
             </div>
         </div>
 
@@ -323,15 +317,12 @@
     
 </div>
 
-<!-- 모달 팝업 구조 (index.html과 동일) -->
+<!-- 모달 팝업 구조 (메시지 박스 용도) -->
 <div id="modal">
     <div class="modal-content">
         <h3 class="modal-title" id="modal-title"></h3>
         <p class="modal-text" id="modal-text"></p>
-        <div class="modal-actions">
-            <button id="modal-secondary-button" class="interactive" onclick="hideModal()">취소</button>
-            <button id="modal-close-button" class="interactive" onclick="hideModal()">확인</button>
-        </div>
+        <button id="modal-close-button" class="interactive" onclick="hideModal()">확인</button>
     </div>
 </div>
 
@@ -346,11 +337,16 @@
     } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { 
         getFirestore, 
-        doc,
-        getDoc,
-        updateDoc,
+        doc, 
+        collection, 
         onSnapshot,
+        updateDoc,
+        setDoc,
+        deleteDoc,
+        query,
+        orderBy
     } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { getStorage, ref, uploadString, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
 
     // --- Firebase 설정 및 초기화 ---
     const userFirebaseConfig = { 
@@ -377,32 +373,45 @@
     let currentUserId = null;
     let isAuthAttempted = false; 
     let currentChallengeId = null;
-    let challengeTotalDuration = 30; // 기본값 (없을 경우)
-    let userProgressRef = null; // 사용자의 도전 진행 상황 Firestore Ref
+    let currentChallengeData = null; // 현재 도전 데이터를 저장할 변수
 
-    // --- UI/UX 함수 ---
+    // --- 유틸리티 및 UI 함수 ---
     const modal = document.getElementById('modal');
     const modalTitle = document.getElementById('modal-title');
     const modalText = document.getElementById('modal-text');
-    const modalConfirmBtn = document.getElementById('modal-close-button');
-    const modalSecondaryBtn = document.getElementById('modal-secondary-button');
-
-    function showModal(title, text, confirmAction = null, confirmText = '확인', showSecondary = false, secondaryText = '취소') {
+    
+    /**
+     * URL에서 쿼리 파라미터를 파싱하여 객체로 반환
+     */
+    function getQueryParams() {
+        const params = new URLSearchParams(window.location.search);
+        return Object.fromEntries(params.entries());
+    }
+    
+    /**
+     * 모달 표시
+     */
+    window.showModal = function(title, text, confirmCallback = null, isConfirm = false) {
         modalTitle.textContent = title;
         modalText.textContent = text;
-        modalConfirmBtn.textContent = confirmText;
-        modalSecondaryBtn.textContent = secondaryText;
+        const closeButton = document.getElementById('modal-close-button');
         
-        modalConfirmBtn.onclick = () => {
-            hideModal();
-            if (confirmAction) confirmAction();
-        };
-
-        if (showSecondary) {
-            modalSecondaryBtn.style.display = 'block';
-            modalSecondaryBtn.onclick = hideModal;
+        closeButton.textContent = isConfirm ? '확인' : '닫기';
+        
+        // 이전 이벤트 리스너 제거
+        const newButton = closeButton.cloneNode(true);
+        closeButton.parentNode.replaceChild(newButton, closeButton);
+        newButton.id = 'modal-close-button';
+        
+        if (isConfirm && confirmCallback) {
+            newButton.textContent = '확인';
+            newButton.onclick = () => {
+                hideModal();
+                confirmCallback();
+            };
         } else {
-            modalSecondaryBtn.style.display = 'none';
+            newButton.textContent = '확인';
+            newButton.onclick = hideModal;
         }
 
         modal.style.display = 'flex';
@@ -412,6 +421,9 @@
         }, 10); 
     }
 
+    /**
+     * 모달 숨기기
+     */
     window.hideModal = function() {
         modal.querySelector('.modal-content').style.transform = 'scale(0.9)';
         modal.querySelector('.modal-content').style.opacity = '0';
@@ -421,207 +433,249 @@
     }
 
     /**
-     * URL 쿼리 파라미터에서 챌린지 ID를 가져옵니다.
-     */
-    function getChallengeIdFromUrl() {
-        const params = new URLSearchParams(window.location.search);
-        return params.get('uid');
-    }
-
-    /**
      * 로그아웃 처리
      */
     window.handleLogout = async function() {
         try {
             await signOut(auth);
-            window.location.href = "/auth";
+            window.location.href = "/auth"; 
         } catch (error) {
             console.error("Logout Error:", error);
             showModal('로그아웃 오류', '로그아웃 중 오류가 발생했습니다.');
         }
     }
     
+    // --- 도전 상세 로직 ---
+
     /**
-     * 인증 처리 함수 (핵심 기능)
+     * Firestore에서 도전 상세 정보 (단일 문서)를 실시간으로 가져옵니다.
      */
-    window.handleCertify = async function() {
-        if (!currentUserId || !currentChallengeId || !userProgressRef) {
-             showModal('오류', '로그인 또는 챌린지 정보를 불러오는 데 실패했습니다.');
-             return;
+    function fetchChallengeDetail() {
+        if (!currentUserId || !currentChallengeId) return;
+        
+        const path = `/artifacts/${appId}/users/${currentUserId}/challenges/${currentChallengeId}`;
+        const challengeDocRef = doc(db, path);
+        
+        const unsubscribe = onSnapshot(challengeDocRef, (docSnap) => {
+            document.getElementById('loading-indicator')?.remove(); 
+            const challengeContent = document.getElementById('challenge-content');
+            
+            if (docSnap.exists()) {
+                currentChallengeData = docSnap.data();
+                challengeContent.style.display = 'block';
+                renderChallengeDetail(currentChallengeData);
+                fetchCertifications(); // 도전 정보 로드 후 인증 기록 로드
+            } else {
+                showModal('오류', '존재하지 않거나 접근 권한이 없는 도전입니다.', () => {
+                    window.location.href = "/challenge"; 
+                });
+            }
+        }, (error) => {
+            console.error("Firestore Challenge Detail Error:", error);
+            showModal('데이터 오류', '도전 정보를 불러오는 중 오류가 발생했습니다.');
+        });
+        
+        return unsubscribe;
+    }
+
+    /**
+     * 도전 상세 정보를 UI에 렌더링합니다.
+     */
+    function renderChallengeDetail(data) {
+        document.getElementById('challenge-title').textContent = data.title || '제목 없음';
+        document.getElementById('challenge-description').textContent = data.description || '상세 설명 없음';
+        document.getElementById('challenge-duration').textContent = `기간: ${data.durationDays || 30}일`;
+        
+        // 진행률 계산
+        const totalDays = data.durationDays || 30;
+        const certifiedCount = data.certifiedCount || 0;
+        const progressPercent = Math.min(100, (certifiedCount / totalDays) * 100).toFixed(0);
+
+        document.getElementById('challenge-status-text').textContent = `${certifiedCount}/${totalDays}일 (${progressPercent}%)`;
+        document.getElementById('progress-bar').style.width = `${progressPercent}%`;
+        
+        // 인증 상태에 따라 버튼 텍스트 변경 (간단 구현)
+        const certifyButton = document.getElementById('certify-button');
+        const today = new Date().toDateString();
+        const lastCertDate = data.lastCertifiedDate; // Firestore에 저장된 마지막 인증 날짜
+        
+        if (lastCertDate === today) {
+            certifyButton.textContent = "오늘 인증 완료!";
+            certifyButton.disabled = true;
+            certifyButton.style.backgroundColor = '#6c757d'; // 회색으로 변경
+            certifyButton.style.cursor = 'default';
+        } else {
+            certifyButton.innerHTML = `<i class="material-icons" style="font-size: 1.3rem; margin-right: 8px; vertical-align: middle;">done_all</i> 오늘 인증하기`;
+            certifyButton.disabled = false;
+            certifyButton.style.backgroundColor = 'var(--color-certify)';
+            certifyButton.style.cursor = 'pointer';
         }
 
-        const certifyButton = document.getElementById('certify-main-button');
-        certifyButton.disabled = true;
-        certifyButton.textContent = "인증 처리 중...";
+        document.title = `Doing! - ${data.title}`;
+    }
+
+    /**
+     * 챌린지 인증 기록 (서브컬렉션)을 실시간으로 가져옵니다.
+     */
+    function fetchCertifications() {
+        if (!currentUserId || !currentChallengeId) return;
+
+        // Certification Subcollection Path: /artifacts/{appId}/users/{userId}/challenges/{challengeId}/certifications
+        const path = `/artifacts/${appId}/users/${currentUserId}/challenges/${currentChallengeId}/certifications`;
+        const certsRef = collection(db, path);
+        
+        // 인증 기록은 최신 날짜순으로 정렬 (orderBy는 실제 환경에서 인덱싱 필요, 여기서는 간단하게 구현)
+        const q = query(certsRef);
+        // 클라이언트에서 정렬할 예정이므로 orderBy 제거 (권장 사항 준수)
+
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            const certifications = [];
+            snapshot.forEach((doc) => {
+                certifications.push({ id: doc.id, ...doc.data() });
+            });
+            
+            // 날짜를 기준으로 내림차순 정렬 (최신 기록이 위로)
+            certifications.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            renderCertifications(certifications);
+        }, (error) => {
+            console.error("Firestore Certifications Error:", error);
+        });
+        
+        return unsubscribe;
+    }
+
+    /**
+     * 인증 기록 목록을 UI에 렌더링합니다.
+     */
+    function renderCertifications(certs) {
+        const container = document.getElementById('certification-log-container');
+        container.innerHTML = '';
+        
+        if (certs.length === 0) {
+            container.innerHTML = '<p id="no-certifications" class="text-center text-gray-400 p-2">아직 인증 기록이 없습니다.</p>';
+            return;
+        }
+
+        certs.forEach(cert => {
+            const item = document.createElement('div');
+            item.className = 'certification-log-item';
+            
+            const date = new Date(cert.date);
+            const dateString = date.toLocaleDateString('ko-KR', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            const timeString = date.toLocaleTimeString('ko-KR', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+
+            item.innerHTML = `
+                <div style="display: flex; flex-direction: column; text-align: left;">
+                    <span class="font-semibold text-base" style="color: #333;">${dateString}</span>
+                    <span class="text-xs text-gray-500">${timeString} 인증 완료</span>
+                </div>
+                <button class="text-xs text-gray-400 hover:text-red-500 interactive" onclick="showModal('기록 상세', '인증 기록 상세 페이지는 곧 업데이트됩니다.', null, false)">
+                    <i class="material-icons" style="font-size: 1rem; vertical-align: middle;">more_vert</i>
+                </button>
+            `;
+            container.appendChild(item);
+        });
+    }
+
+    /**
+     * 인증 처리 함수 (setDoc으로 새로운 인증 문서 생성)
+     */
+    window.handleCertify = async function() {
+        if (!currentUserId || !currentChallengeId) {
+            showModal('오류', '사용자 인증 또는 챌린지 ID가 유효하지 않습니다.');
+            return;
+        }
+
+        if (document.getElementById('certify-button').disabled) {
+            showModal('알림', '이미 오늘 인증을 완료하셨습니다.');
+            return;
+        }
 
         try {
-            // 1. 사용자 진행 상황 문서 가져오기
-            const docSnap = await getDoc(userProgressRef);
+            const today = new Date();
+            const todayString = today.toDateString(); // 날짜만 비교하기 위한 문자열 (예: 'Fri Oct 31 2025')
+            const timestamp = today.toISOString(); // 기록용 ISO 8601 문자열
             
-            // 2. 오늘 이미 인증했는지 확인 (날짜를 YYYY-MM-DD 형식으로 비교)
-            const today = new Date().toISOString().split('T')[0];
+            // 1. 새로운 인증 기록 문서 생성 (서브컬렉션)
+            // 문서 ID를 타임스탬프로 사용 (순서 보장 위함)
+            const certDocRef = doc(db, `/artifacts/${appId}/users/${currentUserId}/challenges/${currentChallengeId}/certifications`, timestamp);
+            
+            await setDoc(certDocRef, {
+                date: timestamp,
+                memo: "오늘의 인증입니다.",
+                type: "manual"
+            });
+            
+            // 2. 메인 챌린지 문서 업데이트
+            const challengeDocRef = doc(db, `/artifacts/${appId}/users/${currentUserId}/challenges/${currentChallengeId}`);
+            
+            // certifiedCount 증가 및 lastCertifiedDate 업데이트
+            const newCertifiedCount = (currentChallengeData.certifiedCount || 0) + 1;
+            
+            await updateDoc(challengeDocRef, {
+                certifiedCount: newCertifiedCount,
+                lastCertifiedDate: todayString,
+                // 만료일 체크 로직은 서버나 추후에 구현한다고 가정
+            });
 
-            if (docSnap.exists() && docSnap.data().lastCertifiedDate === today) {
-                showModal('인증 실패', '이미 오늘 인증을 완료하셨습니다! 내일 다시 도전하세요.');
-                certifyButton.disabled = false;
-                certifyButton.textContent = "오늘 인증하기";
-                return;
-            }
-            
-            // 3. 인증 횟수 업데이트
-            const currentCount = docSnap.exists() ? docSnap.data().currentCertCount || 0 : 0;
-            const newCount = currentCount + 1;
-            
-            await updateDoc(userProgressRef, {
-                currentCertCount: newCount,
-                lastCertifiedDate: today,
-                updatedAt: new Date().toISOString()
-            }, { merge: true }); // 문서가 없으면 생성될 수도 있지만, index.html에서 이미 참여했어야 함
-
-            showModal('인증 완료!', `🔥 ${newCount}회차 인증 성공! 꾸준함이 비결입니다!`);
+            showModal('성공', '오늘의 도전 인증을 완료했습니다!', null, false);
 
         } catch (error) {
             console.error("Certification Error:", error);
-            showModal('오류', '인증 처리 중 서버 오류가 발생했습니다.');
-        } finally {
-            certifyButton.disabled = false;
-            certifyButton.textContent = "오늘 인증하기";
+            showModal('인증 오류', '인증 중 문제가 발생했습니다. 다시 시도해 주세요.');
         }
+    }
+    
+    /**
+     * 도전 포기 확인 모달 표시
+     */
+    window.showAbandonConfirmation = function() {
+        showModal(
+            '도전 포기', 
+            '정말로 이 도전을 포기하시겠습니까? 기록은 삭제되지 않지만, 더 이상 진행할 수 없습니다.', 
+            handleAbandon, 
+            true // 확인 버튼 포함
+        );
     }
 
     /**
-     * 챌린지 관리 (종료/수정 등)
+     * 도전 포기 처리 함수 (도전 문서 삭제)
      */
-    window.handleManagement = function() {
-         showModal(
-             '도전 관리', 
-             '이 도전을 수정하거나, 조기에 종료하시겠습니까? (데모 기능)',
-             () => { /* 실제로는 관리 페이지로 이동 */ },
-             '수정/종료',
-             true
-         );
-    }
-
-
-    /**
-     * 챌린지 상세 정보 및 사용자 진행 상황을 렌더링합니다.
-     */
-    function renderChallenge(publicData, userData) {
-        // UI 요소 가져오기
-        const detailsContainer = document.getElementById('challenge-details');
-        const loadingState = document.getElementById('loading-state');
-        
-        loadingState.style.display = 'none';
-        detailsContainer.style.display = 'block';
-
-        // 1. 공개 챌린지 정보 렌더링
-        const title = publicData.title || '도전 로드 실패';
-        const description = publicData.description || '이 도전에 대한 설명을 찾을 수 없습니다.';
-        const durationDays = publicData.durationDays || challengeTotalDuration;
-        challengeTotalDuration = durationDays;
-        
-        document.getElementById('challenge-title').textContent = title;
-        document.getElementById('challenge-description').textContent = description;
-        document.getElementById('info-duration').textContent = `${durationDays}일 도전`;
-        document.getElementById('info-participants').textContent = `${publicData.participants || 1}명`;
-        
-        // 규칙 (예시 데이터)
-        const successRate = publicData.successRate || 80;
-        const requiredCertCount = Math.ceil(durationDays * successRate / 100);
-        document.getElementById('info-success-rate').textContent = `총 ${requiredCertCount}회 이상 인증 (${successRate}%)`;
-        document.getElementById('info-method').textContent = publicData.certMethod || '매일 사진 인증 (규칙 상세는 모달로 확인)';
-        
-        // 2. 사용자 진행 상황 렌더링
-        const certifiedCount = userData.currentCertCount || 0;
-        const progressPercentage = Math.min(100, (certifiedCount / requiredCertCount) * 100).toFixed(1);
-        const today = new Date().toISOString().split('T')[0];
-        const lastCertifiedDate = userData.lastCertifiedDate || '';
-        
-        // 진행률 바 업데이트
-        document.getElementById('progress-bar').style.width = `${progressPercentage}%`;
-        document.getElementById('progress-text').textContent = `${progressPercentage}% (${certifiedCount}/${requiredCertCount}회 목표)`;
-
-        // 남은 일수 계산 (간단하게 현재 일자 기준)
-        const daysPassed = Math.min(durationDays, certifiedCount); // 간단히 인증 횟수를 경과 일수로 사용
-        const daysRemaining = durationDays - daysPassed;
-        document.getElementById('days-remaining').textContent = `D-${daysRemaining}`;
-
-
-        // 인증 버튼 상태 업데이트
-        const certifyButton = document.getElementById('certify-main-button');
-        const statusText = document.getElementById('certify-status-text');
-
-        if (lastCertifiedDate === today) {
-            statusText.textContent = `✅ 오늘 ${lastCertifiedDate} 인증 완료!`;
-            certifyButton.disabled = true;
-            certifyButton.textContent = "오늘 인증 완료";
-            certifyButton.style.backgroundColor = '#2ecc71'; // 초록색 계열
-        } else {
-            statusText.textContent = '오늘의 인증이 필요합니다! 💪';
-            certifyButton.disabled = false;
-            certifyButton.textContent = "오늘 인증하기";
-            certifyButton.style.backgroundColor = 'var(--color-accent)'; // 수정: 'var(--color-accent)'를 문자열로 감싸서 JavaScript 구문 오류 수정
+    async function handleAbandon() {
+        if (!currentUserId || !currentChallengeId) {
+            showModal('오류', '사용자 인증 또는 챌린지 ID가 유효하지 않습니다.');
+            return;
         }
+        
+        try {
+            // 도전 문서 삭제 (서브컬렉션은 자동으로 삭제되지 않지만, 여기서는 메인 문서만 삭제)
+            const challengeDocRef = doc(db, `/artifacts/${appId}/users/${currentUserId}/challenges/${currentChallengeId}`);
+            await deleteDoc(challengeDocRef);
+            
+            showModal('포기 완료', '도전이 성공적으로 포기되었습니다.', () => {
+                window.location.href = "/challenge"; // 도전 목록 페이지로 리다이렉트
+            });
 
-        if (certifiedCount >= requiredCertCount) {
-             statusText.textContent = '👑 축하합니다! 이미 목표를 달성했습니다!';
-             certifyButton.disabled = true;
-             certifyButton.textContent = "도전 성공!";
-             certifyButton.style.backgroundColor = '#f39c12'; // 노란색 계열
+        } catch (error) {
+            console.error("Abandon Challenge Error:", error);
+            showModal('포기 오류', '도전을 포기하는 중 문제가 발생했습니다.');
         }
     }
 
-    /**
-     * Firebase에서 챌린지 데이터 및 사용자 진행 상황을 실시간으로 가져옵니다.
-     */
-    function fetchChallengeData() {
-        if (!currentUserId || !currentChallengeId) return;
-
-        // 1. 공개 챌린지 상세 정보 (참여자 수, 규칙 등)
-        const publicPath = `/artifacts/${appId}/public/data/challenges/${currentChallengeId}`;
-        const publicDocRef = doc(db, publicPath);
-        
-        // 2. 사용자의 해당 챌린지 진행 상황 (인증 횟수, 마지막 인증일)
-        const userPath = `/artifacts/${appId}/users/${currentUserId}/challenges/${currentChallengeId}`;
-        userProgressRef = doc(db, userPath);
-        
-        let publicData = {};
-        let userData = {};
-        
-        // 공개 데이터 리스너
-        const unsubscribePublic = onSnapshot(publicDocRef, (docSnap) => {
-            if (docSnap.exists()) {
-                publicData = docSnap.data();
-                renderChallenge(publicData, userData);
-                console.log("Public Challenge Details Updated.");
-            } else {
-                showModal('오류', '존재하지 않는 도전 ID입니다.');
-                document.getElementById('loading-state').innerHTML = `<p style="color:red;">오류: 유효하지 않은 도전 ID입니다.</p>`;
-                document.getElementById('challenge-details').style.display = 'none';
-            }
-        }, (error) => {
-            console.error("Firestore Public Data Error:", error);
-        });
-
-        // 사용자 데이터 리스너
-        const unsubscribeUser = onSnapshot(userProgressRef, (docSnap) => {
-             // 문서가 없으면 (참여하지 않았으면) 기본값 사용
-             userData = docSnap.exists() ? docSnap.data() : { currentCertCount: 0, lastCertifiedDate: '' };
-             // renderChallenge 호출: 공개 데이터가 로드된 후에도 사용자 데이터 변경 시 UI 업데이트
-             renderChallenge(publicData, userData); 
-             console.log("User Challenge Progress Updated.");
-        }, (error) => {
-            console.error("Firestore User Data Error:", error);
-        });
-
-        // 클린업 함수 반환 (필요시)
-        return () => {
-            unsubscribePublic();
-            unsubscribeUser();
-        };
-    }
 
     // --- 인증 및 초기화 ---
+
+    /**
+     * 사용자 인증 상태 확인 및 데이터 로드
+     */
     onAuthStateChanged(auth, async (user) => {
         if (!isAuthAttempted) {
             const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
@@ -632,8 +686,8 @@
                     await signInWithCustomToken(auth, initialAuthToken);
                     return; 
                 } catch (error) {
-                    console.error("Custom token login failed. Redirecting to /auth", error);
-                    window.location.href = "/auth";
+                    console.error("Custom token login failed. Forcing redirect to /auth", error);
+                    window.location.href = "/auth"; 
                     return;
                 }
             } else if (!user) {
@@ -646,21 +700,28 @@
         if (user) {
             currentUserId = user.uid;
             if (user.isAnonymous) {
-                 console.warn("Anonymous user detected. Redirecting to /auth");
-                 window.location.href = "/auth";
+                 console.warn("Anonymous user detected. Forcing redirect to /auth");
+                 window.location.href = "/auth"; 
                  return;
             }
             
-            // 챌린지 ID 확인 및 데이터 로드 시작
-            currentChallengeId = getChallengeIdFromUrl();
-            if (currentChallengeId) {
-                fetchChallengeData();
-            } else {
-                document.getElementById('loading-state').innerHTML = `<p style="color:red;">오류: URL에 도전 ID(uid)가 없습니다.</p>`;
+            // 1. Challenge ID 로드
+            const params = getQueryParams();
+            currentChallengeId = params.challengeId;
+
+            if (!currentChallengeId) {
+                showModal('오류', 'URL에 도전 ID(challengeId)가 없습니다.', () => {
+                     window.location.href = "/challenge"; 
+                });
+                return;
             }
 
+            // 2. 데이터 로드 시작
+            fetchChallengeDetail(); 
+
         } else if (isAuthAttempted) {
-             window.location.href = "/auth";
+             console.warn("Authentication failed or logged out. Redirecting to /auth");
+             window.location.href = "/auth"; 
              return;
         }
         
@@ -674,7 +735,6 @@
     // --- 초기화 로직 ---
     window.addEventListener('load', () => {
         const appContainer = document.getElementById('app-container');
-        // 모바일 뷰에서 뷰포트 크기를 정확히 맞추기 위해 minHeight 설정
         appContainer.style.minHeight = `${window.innerHeight}px`;
         
         window.addEventListener('resize', () => {
