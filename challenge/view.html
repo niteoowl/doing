@@ -370,6 +370,9 @@
         #float-action-button.participate {
             background: linear-gradient(45deg, #FF9800, #FFC107); /* 주황색 계열로 참여 강조 */
         }
+        #float-action-button.pending {
+            background: linear-gradient(45deg, #B0BEC5, #78909C); /* 시작 예정 회색 */
+        }
         #float-action-button:disabled {
             background-color: var(--color-pending);
             cursor: not-allowed;
@@ -738,22 +741,14 @@
         let stampedCount = 0;
         let pastDaysCount = 0;
         
-        // 챌린지 시작일 Date 객체 (시간 무시)
-        const challengeStartDate = new Date(startDate);
-        const todayDate = new Date(todayKey);
-        
-        challengeStarted = todayDate.getTime() >= challengeStartDate.getTime();
+        // 챌린지 시작일 판정 로직 수정: YYYY-MM-DD 문자열 직접 비교
+        // '2025-10-31' >= '2025-10-31' 은 true
+        challengeStarted = todayKey >= startDate;
         
         allDates.forEach((dateKey, index) => {
             const isStamped = history[dateKey] === true;
-            const itemDate = new Date(dateKey);
-            
-            // 날짜 비교 (시간 무시)
-            const itemDateTime = itemDate.getTime();
-            const todayDateTime = todayDate.getTime();
-            
-            const isToday = itemDateTime === todayDateTime;
-            const isPast = itemDateTime < todayDateTime;
+            const isToday = dateKey === todayKey;
+            const isPast = dateKey < todayKey;
             
             let statusClass = 'pending';
             let stampIcon = 'check'; // 기본 인증 완료 아이콘
@@ -774,7 +769,7 @@
                 statusClass = 'stamped today'; // 오늘 인증 완료
             }
 
-            if (itemDateTime <= todayDateTime) {
+            if (dateKey <= todayKey) {
                  pastDaysCount++;
             }
 
@@ -866,30 +861,35 @@
         const floatButton = document.getElementById('float-action-button');
         const history = data.proofHistory || {};
         isTodayVerified = history[todayKey] === true;
+        
+        // 챌린지 시작일 판정 로직 재확인
+        challengeStarted = todayKey >= startDateString;
+
 
         if (!challengeStarted) {
             // 챌린지 시작일 전
             floatButton.textContent = `챌린지 시작 예정: ${startDateString}`;
             floatButton.classList.remove('ready', 'participate');
+            floatButton.classList.add('pending');
             floatButton.classList.remove('hidden');
             floatButton.disabled = true;
         } else if (isPublicChallenge && !isParticipant) {
             // 팀 챌린지 & 미참여: 참여 버튼 표시
             floatButton.textContent = '팀 챌린지 참여하기';
-            floatButton.classList.remove('ready');
+            floatButton.classList.remove('ready', 'pending');
             floatButton.classList.add('participate');
             floatButton.classList.remove('hidden');
             floatButton.disabled = false;
         } else if (isTodayVerified) {
             // 인증 완료: 비활성화 버튼 표시
             floatButton.textContent = '인증 완료! 내일 다시 만나요';
-            floatButton.classList.remove('ready', 'participate');
+            floatButton.classList.remove('ready', 'participate', 'pending');
             floatButton.classList.remove('hidden');
             floatButton.disabled = true;
         } else {
             // 인증 가능: 성공 버튼 표시
             floatButton.textContent = '오늘의 목표 성공!';
-            floatButton.classList.remove('participate');
+            floatButton.classList.remove('participate', 'pending');
             floatButton.classList.add('ready');
             floatButton.classList.remove('hidden');
             floatButton.disabled = false;
@@ -1008,6 +1008,7 @@
         }
 
         // 시작일 체크 (사용자 요청 사항)
+        // challengeStarted는 renderChallenge에서 이미 오늘 날짜 기준으로 계산됨.
         if (!challengeStarted) {
             showModal('알림', `챌린지가 아직 시작되지 않았습니다. 시작일: ${challengeData.startDate}`);
             return;
