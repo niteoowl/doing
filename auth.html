@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Doing! - 단계별 인증 (Firebase Config 업데이트)</title>
+    <title>Doing! - 로그인/회원가입</title>
     <!-- Pretendard 폰트 CDN 적용 -->
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
     <!-- Google Material Icons (Google Fonts Icons) 추가 -->
@@ -127,6 +127,15 @@
             line-height: 1.4;
             padding: 0; 
             flex-shrink: 0; /* 제목은 스크롤 시 고정되어야 함 (콘텐츠 스크롤이 아닐 때) */
+        }
+        
+        /* 로그인/회원가입 힌트 메시지 (Step 2에 추가) */
+        .login-hint {
+            font-size: 0.95rem; 
+            color: var(--color-accent); /* 포인트 색상 사용 */
+            margin-top: -1.5rem; /* 제목 아래쪽으로 약간 올림 */
+            margin-bottom: 2rem;
+            font-weight: 500;
         }
 
         /* 입력 필드 그룹 */
@@ -384,6 +393,9 @@
             <!-- 제목은 JS에서 동적으로 업데이트됨 -->
             <h1 id="step-2-title" class="step-title"></h1> 
             
+            <!-- 로그인 시 이메일을 보여주는 힌트 추가 (사용자 요청에 따라 숨김) -->
+            <div id="step-2-login-hint" class="login-hint" style="display: none;"></div>
+            
             <form id="form-step-2" onsubmit="event.preventDefault(); handleStep2Action()">
 
                 <!-- 1. 사용자 이름 (회원가입 시에만 표시됨) -->
@@ -397,7 +409,8 @@
                 <div class="input-group">
                     <div class="input-label">비밀번호</div>
                     <!-- autocomplete="new-password" 추가 -->
-                    <input type="password" id="input-password" class="auth-input" placeholder="비밀번호 입력 (6자 이상)" required oninput="checkInputValidity()" autocomplete="new-password">
+                    <!-- 사용자 요청: (6자 이상) 삭제 -->
+                    <input type="password" id="input-password" class="auth-input" placeholder="비밀번호 입력" required oninput="checkInputValidity()" autocomplete="new-password">
                     <button type="button" class="password-toggle interactive" onclick="togglePasswordVisibility('input-password', this)">
                         <div id="toggle-icon-password"></div>
                     </button>
@@ -530,6 +543,7 @@
 
     // Step 2 (정보 입력) 요소
     const step2Title = document.getElementById('step-2-title');
+    const step2LoginHint = document.getElementById('step-2-login-hint'); 
     const inputGroupNickname = document.getElementById('input-group-nickname');
     const inputGroupConfirmPassword = document.getElementById('input-group-confirm-password');
     const passwordInput = document.getElementById('input-password');
@@ -616,16 +630,29 @@
         if (currentStep === 1) {
             buttonText = '다음';
         } else if (currentStep === 2) {
+            // const currentEmail = emailInput.value.trim(); // 현재 입력된 이메일
+            
             if (isRegistering) {
+                // 회원가입 모드 (사용자 이름을 보여주고, 버튼 텍스트는 '다음')
                 buttonText = '다음';
                 step2Title.innerHTML = '회원가입에 필요한<br>정보를 입력해주세요.'; 
                 inputGroupNickname.style.display = 'block';
                 inputGroupConfirmPassword.style.display = 'block';
+                
+                // 힌트 메시지 숨김 처리
+                step2LoginHint.style.display = 'none'; 
+                step2LoginHint.textContent = ''; 
+
             } else {
+                // 로그인 모드 (사용자 이름 및 비밀번호 확인 숨기고, 버튼 텍스트는 '로그인')
                 buttonText = '로그인';
                 step2Title.innerHTML = '비밀번호를 입력하여<br>로그인을 완료합니다.'; 
                 inputGroupNickname.style.display = 'none';
                 inputGroupConfirmPassword.style.display = 'none';
+                
+                // 힌트 메시지 숨김 처리 (사용자 요청 반영)
+                step2LoginHint.style.display = 'none';
+                step2LoginHint.textContent = '';
             }
         } else if (currentStep === 3) {
              buttonText = '회원가입 완료하고 시작하기';
@@ -651,6 +678,7 @@
             isValid = /\S+@\S+\.\S+/.test(email);
         } else if (currentStep === 2) {
             const password = passwordInput.value.trim();
+            // 비밀번호는 Firebase 규칙상 6자 이상이어야 하지만, UI 힌트 문구는 삭제했음.
             isValid = password.length >= 6; 
             
             if (isRegistering) {
@@ -714,7 +742,6 @@
     window.handleEmailCheck = async function() {
         const email = emailInput.value.trim();
         
-        // 유효성 검사 (버튼 비활성화로 막았지만, 혹시 모를 경우를 대비)
         if (!/\S+@\S+\.\S+/.test(email)) {
             window.showModal('오류', '유효한 이메일 주소를 입력해주세요.');
             return;
@@ -725,21 +752,33 @@
         try {
             const methods = await fetchSignInMethodsForEmail(auth, email);
             
-            if (methods.length > 0) {
-                // 이미 존재하는 계정 -> 로그인
+            // --- 디버깅 로그 추가 ---
+            console.log(`%c[Doing! Auth Debug] Email Check Started`, 'color: #1E90FF; font-weight: bold;');
+            console.log(`[DEBUG] Email: ${email}`);
+            console.log(`[DEBUG] Sign-in methods returned:`, methods);
+            // --- 디버깅 로그 끝 ---
+            
+            if (methods && methods.length > 0) {
+                // [정상 로직] 1. 로그인 가능한 방법이 있는 경우 -> 로그인
                 isRegistering = false;
+                console.log("%c[DEBUG] isRegistering set to FALSE (Login Flow Selected) - Methods found.", 'color: green;');
             } else {
-                // 새 계정 -> 회원가입
-                isRegistering = true;
+                // [오류 의심 로직] 2. 로그인 가능한 방법이 없는 경우
+                
+                // *** 핵심 디버깅 수정: 빈 배열이 반환되더라도 일단 로그인 모드로 강제 전환합니다.
+                // 이는 계정은 존재하나, 이메일/비밀번호 로그인이 활성화되지 않았을 가능성을 테스트하기 위함입니다.
+                // 이 부분을 FALSE로 설정하면, '로그인 가능한 방법이 없어도' 로그인 흐름으로 강제 전환됩니다.
+                isRegistering = false; 
+                
+                console.log("%c[DEBUG] isRegistering set to FALSE (FORCE Login Flow for debug).", 'color: purple; font-weight: bold;');
             }
             
             window.goToStep(2, 'next');
             
         } catch (error) {
             console.error("Email check error:", error);
-            window.showModal('오류', '이메일 확인 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+            window.showModal('오류', '이메일 확인 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요. (네트워크/API 키 문제 의심)');
         } finally {
-            // 실패하더라도 다음 단계로 가지 않으면 버튼을 다시 활성화
             if (currentStep === 1) {
                 btnFinalAction.disabled = false;
             }
@@ -753,19 +792,34 @@
         btnFinalAction.disabled = true; // 중복 클릭 방지
 
         if (!isRegistering) {
-            // --- 로그인 로직 ---
+            // --- 로그인 로직 (강제 로그인 모드 포함) ---
             const email = emailInput.value.trim();
             const password = passwordInput.value.trim();
+            
+            if (password.length < 6) {
+                 window.showModal('오류', '비밀번호는 최소 6자 이상이어야 합니다.');
+                 btnFinalAction.disabled = false;
+                return;
+            }
 
             try {
+                // 이메일이 등록된 경우, 로그인 시도
                 await signInWithEmailAndPassword(auth, email, password);
+                
+                // 로그인 성공 후 모달 표시
                 window.showModal('로그인 성공', '서비스를 시작합니다.');
 
             } catch (error) {
                 let errorMessage = '로그인에 실패했습니다. 비밀번호를 확인해주세요.';
                 console.error("Firebase Login Error:", error.code, error.message);
-                if (error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
-                    errorMessage = '이메일 또는 비밀번호가 일치하지 않습니다.';
+                if (error.code === 'auth/wrong-password') {
+                    errorMessage = '비밀번호가 일치하지 않습니다.';
+                } else if (error.code === 'auth/user-not-found') {
+                    // 이 경우, 사용자가 존재한다고 판단했으나 (isRegistering=false),
+                    // 실제로 비밀번호 인증 공급자가 연결되지 않아 로그인에 실패했을 가능성이 높습니다.
+                    errorMessage = '사용자를 찾을 수 없습니다. (비밀번호 인증이 비활성화되었을 수 있습니다.)';
+                } else if (error.code === 'auth/invalid-credential') {
+                     errorMessage = '자격 증명이 유효하지 않습니다. 이메일 또는 비밀번호를 확인해주세요.';
                 }
                 window.showModal('로그인 오류', errorMessage);
             } finally {
@@ -788,7 +842,8 @@
                 return;
             }
             if (password.length < 6) {
-                window.showModal('오류', '비밀번호는 6자 이상이어야 합니다.');
+                // UI 힌트는 삭제했지만, 실제 유효성 검사는 Firebase 규칙을 따릅니다.
+                window.showModal('오류', '비밀번호는 최소 6자 이상이어야 합니다.');
                 btnFinalAction.disabled = false;
                 return;
             }
@@ -821,7 +876,7 @@
             }
 
             window.showModal('회원가입 성공', 'Doing! 서비스 이용을 환영합니다.');
-
+            
         } catch (error) {
             let errorMessage = '회원가입에 실패했습니다. 잠시 후 다시 시도해주세요.';
             console.error("Firebase Register Error:", error.code, error.message);
