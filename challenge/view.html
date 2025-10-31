@@ -3,28 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Doing! - 도전 상세</title>
+    <title>도전 상세 보기</title>
     <!-- Pretendard 폰트 CDN 적용 -->
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
-    <!-- Google Material Icons -->
+    <!-- Google Material Icons (필수적인 내비게이션 및 UI 요소에만 사용) -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
-    <!-- 공통 및 뷰 페이지 스타일 (index.html과 일관성 유지) -->
     <style>
         /* 기본 스타일 및 iOS 안전 영역 지원 */
         :root {
             --color-white: #ffffff;
             --color-black: #000000;
             --color-accent: #1E90FF; /* 포인트 블루 (Dodger Blue) */
-            --color-my-challenge-border: #bbbbbb; 
             --color-app-bg: #ffffff; 
             --color-content-bg: #ffffff; 
             --color-border: #e8e8e8; 
             --bottom-nav-height-mobile: 80px;
             --bottom-nav-height-pc: 60px; 
             --pc-max-width: 1200px; 
-            --color-certify: #28a745; /* 인증 성공 녹색 */
-            --color-abandon: #dc3545; /* 포기/삭제 빨간색 */
         }
 
         * { box-sizing: border-box; }
@@ -59,25 +55,19 @@
         @media (min-width: 640px) {
             body { align-items: flex-start; justify-content: center; }
             #app-container { max-width: var(--pc-max-width); box-shadow: none; }
-            .view {
-                padding: 2rem 3rem; 
-                padding-bottom: calc(2rem + var(--bottom-nav-height-pc)); 
-            }
+            .view { padding: 2rem 3rem; padding-bottom: calc(2rem + var(--bottom-nav-height-pc)); }
             .bottom-nav { height: var(--bottom-nav-height-pc); }
             .nav-item i.material-icons { font-size: 20px; margin-bottom: 0; }
             .nav-item { flex-direction: row; gap: 8px; font-size: 0.9rem; }
             .header { padding: 0.5rem 3rem; }
+            .tab-list { padding: 0 3rem; }
         }
         
         /* ------------------ Mobile Layout ------------------ */
         @media (max-width: 639px) {
-            #app-container { max-width: 100%; box-shadow: none; }
             .bottom-nav { height: var(--bottom-nav-height-mobile); } 
             .header { padding: 0.5rem 1.5rem; } 
-            .view {
-                padding: 1.5rem 1.5rem;
-                padding-bottom: calc(1.5rem + var(--bottom-nav-height-mobile));
-            }
+            .view { padding: 1.5rem 1.5rem; padding-bottom: calc(1.5rem + var(--bottom-nav-height-mobile)); }
             .nav-item i.material-icons { font-size: 28px; margin-bottom: 2px; }
             .nav-item { flex-direction: column; font-size: 0.75rem; line-height: 1.2; }
         }
@@ -101,21 +91,16 @@
             letter-spacing: -0.5px;
         }
         
-        /* 로그아웃 버튼 스타일 */
-        .logout-button {
-            padding: 0.5rem 1.2rem; 
-            background-color: transparent;
-            color: var(--color-accent); 
-            border: 1px solid var(--color-accent); 
-            border-radius: 9999px; 
-            font-size: 0.9rem;
-            font-weight: 500; 
+        .header-action-button {
+            background: none;
+            border: none;
+            color: var(--color-accent);
             cursor: pointer;
-            transition: all 0.2s ease;
+            padding: 8px;
+            border-radius: 8px;
+            transition: background-color 0.2s;
         }
-        .logout-button:hover {
-            background-color: rgba(30, 144, 255, 0.05); 
-        }
+        .header-action-button:hover { background-color: rgba(30, 144, 255, 0.05); }
 
         /* 메인 뷰 컨테이너 */
         .view {
@@ -123,9 +108,10 @@
             overflow-y: auto;
             display: block; 
             background-color: var(--color-app-bg); 
+            padding-top: 1rem;
         }
 
-        /* 하단 내비게이션 바 */
+        /* 하단 내비게이션 바 (공통) */
         .bottom-nav {
             width: 100%;
             background-color: var(--color-content-bg);
@@ -135,7 +121,6 @@
             z-index: 20;
             position: fixed;
             bottom: 0;
-            top: auto;
             padding-bottom: env(safe-area-inset-bottom); 
             border-top: 1px solid var(--color-border); 
             box-shadow: 0 -1px 8px rgba(0, 0, 0, 0.03); 
@@ -146,86 +131,232 @@
         
         .nav-item { color: #999; text-decoration: none; display: flex; align-items: center; justify-content: center; padding: 0.5rem; border-radius: 12px; transition: color 0.2s ease; }
         .nav-item.active { color: var(--color-accent); font-weight: 600; }
-        
-        /* ------------------ 도전 상세 뷰 스타일 ------------------ */
 
-        /* 도전 정보 카드 (index.html의 my-challenge-card와 일관) */
-        .challenge-detail-card {
-            background-color: var(--color-content-bg);
-            padding: 2rem;
-            border-radius: 16px; 
-            border: 2px solid var(--color-my-challenge-border); 
-            margin-bottom: 2rem;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        /* ------------------ 챌린지 상세 스타일 ------------------ */
+
+        /* 챌린지 제목 및 기본 정보 */
+        .challenge-info {
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--color-border);
+            padding-bottom: 1.5rem;
         }
-        
-        /* 진행률 바 스타일 */
-        .progress-bar-container {
-            height: 12px;
-            background-color: #e0e0e0;
-            border-radius: 6px;
-            overflow: hidden;
-            margin-top: 0.5rem;
+        .challenge-info h2 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin: 0 0 0.5rem 0;
         }
-        .progress-bar {
-            height: 100%;
-            background-color: var(--color-accent);
-            transition: width 0.5s ease-out;
+        .challenge-meta {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 1rem;
+        }
+        .challenge-description {
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #333;
         }
 
-        /* 버튼 그룹 */
-        .action-buttons {
+        /* 탭 내비게이션 */
+        .tab-list {
             display: flex;
-            gap: 1rem;
-            margin-top: 2rem;
+            gap: 1.5rem;
+            border-bottom: 1px solid var(--color-border);
+            margin-bottom: 1.5rem;
+            position: sticky;
+            top: 60px; /* 헤더 아래 */
+            background-color: var(--color-app-bg);
+            z-index: 5;
+            /* 모바일 패딩 조정 */
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+            margin-left: -1.5rem;
+            margin-right: -1.5rem;
         }
 
-        /* 인증하기 버튼 */
-        .certify-main-button {
-            flex-grow: 1;
+        .tab-button {
+            background: none;
+            border: none;
+            padding: 1rem 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #999;
+            cursor: pointer;
+            position: relative;
+            transition: color 0.2s;
+        }
+        .tab-button.active {
+            color: var(--color-accent);
+        }
+        .tab-button.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: var(--color-accent);
+            border-radius: 2px 2px 0 0;
+        }
+
+        /* 탭 콘텐츠 */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        /* 기록하기 섹션 */
+        #record-section {
+            background-color: #f8f8f8;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        #record-section textarea {
+            width: 100%;
+            min-height: 100px;
             padding: 1rem;
-            background-color: var(--color-certify);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            resize: vertical;
+            font-size: 1rem;
+            font-family: 'Pretendard Variable', sans-serif;
+        }
+        #record-section button {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: var(--color-accent);
             color: var(--color-white);
             border: none;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        .certify-main-button:hover {
-            background-color: #1e7e34;
-        }
-
-        /* 포기하기 버튼 (작게, 20% 너비) */
-        .abandon-button {
-            width: 20%; 
-            padding: 1rem;
-            background-color: #f8d7da; /* 연한 빨강 배경 */
-            color: var(--color-abandon);
-            border: 1px solid var(--color-abandon);
-            border-radius: 12px;
-            font-size: 1rem;
+            border-radius: 8px;
             font-weight: 600;
             cursor: pointer;
             transition: background-color 0.2s;
         }
-        .abandon-button:hover {
-            background-color: #f5c6cb;
+        #record-section button:hover { background-color: #0d79e6; }
+        
+        /* 진행 기록 목록 */
+        .progress-log-item {
+            border-bottom: 1px solid var(--color-border);
+            padding: 1rem 0;
+        }
+        .progress-log-item:last-child { border-bottom: none; }
+        .log-date { font-size: 0.85rem; color: #aaa; margin-bottom: 0.25rem; }
+        .log-content { font-size: 0.95rem; line-height: 1.5; color: #333; }
+        
+        /* ------------------ 팀 메신저 스타일 ------------------ */
+        
+        #team-chat-content {
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 250px); /* 뷰포트 높이 기반 임시 설정 */
+            min-height: 400px;
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative; /* 채팅 입력창 고정을 위해 */
+            padding-bottom: 60px; /* 입력창 높이 확보 */
         }
         
-        /* 인증 기록 목록 */
-        .certification-log-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.75rem 0;
-            border-bottom: 1px solid #f0f0f0;
+        #chat-messages {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #f7f9fc;
+            border-radius: 12px;
+            border: 1px solid #e1e8f2;
         }
-        .certification-log-item:last-child {
-            border-bottom: none;
+        
+        .message-box {
+            display: flex;
+            margin-bottom: 10px;
         }
 
+        .message-box.mine {
+            justify-content: flex-end;
+        }
+        
+        .message-box.theirs {
+            justify-content: flex-start;
+        }
+
+        .message {
+            max-width: 70%;
+            padding: 10px 15px;
+            border-radius: 20px;
+            line-height: 1.4;
+            font-size: 0.95rem;
+            position: relative;
+        }
+
+        .message-box.mine .message {
+            background-color: var(--color-accent);
+            color: var(--color-white);
+            border-bottom-right-radius: 5px;
+            margin-left: 20px;
+        }
+
+        .message-box.theirs .message {
+            background-color: var(--color-white);
+            color: var(--color-black);
+            border: 1px solid #ddd;
+            border-bottom-left-radius: 5px;
+            margin-right: 20px;
+        }
+        
+        .message-sender {
+            font-size: 0.75rem;
+            color: #777;
+            margin-bottom: 3px;
+            display: block;
+        }
+
+        .message-box.mine .message-sender {
+            text-align: right;
+            color: var(--color-accent);
+        }
+        .message-box.theirs .message-sender {
+            text-align: left;
+        }
+
+        #chat-input-area {
+            display: flex;
+            padding: 10px;
+            background-color: var(--color-white);
+            border-top: 1px solid var(--color-border);
+            border-radius: 0 0 12px 12px; 
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+
+        #chat-input-area input {
+            flex-grow: 1;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            margin-right: 10px;
+            font-size: 1rem;
+            font-family: 'Pretendard Variable', sans-serif;
+        }
+        
+        #chat-input-area button {
+            background-color: var(--color-accent);
+            color: var(--color-white);
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        #chat-input-area button:hover {
+            background-color: #0d79e6;
+        }
+        
         /* 모달 스타일 유지 */
         #modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0, 0, 0, 0.4); justify-content: center; align-items: center; }
         .modal-content { background-color: var(--color-content-bg); padding: 30px; padding-bottom: 20px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2); width: 90%; max-width: 400px; text-align: center; transform: scale(0.9); opacity: 0; transition: all 0.2s ease-out; }
@@ -238,7 +369,7 @@
 <body>
 
 <div id="app-container">
-    <!-- 하단 내비게이션 바 (index.html과 동일) -->
+    <!-- 하단 내비게이션 바 -->
     <div class="bottom-nav">
         <a class="nav-item interactive" href="/">
             <i class="material-icons">home</i>
@@ -248,71 +379,112 @@
             <i class="material-icons">local_fire_department</i> 
             <span>도전</span>
         </a>
-        <a class="nav-item interactive" href="/my"> 
+        <a class="nav-item interactive" href="/my">
             <i class="material-icons">person</i>
             <span>마이</span>
         </a>
     </div>
 
-    <!-- 컴팩트 헤더 (index.html과 동일) -->
+    <!-- 헤더 -->
     <header class="header">
-        <h1 class="header-title">Doing!</h1>
-        <button class="logout-button interactive" onclick="handleLogout()">
-            로그아웃
+        <button class="header-action-button interactive" onclick="history.back()">
+            <i class="material-icons">arrow_back</i>
+        </button>
+        <h1 class="header-title">도전 상세</h1>
+        <button id="manage-button" class="header-action-button interactive" onclick="showTab('management')" title="설정/관리">
+            <i class="material-icons">settings</i>
         </button>
     </header>
 
-    <!-- ------------------ 도전 상세 뷰 컨테이너 ------------------ -->
-    <div id="challenge-detail-view" class="view active">
+    <!-- ------------------ 뷰 컨테이너 ------------------ -->
+    <div id="challenge-view" class="view active">
         
-        <p id="loading-indicator" style="text-align: center; color: #777; margin-top: 3rem; font-size: 1.1rem;">도전 정보를 불러오는 중입니다...</p>
-        
-        <div id="challenge-content" style="display: none;">
-            
-            <!-- 도전 핵심 정보 카드 -->
-            <div class="challenge-detail-card">
-                <h2 id="challenge-title" style="font-weight: 800; font-size: 2rem; margin-bottom: 0.5rem;">도전 제목</h2>
-                <p id="challenge-description" class="text-gray-600 mb-4" style="font-size: 1.1rem; color: #555;">도전 설명이 여기에 표시됩니다.</p>
-                
-                <hr style="border: 0; border-top: 1px solid #f0f0f0; margin: 1.5rem 0;">
-                
-                <!-- 진행 상황 -->
-                <div class="flex justify-between items-end mb-2">
-                    <span class="text-lg font-bold" style="color: var(--color-black);">진행 상황</span>
-                    <span id="challenge-status-text" class="text-sm font-semibold text-gray-500">0/30일 (0%)</span>
-                </div>
-                <div class="progress-bar-container">
-                    <div id="progress-bar" class="progress-bar" style="width: 0%;"></div>
-                </div>
-
-                <!-- 기간/참여자 정보 -->
-                <div class="mt-4 flex justify-between text-sm text-gray-500">
-                    <span id="challenge-duration">기간: 30일</span>
-                    <span id="challenge-participants">참여자: 1명 (나만)</span>
-                </div>
-            </div>
-            
-            <!-- 액션 버튼 -->
-            <div class="action-buttons">
-                <button id="certify-button" class="certify-main-button interactive" onclick="handleCertify()">
-                    <i class="material-icons" style="font-size: 1.3rem; margin-right: 8px; vertical-align: middle;">done_all</i>
-                    오늘 인증하기
-                </button>
-                <button id="abandon-button" class="abandon-button interactive" onclick="showAbandonConfirmation()">
-                    포기
-                </button>
-            </div>
-
-            <!-- 인증 기록 섹션 -->
-            <h3 style="font-weight: 700; font-size: 1.3rem; margin-top: 3rem; margin-bottom: 1rem; color: #333;">
-                인증 기록
-            </h3>
-            <div id="certification-log-container" class="bg-white p-4 rounded-xl border border-gray-100 mb-10">
-                <!-- 인증 기록 아이템들이 여기에 삽입됩니다. -->
-                <p id="no-certifications" class="text-center text-gray-400 p-2">아직 인증 기록이 없습니다.</p>
-            </div>
+        <!-- 챌린지 기본 정보 -->
+        <div class="challenge-info">
+            <p id="challenge-type" class="challenge-meta"></p>
+            <h2 id="challenge-title">... 로딩 중 ...</h2>
+            <p id="challenge-status" class="challenge-meta"></p>
+            <p id="challenge-description" class="challenge-description">챌린지 상세 설명이 여기에 표시됩니다.</p>
         </div>
 
+        <!-- 탭 내비게이션 -->
+        <div class="tab-list">
+            <button class="tab-button interactive active" data-tab="progress" onclick="showTab('progress')">
+                진행 기록
+            </button>
+            <!-- 팀 챌린지일 경우에만 표시 -->
+            <button id="chat-tab-button" class="tab-button interactive" data-tab="chat" onclick="showTab('chat')" style="display: none;">
+                팀 메신저
+            </button>
+            <button class="tab-button interactive" data-tab="management" onclick="showTab('management')">
+                관리 / 설정
+            </button>
+        </div>
+
+        <!-- 탭 콘텐츠 영역 -->
+        <div id="content-area">
+            
+            <!-- 1. 진행 기록 탭 -->
+            <div id="progress-tab" class="tab-content active">
+                
+                <!-- 기록하기 섹션 -->
+                <div id="record-section">
+                    <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1rem;">오늘의 기록 남기기</h3>
+                    <textarea id="progress-input" placeholder="오늘의 도전 내용, 성과, 느낌 등을 자유롭게 기록하세요."></textarea>
+                    <button class="interactive" onclick="recordProgress()">기록 저장하기</button>
+                </div>
+                
+                <!-- 진행 기록 목록 -->
+                <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1rem;">전체 기록</h3>
+                <div id="progress-log-list">
+                    <p style="text-align: center; color: #aaa;">진행 기록을 불러오는 중...</p>
+                </div>
+            </div>
+            
+            <!-- 2. 팀 메신저 탭 -->
+            <div id="chat-tab" class="tab-content">
+                <div id="team-chat-content">
+                    <div id="chat-messages">
+                        <!-- 채팅 메시지가 여기에 삽입됩니다 -->
+                        <p style="text-align: center; color: #999;">팀 챌린지 채팅 시작!</p>
+                    </div>
+                    
+                    <div id="chat-input-area">
+                        <input type="text" id="chat-input" placeholder="메시지를 입력하세요..." onkeydown="handleChatKeydown(event)">
+                        <button class="interactive" onclick="sendMessage()">
+                            <i class="material-icons">send</i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. 관리/설정 탭 -->
+            <div id="management-tab" class="tab-content">
+                <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1rem;">챌린지 관리</h3>
+
+                <div style="padding: 1rem; border: 1px solid var(--color-border); border-radius: 8px; margin-bottom: 1.5rem;">
+                    <h4 style="font-weight: 600; margin-bottom: 0.5rem;">팀원 관리 (팀 챌린지 전용)</h4>
+                    <p id="team-members">현재 팀원: 나 (Owner), 멤버 A, 멤버 B</p>
+                    <button class="interactive" style="width: 100%; padding: 0.5rem; background-color: #f0f0f0; border: none; border-radius: 6px; margin-top: 0.75rem;" onclick="showModal('팀원 초대', '팀원 초대는 현재 데모 기능입니다.')">
+                        팀원 초대하기
+                    </button>
+                </div>
+
+                <div style="padding: 1rem; border: 1px solid var(--color-border); border-radius: 8px; margin-bottom: 1.5rem;">
+                    <h4 style="font-weight: 600; margin-bottom: 0.5rem;">챌린지 목표 수정</h4>
+                    <input type="text" placeholder="새로운 챌린지 목표" style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 0.5rem;"/>
+                    <button class="interactive" style="width: 100%; padding: 0.5rem; background-color: #f0f0f0; border: none; border-radius: 6px;" onclick="showModal('목표 수정', '목표가 수정되었습니다. (데모)')">
+                        수정하기
+                    </button>
+                </div>
+
+                <button class="interactive" style="width: 100%; padding: 0.75rem; background-color: #ff4d4d; color: var(--color-white); border: none; border-radius: 8px; margin-top: 2rem;" onclick="showModal('챌린지 종료', '챌린지를 종료하시겠습니까? (데모)')">
+                    챌린지 종료하기
+                </button>
+            </div>
+            
+        </div>
+        
     </div>
     
 </div>
@@ -331,24 +503,21 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { 
         getAuth, 
-        signOut,
         onAuthStateChanged,
         signInWithCustomToken 
     } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { 
         getFirestore, 
-        doc, 
         collection, 
+        query, 
         onSnapshot,
-        updateDoc,
-        setDoc,
-        deleteDoc,
-        query,
+        addDoc,
+        serverTimestamp,
         orderBy
     } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-    import { getStorage, ref, uploadString, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
 
     // --- Firebase 설정 및 초기화 ---
+    // Note: Firebase configuration is hardcoded for demonstration but should be replaced by __firebase_config in a live environment.
     const userFirebaseConfig = { 
         apiKey: "AIzaSyBMowSIHMdz69dYY-mAW8l6VjKxBW54SfU",
         authDomain: "doing-a.firebaseapp.com",
@@ -369,51 +538,22 @@
     const db = getFirestore(app);
     const auth = getAuth(app);
     
-    // 글로벌 변수
+    // 글로벌 상태
     let currentUserId = null;
     let isAuthAttempted = false; 
-    let currentChallengeId = null;
-    let currentChallengeData = null; // 현재 도전 데이터를 저장할 변수
+    let challengeId = new URLSearchParams(window.location.search).get('id');
+    let challengeData = null;
+    let isTeamChallenge = false;
+    let userName = "사용자" + (Math.random() * 1000).toFixed(0); // 임시 사용자명
 
-    // --- 유틸리티 및 UI 함수 ---
+    // --- UI/UX 함수 (Modal) ---
     const modal = document.getElementById('modal');
     const modalTitle = document.getElementById('modal-title');
     const modalText = document.getElementById('modal-text');
     
-    /**
-     * URL에서 쿼리 파라미터를 파싱하여 객체로 반환
-     */
-    function getQueryParams() {
-        const params = new URLSearchParams(window.location.search);
-        return Object.fromEntries(params.entries());
-    }
-    
-    /**
-     * 모달 표시
-     */
-    window.showModal = function(title, text, confirmCallback = null, isConfirm = false) {
+    window.showModal = function(title, text) {
         modalTitle.textContent = title;
         modalText.textContent = text;
-        const closeButton = document.getElementById('modal-close-button');
-        
-        closeButton.textContent = isConfirm ? '확인' : '닫기';
-        
-        // 이전 이벤트 리스너 제거
-        const newButton = closeButton.cloneNode(true);
-        closeButton.parentNode.replaceChild(newButton, closeButton);
-        newButton.id = 'modal-close-button';
-        
-        if (isConfirm && confirmCallback) {
-            newButton.textContent = '확인';
-            newButton.onclick = () => {
-                hideModal();
-                confirmCallback();
-            };
-        } else {
-            newButton.textContent = '확인';
-            newButton.onclick = hideModal;
-        }
-
         modal.style.display = 'flex';
         setTimeout(() => {
             modal.querySelector('.modal-content').style.transform = 'scale(1)';
@@ -421,9 +561,6 @@
         }, 10); 
     }
 
-    /**
-     * 모달 숨기기
-     */
     window.hideModal = function() {
         modal.querySelector('.modal-content').style.transform = 'scale(0.9)';
         modal.querySelector('.modal-content').style.opacity = '0';
@@ -433,248 +570,280 @@
     }
 
     /**
-     * 로그아웃 처리
+     * 탭 전환 및 콘텐츠 표시를 처리합니다.
      */
-    window.handleLogout = async function() {
-        try {
-            await signOut(auth);
-            window.location.href = "/auth"; 
-        } catch (error) {
-            console.error("Logout Error:", error);
-            showModal('로그아웃 오류', '로그아웃 중 오류가 발생했습니다.');
-        }
+    window.showTab = function(tabName) {
+        // 모든 탭 버튼과 콘텐츠 비활성화
+        document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+        // 선택된 탭 활성화
+        const activeTabButton = document.querySelector(`.tab-button[data-tab="${tabName}"]`);
+        const activeTabContent = document.getElementById(`${tabName}-tab`);
+
+        if (activeTabButton) activeTabButton.classList.add('active');
+        if (activeTabContent) activeTabContent.classList.add('active');
+
+        // 스크롤 위치 초기화
+        document.getElementById('challenge-view').scrollTop = 0;
     }
     
-    // --- 도전 상세 로직 ---
-
+    // --- 챌린지 상세 데이터 로드 ---
+    
     /**
-     * Firestore에서 도전 상세 정보 (단일 문서)를 실시간으로 가져옵니다.
+     * 챌린지 데이터를 모킹/로딩하고 UI를 업데이트합니다.
      */
-    function fetchChallengeDetail() {
-        if (!currentUserId || !currentChallengeId) return;
-        
-        const path = `/artifacts/${appId}/users/${currentUserId}/challenges/${currentChallengeId}`;
-        const challengeDocRef = doc(db, path);
-        
-        const unsubscribe = onSnapshot(challengeDocRef, (docSnap) => {
-            document.getElementById('loading-indicator')?.remove(); 
-            const challengeContent = document.getElementById('challenge-content');
-            
-            if (docSnap.exists()) {
-                currentChallengeData = docSnap.data();
-                challengeContent.style.display = 'block';
-                renderChallengeDetail(currentChallengeData);
-                fetchCertifications(); // 도전 정보 로드 후 인증 기록 로드
-            } else {
-                showModal('오류', '존재하지 않거나 접근 권한이 없는 도전입니다.', () => {
-                    window.location.href = "/challenge"; 
-                });
-            }
-        }, (error) => {
-            console.error("Firestore Challenge Detail Error:", error);
-            showModal('데이터 오류', '도전 정보를 불러오는 중 오류가 발생했습니다.');
-        });
-        
-        return unsubscribe;
-    }
+    function loadChallengeDetails(data) {
+        if (!data) {
+             // 챌린지 데이터가 없으면 오류 표시
+             document.getElementById('challenge-title').textContent = "챌린지를 찾을 수 없습니다.";
+             document.getElementById('challenge-description').textContent = "유효하지 않은 챌린지 ID입니다.";
+             return;
+        }
 
-    /**
-     * 도전 상세 정보를 UI에 렌더링합니다.
-     */
-    function renderChallengeDetail(data) {
-        document.getElementById('challenge-title').textContent = data.title || '제목 없음';
-        document.getElementById('challenge-description').textContent = data.description || '상세 설명 없음';
-        document.getElementById('challenge-duration').textContent = `기간: ${data.durationDays || 30}일`;
+        challengeData = data;
+        isTeamChallenge = data.isTeam;
         
-        // 진행률 계산
-        const totalDays = data.durationDays || 30;
-        const certifiedCount = data.certifiedCount || 0;
-        const progressPercent = Math.min(100, (certifiedCount / totalDays) * 100).toFixed(0);
+        document.getElementById('challenge-title').textContent = data.title;
+        document.getElementById('challenge-description').textContent = data.description;
+        document.getElementById('challenge-type').textContent = data.isTeam ? '팀 챌린지 🤝' : '개인 챌린지 🏃';
+        document.getElementById('challenge-status').textContent = `D-${data.daysRemaining} | ${data.progress}% 달성`;
 
-        document.getElementById('challenge-status-text').textContent = `${certifiedCount}/${totalDays}일 (${progressPercent}%)`;
-        document.getElementById('progress-bar').style.width = `${progressPercent}%`;
-        
-        // 인증 상태에 따라 버튼 텍스트 변경 (간단 구현)
-        const certifyButton = document.getElementById('certify-button');
-        const today = new Date().toDateString();
-        const lastCertDate = data.lastCertifiedDate; // Firestore에 저장된 마지막 인증 날짜
-        
-        if (lastCertDate === today) {
-            certifyButton.textContent = "오늘 인증 완료!";
-            certifyButton.disabled = true;
-            certifyButton.style.backgroundColor = '#6c757d'; // 회색으로 변경
-            certifyButton.style.cursor = 'default';
+        // 팀 챌린지일 경우에만 채팅 탭 표시 및 채팅 기능 시작
+        if (isTeamChallenge) {
+            document.getElementById('chat-tab-button').style.display = 'block';
+            fetchChatMessages();
         } else {
-            certifyButton.innerHTML = `<i class="material-icons" style="font-size: 1.3rem; margin-right: 8px; vertical-align: middle;">done_all</i> 오늘 인증하기`;
-            certifyButton.disabled = false;
-            certifyButton.style.backgroundColor = 'var(--color-certify)';
-            certifyButton.style.cursor = 'pointer';
+            document.getElementById('chat-tab-button').style.display = 'none';
         }
-
-        document.title = `Doing! - ${data.title}`;
+        
+        // 진행 기록 로드 (Solo/Team 공통)
+        fetchProgressLogs();
     }
-
+    
     /**
-     * 챌린지 인증 기록 (서브컬렉션)을 실시간으로 가져옵니다.
+     * 챌린지 데이터를 Firestore에서 가져옵니다.
+     * (데모를 위해 Team/Solo ID에 따라 Mock Data 로드)
      */
-    function fetchCertifications() {
-        if (!currentUserId || !currentChallengeId) return;
-
-        // Certification Subcollection Path: /artifacts/{appId}/users/{userId}/challenges/{challengeId}/certifications
-        const path = `/artifacts/${appId}/users/${currentUserId}/challenges/${currentChallengeId}/certifications`;
-        const certsRef = collection(db, path);
-        
-        // 인증 기록은 최신 날짜순으로 정렬 (orderBy는 실제 환경에서 인덱싱 필요, 여기서는 간단하게 구현)
-        const q = query(certsRef);
-        // 클라이언트에서 정렬할 예정이므로 orderBy 제거 (권장 사항 준수)
-
-        const unsubscribe = onSnapshot(q, (snapshot) => {
-            const certifications = [];
-            snapshot.forEach((doc) => {
-                certifications.push({ id: doc.id, ...doc.data() });
-            });
-            
-            // 날짜를 기준으로 내림차순 정렬 (최신 기록이 위로)
-            certifications.sort((a, b) => new Date(b.date) - new Date(a.date));
-            
-            renderCertifications(certifications);
-        }, (error) => {
-            console.error("Firestore Certifications Error:", error);
-        });
-        
-        return unsubscribe;
-    }
-
-    /**
-     * 인증 기록 목록을 UI에 렌더링합니다.
-     */
-    function renderCertifications(certs) {
-        const container = document.getElementById('certification-log-container');
-        container.innerHTML = '';
-        
-        if (certs.length === 0) {
-            container.innerHTML = '<p id="no-certifications" class="text-center text-gray-400 p-2">아직 인증 기록이 없습니다.</p>';
+    function fetchChallengeDetails() {
+        if (!challengeId) {
+            loadChallengeDetails(null);
             return;
         }
-
-        certs.forEach(cert => {
-            const item = document.createElement('div');
-            item.className = 'certification-log-item';
-            
-            const date = new Date(cert.date);
-            const dateString = date.toLocaleDateString('ko-KR', { 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
-            });
-            const timeString = date.toLocaleTimeString('ko-KR', { 
-                hour: '2-digit', 
-                minute: '2-digit' 
-            });
-
-            item.innerHTML = `
-                <div style="display: flex; flex-direction: column; text-align: left;">
-                    <span class="font-semibold text-base" style="color: #333;">${dateString}</span>
-                    <span class="text-xs text-gray-500">${timeString} 인증 완료</span>
-                </div>
-                <button class="text-xs text-gray-400 hover:text-red-500 interactive" onclick="showModal('기록 상세', '인증 기록 상세 페이지는 곧 업데이트됩니다.', null, false)">
-                    <i class="material-icons" style="font-size: 1rem; vertical-align: middle;">more_vert</i>
-                </button>
-            `;
-            container.appendChild(item);
-        });
+        
+        // Mocking logic based on ID for demo purposes
+        let mockData;
+        if (challengeId === 'C-TEAM-456') {
+             mockData = {
+                id: challengeId,
+                title: "매일 코딩 1시간! 💻",
+                description: "팀원들과 함께 매일 밤 10시에 코딩 스터디 인증을 진행합니다. 100일간 꾸준히!",
+                isTeam: true,
+                daysRemaining: 95,
+                progress: 5
+             };
+        } else {
+             // Default Solo Mock
+             mockData = {
+                id: challengeId,
+                title: "아침 6시 기상 🌞",
+                description: "나 자신과의 싸움! 30일 동안 매일 아침 6시에 일어나 인증 사진을 남깁니다.",
+                isTeam: false,
+                daysRemaining: 15,
+                progress: 50
+             };
+        }
+        
+        loadChallengeDetails(mockData);
+        // 실제 Firestore 로직은 onSnapshot으로 대체됩니다.
+        // const challengeRef = doc(db, `/artifacts/${appId}/public/data/challenges/${challengeId}`);
+        // onSnapshot(challengeRef, (doc) => { if(doc.exists()) loadChallengeDetails(doc.data()); });
     }
 
+    // --- 진행 기록 기능 ---
+
     /**
-     * 인증 처리 함수 (setDoc으로 새로운 인증 문서 생성)
+     * 진행 기록을 Firestore에 저장합니다.
      */
-    window.handleCertify = async function() {
-        if (!currentUserId || !currentChallengeId) {
-            showModal('오류', '사용자 인증 또는 챌린지 ID가 유효하지 않습니다.');
-            return;
-        }
+    window.recordProgress = async function() {
+        if (!currentUserId || !challengeId) return showModal('오류', '로그인 또는 챌린지 정보가 부족합니다.');
 
-        if (document.getElementById('certify-button').disabled) {
-            showModal('알림', '이미 오늘 인증을 완료하셨습니다.');
-            return;
-        }
+        const progressInput = document.getElementById('progress-input');
+        const content = progressInput.value.trim();
 
+        if (content.length < 5) {
+            return showModal('경고', '기록 내용을 5자 이상 입력해주세요.');
+        }
+        
         try {
-            const today = new Date();
-            const todayString = today.toDateString(); // 날짜만 비교하기 위한 문자열 (예: 'Fri Oct 31 2025')
-            const timestamp = today.toISOString(); // 기록용 ISO 8601 문자열
-            
-            // 1. 새로운 인증 기록 문서 생성 (서브컬렉션)
-            // 문서 ID를 타임스탬프로 사용 (순서 보장 위함)
-            const certDocRef = doc(db, `/artifacts/${appId}/users/${currentUserId}/challenges/${currentChallengeId}/certifications`, timestamp);
-            
-            await setDoc(certDocRef, {
-                date: timestamp,
-                memo: "오늘의 인증입니다.",
-                type: "manual"
+            // Private data path: /artifacts/{appId}/users/{userId}/progress_logs
+            const path = `/artifacts/${appId}/users/${currentUserId}/progress_logs`;
+            await addDoc(collection(db, path), {
+                challengeId: challengeId,
+                userId: currentUserId,
+                userName: userName,
+                content: content,
+                timestamp: serverTimestamp()
             });
-            
-            // 2. 메인 챌린지 문서 업데이트
-            const challengeDocRef = doc(db, `/artifacts/${appId}/users/${currentUserId}/challenges/${currentChallengeId}`);
-            
-            // certifiedCount 증가 및 lastCertifiedDate 업데이트
-            const newCertifiedCount = (currentChallengeData.certifiedCount || 0) + 1;
-            
-            await updateDoc(challengeDocRef, {
-                certifiedCount: newCertifiedCount,
-                lastCertifiedDate: todayString,
-                // 만료일 체크 로직은 서버나 추후에 구현한다고 가정
-            });
-
-            showModal('성공', '오늘의 도전 인증을 완료했습니다!', null, false);
-
+            progressInput.value = ''; // 입력 필드 초기화
+            showModal('성공', '오늘의 기록이 성공적으로 저장되었습니다!');
         } catch (error) {
-            console.error("Certification Error:", error);
-            showModal('인증 오류', '인증 중 문제가 발생했습니다. 다시 시도해 주세요.');
+            console.error("Progress Record Error:", error);
+            showModal('오류', '기록 저장 중 문제가 발생했습니다.');
         }
     }
     
     /**
-     * 도전 포기 확인 모달 표시
+     * 진행 기록 목록을 실시간으로 가져와 렌더링합니다.
      */
-    window.showAbandonConfirmation = function() {
-        showModal(
-            '도전 포기', 
-            '정말로 이 도전을 포기하시겠습니까? 기록은 삭제되지 않지만, 더 이상 진행할 수 없습니다.', 
-            handleAbandon, 
-            true // 확인 버튼 포함
+    function fetchProgressLogs() {
+        if (!currentUserId || !challengeId) return;
+
+        // Private data path: /artifacts/{appId}/users/{userId}/progress_logs
+        const path = `/artifacts/${appId}/users/${currentUserId}/progress_logs`; 
+        const logsRef = collection(db, path);
+        
+        // 현재 챌린지에 해당하는 기록만 가져오며, 최신순 정렬
+        const q = query(
+            logsRef, 
+            // Note: orderBy is used for simple querying but for large datasets, sort in client-side to avoid index issues.
+            // For demo, we are showing the intent.
+            // You may need to remove orderBy in production if performance degrades.
+            // where('challengeId', '==', challengeId), // 챌린지ID 필터링 (Firestore Rule에서 처리할 수도 있음)
+            orderBy('timestamp', 'desc')
         );
+        
+        const listContainer = document.getElementById('progress-log-list');
+        listContainer.innerHTML = '';
+        listContainer.innerHTML = '<p style="text-align: center; color: #777;">기록을 불러오는 중...</p>';
+
+        onSnapshot(q, (snapshot) => {
+            listContainer.innerHTML = ''; 
+            let logsFound = false;
+            
+            snapshot.forEach((doc) => {
+                const log = doc.data();
+                if (log.challengeId === challengeId) { // 클라이언트 측 필터링 추가
+                    logsFound = true;
+                    const logItem = document.createElement('div');
+                    logItem.className = 'progress-log-item';
+                    
+                    const date = log.timestamp ? 
+                        new Date(log.timestamp.toDate()).toLocaleDateString('ko-KR', { year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 
+                        '방금 전';
+                        
+                    logItem.innerHTML = `
+                        <div class="log-date">${date} (${log.userName})</div>
+                        <div class="log-content">${log.content}</div>
+                    `;
+                    listContainer.appendChild(logItem);
+                }
+            });
+
+            if (!logsFound) {
+                listContainer.innerHTML = '<p style="text-align: center; color: #aaa; padding: 2rem 0;">아직 기록된 내용이 없습니다.</p>';
+            }
+
+        }, (error) => {
+            console.error("Progress Log Error:", error);
+            listContainer.innerHTML = '<p style="text-align: center; color: #ff4d4d;">기록 로드 중 오류 발생.</p>';
+        });
+    }
+
+    // --- 팀 메신저 기능 ---
+
+    /**
+     * 채팅 메시지를 Firestore에 저장합니다.
+     */
+    window.sendMessage = async function() {
+        if (!currentUserId || !challengeId || !isTeamChallenge) return;
+
+        const chatInput = document.getElementById('chat-input');
+        const content = chatInput.value.trim();
+
+        if (!content) return;
+        
+        try {
+            // Public data path: /artifacts/{appId}/public/data/challenges/{challengeId}/chat
+            const path = `/artifacts/${appId}/public/data/challenges/${challengeId}/chat`; 
+            await addDoc(collection(db, path), {
+                challengeId: challengeId,
+                userId: currentUserId,
+                userName: userName,
+                content: content,
+                timestamp: serverTimestamp()
+            });
+            chatInput.value = ''; // 입력 필드 초기화
+        } catch (error) {
+            console.error("Chat Send Error:", error);
+            showModal('오류', '메시지 전송 중 문제가 발생했습니다.');
+        }
+    }
+    
+    /**
+     * Enter 키를 눌렀을 때 메시지를 전송합니다.
+     */
+    window.handleChatKeydown = function(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            sendMessage();
+        }
     }
 
     /**
-     * 도전 포기 처리 함수 (도전 문서 삭제)
+     * 채팅 메시지 목록을 실시간으로 가져와 렌더링합니다.
      */
-    async function handleAbandon() {
-        if (!currentUserId || !currentChallengeId) {
-            showModal('오류', '사용자 인증 또는 챌린지 ID가 유효하지 않습니다.');
-            return;
-        }
+    function fetchChatMessages() {
+        if (!challengeId || !isTeamChallenge) return;
+
+        // Public data path: /artifacts/{appId}/public/data/challenges/{challengeId}/chat
+        const path = `/artifacts/${appId}/public/data/challenges/${challengeId}/chat`;
+        const chatRef = collection(db, path);
         
-        try {
-            // 도전 문서 삭제 (서브컬렉션은 자동으로 삭제되지 않지만, 여기서는 메인 문서만 삭제)
-            const challengeDocRef = doc(db, `/artifacts/${appId}/users/${currentUserId}/challenges/${currentChallengeId}`);
-            await deleteDoc(challengeDocRef);
+        // 시간순으로 정렬
+        const q = query(chatRef, orderBy('timestamp', 'asc')); 
+
+        const messagesContainer = document.getElementById('chat-messages');
+        messagesContainer.innerHTML = '<p style="text-align: center; color: #777;">채팅 기록을 불러오는 중...</p>';
+
+        onSnapshot(q, (snapshot) => {
+            messagesContainer.innerHTML = '';
             
-            showModal('포기 완료', '도전이 성공적으로 포기되었습니다.', () => {
-                window.location.href = "/challenge"; // 도전 목록 페이지로 리다이렉트
+            snapshot.forEach((doc) => {
+                const msg = doc.data();
+                const isMine = msg.userId === currentUserId;
+                
+                const messageBox = document.createElement('div');
+                messageBox.className = `message-box ${isMine ? 'mine' : 'theirs'}`;
+
+                const messageBlock = document.createElement('div');
+                messageBlock.className = 'message';
+                
+                // 보낸 사람 이름 표시 (내 메시지에는 이름만 표시)
+                const senderName = msg.userName || '알 수 없음';
+                
+                messageBlock.innerHTML = `
+                    <span class="message-sender">${isMine ? senderName : senderName}</span>
+                    ${msg.content}
+                `;
+                
+                messageBox.appendChild(messageBlock);
+                messagesContainer.appendChild(messageBox);
             });
+            
+            // 항상 최신 메시지로 스크롤
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
-        } catch (error) {
-            console.error("Abandon Challenge Error:", error);
-            showModal('포기 오류', '도전을 포기하는 중 문제가 발생했습니다.');
-        }
+        }, (error) => {
+            console.error("Chat Fetch Error:", error);
+            messagesContainer.innerHTML = '<p style="text-align: center; color: #ff4d4d;">채팅 로드 중 오류 발생.</p>';
+        });
     }
-
 
     // --- 인증 및 초기화 ---
 
     /**
-     * 사용자 인증 상태 확인 및 데이터 로드
+     * 사용자 인증 상태 확인 및 초기 데이터 로드
      */
     onAuthStateChanged(auth, async (user) => {
         if (!isAuthAttempted) {
@@ -699,25 +868,13 @@
 
         if (user) {
             currentUserId = user.uid;
-            if (user.isAnonymous) {
-                 console.warn("Anonymous user detected. Forcing redirect to /auth");
-                 window.location.href = "/auth"; 
-                 return;
-            }
             
-            // 1. Challenge ID 로드
-            const params = getQueryParams();
-            currentChallengeId = params.challengeId;
-
-            if (!currentChallengeId) {
-                showModal('오류', 'URL에 도전 ID(challengeId)가 없습니다.', () => {
-                     window.location.href = "/challenge"; 
-                });
-                return;
-            }
-
-            // 2. 데이터 로드 시작
-            fetchChallengeDetail(); 
+            // 임시 사용자명 설정 (실제 앱에서는 사용자 프로필에서 가져와야 함)
+            const userShortId = user.uid.substring(0, 4);
+            userName = `User-${userShortId}`; 
+            
+            // 챌린지 상세 정보 로드 시작
+            fetchChallengeDetails(); 
 
         } else if (isAuthAttempted) {
              console.warn("Authentication failed or logged out. Redirecting to /auth");
@@ -734,6 +891,10 @@
 
     // --- 초기화 로직 ---
     window.addEventListener('load', () => {
+        if (!challengeId) {
+             showModal('오류', '접근할 챌린지 정보가 없습니다. 유효한 ID를 제공해주세요.');
+        }
+
         const appContainer = document.getElementById('app-container');
         appContainer.style.minHeight = `${window.innerHeight}px`;
         
