@@ -4,681 +4,184 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Doing! - 챌린지 생성</title>
-    <!-- Pretendard 폰트 CDN 적용 -->
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
-    <!-- Google Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    
-    <!-- 공통 및 챌린지 생성 페이지 스타일 -->
     <style>
-        /* 기본 스타일 및 iOS 안전 영역 지원 */
-        :root {
-            --color-white: #ffffff;
-            --color-black: #000000;
-            --color-accent: #1E90FF; /* 포인트 블루 (Dodger Blue) */
-            --color-app-bg: #ffffff; 
-            --color-content-bg: #ffffff; 
-            --color-border: #e8e8e8; 
-            --color-light-accent: #E6F7FF; 
-            --color-danger: #ff4d4f;
-            --color-inactive: #ccc;
-        }
-
-        * { box-sizing: border-box; }
-
-        body {
-            font-family: 'Pretendard Variable', Pretendard, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: var(--color-app-bg); 
-            display: flex;
-            justify-content: center;
-            min-height: 100vh;
-            color: var(--color-black);
-            -webkit-tap-highlight-color: transparent;
-            overflow-y: scroll; 
-        }
-
-        #app-container {
-            width: 100%;
-            background-color: var(--color-app-bg); 
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            min-height: 100vh;
-            opacity: 0;
-            transition: opacity 0.5s ease;
-        }
-        
+        :root { --c-acc: #1E90FF; --c-lite: #E6F7FF; --c-bord: #e8e8e8; --c-dan: #ff4d4f; }
+        * { box-sizing: border-box; font-family: 'Pretendard Variable', sans-serif; }
+        body { margin: 0; padding: 0; display: flex; justify-content: center; min-height: 100vh; color: #000; -webkit-tap-highlight-color: transparent; }
+        #app-container { width: 100%; display: flex; flex-direction: column; position: relative; min-height: 100vh; opacity: 0; transition: opacity 0.5s; }
         #app-container.font-loaded { opacity: 1; }
-        
-        .hidden { display: none !important; }
-        .interactive { cursor: pointer; transition: background-color 0.2s, opacity 0.2s, transform 0.1s; }
-        .interactive:active { transform: scale(0.98); }
+        .h { display: none !important; }
+        .i { cursor: pointer; transition: 0.2s; }
+        .i:active { transform: scale(0.98); }
 
-        /* ------------------ PC/Desktop Layout ------------------ */
-        @media (min-width: 640px) {
-            body { align-items: flex-start; justify-content: center; }
-            #app-container { max-width: 600px; box-shadow: none; background-color: var(--color-white); } 
-            .view { padding: 2rem 1.5rem; } 
-            .header { padding: 0.5rem 1.5rem; }
-            .form-card { padding: 2rem; }
-            .submit-button { margin-top: 3rem; }
-        }
-        
-        /* ------------------ Mobile Layout ------------------ */
-        @media (max-width: 639px) {
-            #app-container { max-width: 100%; box-shadow: none; background-color: var(--color-app-bg); }
-            .header { padding: 0.5rem 1.5rem; } 
-            .view { padding: 1.5rem 1.5rem; }
-            .form-card { padding: 1.5rem; }
-            .submit-button { margin-top: 2rem; }
-        }
+        @media (min-width: 640px) { body { align-items: flex-start; justify-content: center; } #app-container { max-width: 600px; box-shadow: none; } .v { padding: 2rem 1.5rem; } .h-main { padding: 0.5rem 1.5rem; } }
+        @media (max-width: 639px) { .h-main { padding: 0.5rem 1.5rem; } .v { padding: 1.5rem 1.5rem; } }
 
-        /* 공통 헤더 스타일 */
-        .header {
-            display: flex;
-            justify-content: flex-start; 
-            align-items: center;
-            background-color: var(--color-content-bg);
-            border-bottom: 1px solid var(--color-border); 
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
+        .h-main { display: flex; justify-content: flex-start; align-items: center; background-color: #fff; border-bottom: 1px solid var(--c-bord); position: sticky; top: 0; z-index: 10; }
+        .h-main-title { font-size: 1.2rem; font-weight: 600; flex-grow: 1; text-align: center; margin-right: 40px; }
+        .back-btn { border: none; background: none; padding: 0.5rem; color: #000; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; }
+        .back-btn i { font-size: 1.2rem; margin-right: 2px; } 
 
-        .header-title {
-            font-size: 1.2rem; 
-            font-weight: 600; 
-            color: var(--color-black); 
-            letter-spacing: -0.5px;
-            flex-grow: 1; 
-            text-align: center; 
-            margin-right: 40px; 
-        }
-        
-        .back-button {
-            border: none;
-            background: none; 
-            padding: 0.5rem;
-            color: var(--color-black);
-            font-size: 1.5rem;
-            width: 40px; 
-            height: 40px; 
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .back-button i { font-size: 1.2rem; margin-right: 2px; } 
+        .v { flex-grow: 1; overflow-y: auto; background-color: #fff; }
+        .f-card { background-color: #fff; border-radius: 16px; box-shadow: none; }
+        .f-grp { margin-bottom: 1.5rem; }
+        .f-lbl { display: block; font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; color: #333; }
+        .f-inp, .f-txt, .f-sel { width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--c-bord); border-radius: 12px; font-size: 1rem; outline: none; transition: border-color 0.2s; background-color: #fff; }
+        .f-inp:focus, .f-txt:focus { border-color: var(--c-acc); }
+        .f-txt { resize: vertical; min-height: 100px; }
 
-        /* ------------------ 뷰 컨테이너 및 폼 카드 ------------------ */
-        .view {
-            flex-grow: 1;
-            overflow-y: auto;
-            display: block; 
-            background-color: var(--color-app-bg); 
-        }
+        .t-opt { border: 2px solid var(--c-bord); border-radius: 12px; padding: 1rem; transition: all 0.2s; background-color: #fcfcfc; }
+        .t-opt.active { border-color: var(--c-acc); background-color: var(--c-lite); }
+        .t-opt-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.2rem; }
+        .t-opt-desc { font-size: 0.85rem; color: #555; margin: 0; line-height: 1.3; }
+        .t-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
-        .form-card {
-            background-color: var(--color-content-bg);
-            border-radius: 16px;
-            box-shadow: none;
-        }
+        .s-btn { width: 100%; padding: 1rem; background-color: var(--c-acc); color: #fff; border: none; border-radius: 12px; font-size: 1.1rem; font-weight: 700; position: relative; overflow: hidden; }
+        .s-spin { display: inline-block; width: 20px; height: 20px; border: 3px solid rgba(255, 255, 255, 0.3); border-radius: 50%; border-top-color: #fff; animation: spin 1s ease-in-out infinite; margin-right: 8px; vertical-align: middle; }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* ------------------ 폼 요소 스타일 ------------------ */
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
+        .g-inp-c { display: flex; gap: 10px; }
+        .g-add-btn { width: 44px; height: 44px; padding: 0; border: none; background-color: var(--c-acc); color: #fff; border-radius: 12px; font-size: 1.5rem; line-height: 1; flex-shrink: 0; }
+        .g-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; margin-bottom: 8px; background-color: #f7f7f7; border: 1px solid var(--c-bord); border-radius: 12px; font-size: 0.95rem; }
+        .g-item .g-del-btn { margin-left: 10px; background: none; border: none; color: var(--c-dan); font-size: 1.2rem; padding: 0; line-height: 1; }
 
-        .form-label {
-            display: block;
-            font-size: 1rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: #333;
-        }
+        #tagCont { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+        .t-chip { display: inline-flex; align-items: center; background-color: var(--c-lite); color: var(--c-acc); padding: 4px 10px; border-radius: 16px; font-size: 0.85rem; font-weight: 600; }
+        .t-chip .r-tag { margin-left: 8px; opacity: 0.7; font-size: 0.9rem; }
 
-        .form-input, .form-textarea, .form-select {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 1px solid var(--color-border);
-            border-radius: 12px;
-            font-size: 1rem;
-            outline: none;
-            transition: border-color 0.2s ease;
-            background-color: var(--color-white);
-        }
-        .form-input:focus, .form-textarea:focus, .form-select:focus {
-            border-color: var(--color-accent);
-        }
-        
-        /* 읽기 전용 필드 스타일 */
-        .form-input[readonly] {
-            background-color: #f0f0f0; 
-            color: #555;
-            cursor: default;
-        }
-        
-        .form-textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
+        .sum-box { padding: 1rem; border: 1px solid var(--c-bord); border-radius: 12px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background-color: #fff; transition: background-color 0.2s; }
+        .sum-box span { font-weight: 600; color: var(--c-acc); }
 
-        /* 챌린지 타입 토글 스타일 */
-        .challenge-type-toggle {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
+        /* Bottom Sheet & Modal */
+        .bs { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: hidden; background-color: rgba(0, 0, 0, 0.4); justify-content: center; align-items: flex-end; }
+        .bs-cont { background-color: #fff; width: 100%; max-width: 600px; border-radius: 20px 20px 0 0; padding: 10px 20px 0 20px; transform: translateY(100%); transition: transform 0.3s ease-out; box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1); display: flex; flex-direction: column; max-height: 90vh; }
+        .bs.show .bs-cont { transform: translateY(0); }
+        .h-bar { width: 40px; height: 4px; background-color: #ddd; border-radius: 2px; margin: 0 auto 10px; }
+        .bs-head { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; margin-bottom: 10px; border-bottom: 1px solid var(--c-bord); }
+        .bs-title { font-size: 1.2rem; font-weight: 700; margin: 0; }
+        .bs-close { background: none; border: none; color: #888; font-size: 1.5rem; padding: 5px; }
+        .bs-area { flex-grow: 1; overflow-y: auto; padding-bottom: 20px; }
+        .bs-foot { padding: 10px 20px 20px 20px; background-color: #fff; border-top: 1px solid var(--c-bord); position: sticky; bottom: 0; width: 100%; display: flex; justify-content: center; }
 
-        .type-option {
-            border: 2px solid var(--color-border);
-            border-radius: 12px;
-            padding: 1rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            background-color: #fcfcfc;
-        }
-        .type-option.active {
-            border-color: var(--color-accent);
-            box-shadow: none;
-            background-color: var(--color-light-accent); 
-        }
-        .type-title {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--color-black);
-            display: block;
-            margin-bottom: 0.2rem;
-        }
-        .type-desc {
-            font-size: 0.85rem;
-            color: #555;
-            margin: 0;
-            line-height: 1.3;
-        }
-        
-        /* 폼 제출 버튼 */
-        .submit-button {
-            width: 100%;
-            padding: 1rem;
-            background-color: var(--color-accent);
-            color: var(--color-white);
-            border: none; 
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            box-shadow: none;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        /* 로딩 스피너 스타일 */
-        .loading-spinner {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: var(--color-white);
-            animation: spin 1s ease-in-out infinite;
-            margin-right: 8px;
-            vertical-align: middle;
-        }
+        /* Calendar */
+        .cal-head { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; margin-bottom: 10px; }
+        .cal-nav { background: none; border: none; color: var(--c-acc); font-size: 1.5rem; padding: 5px; }
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; text-align: center; }
+        .cal-wday { font-size: 0.9rem; font-weight: 600; color: #555; padding: 8px 0; }
+        .cal-wday:first-child { color: var(--c-dan); } 
+        .cal-wday:last-child { color: var(--c-acc); }
+        .cal-day { width: 36px; height: 36px; line-height: 36px; margin: 0 auto; border-radius: 50%; display: block; text-align: center; }
+        .cal-day.in { color: #bbb; cursor: default; }
+        .cal-day.td { font-weight: 700; border: 2px solid var(--c-acc); color: var(--c-acc); background-color: var(--c-lite); }
+        .cal-day.sel { background-color: var(--c-acc); color: #fff !important; font-weight: 700; border: none; }
+        .cal-day:not(.in):not(.sel):hover { background-color: #eee; }
+        .dur-grp { display: flex; align-items: center; gap: 10px; }
+        .dur-grp span { font-weight: 600; }
+        .exc-opt { display: flex; gap: 20px; margin-top: 20px; padding-top: 15px; border-top: 1px dashed var(--c-bord); }
+        .end-disp { text-align: center; padding: 1rem; background-color: #f7f7f7; border-radius: 12px; margin: 20px 0; }
+        .end-disp span { font-weight: 700; color: var(--c-dan); }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
+        /* Category */
+        .cat-grp { margin-bottom: 20px; }
+        .cat-grp-title { font-size: 1.1rem; font-weight: 700; color: var(--c-acc); margin-bottom: 10px; padding-bottom: 5px; border-bottom: 1px solid var(--c-lite); }
+        .cat-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+        .cat-chip { padding: 8px 15px; border-radius: 20px; border: 1px solid var(--c-bord); background-color: #fcfcfc; font-size: 0.95rem; font-weight: 500; }
+        .cat-chip.selected { background-color: var(--c-acc); color: #fff; border-color: var(--c-acc); font-weight: 600; }
+        .cat-sel-list { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px; margin-bottom: 10px; background-color: #f7f7f7; border-radius: 12px; }
+        .cat-sel-item { padding: 4px 10px; background-color: var(--c-lite); color: var(--c-acc); border-radius: 16px; font-size: 0.85rem; font-weight: 600; }
 
-        /* 목표 리스트 UI */
-        .goal-input-container {
-            display: flex;
-            gap: 10px;
-        }
-        .goal-input-container input {
-            flex-grow: 1;
-        }
-        .add-goal-button {
-            width: 44px;
-            height: 44px;
-            padding: 0;
-            border: none;
-            background-color: var(--color-accent);
-            color: var(--color-white);
-            border-radius: 12px;
-            font-size: 1.5rem;
-            line-height: 1;
-            font-weight: 300;
-            flex-shrink: 0;
-        }
-        #goalListContainer {
-            margin-top: 10px;
-        }
-        .goal-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px;
-            margin-bottom: 8px;
-            background-color: #f7f7f7; 
-            border: 1px solid var(--color-border);
-            border-radius: 12px;
-            font-size: 0.95rem;
-        }
-        .goal-item .delete-goal-button {
-            margin-left: 10px;
-            background: none;
-            border: none;
-            color: var(--color-danger);
-            cursor: pointer;
-            font-size: 1.2rem;
-            padding: 0;
-            line-height: 1;
-        }
-        
-        /* 태그 칩 스타일 */
-        #tagContainer {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 10px;
-        }
-        .tag-chip {
-            display: inline-flex;
-            align-items: center;
-            background-color: var(--color-light-accent);
-            color: var(--color-accent);
-            padding: 4px 10px;
-            border-radius: 16px;
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-        .tag-chip .remove-tag {
-            cursor: pointer;
-            margin-left: 8px;
-            color: var(--color-accent);
-            font-size: 0.9rem;
-            line-height: 1;
-            opacity: 0.7;
-            transition: opacity 0.2s;
-        }
-        .tag-chip .remove-tag:hover {
-            opacity: 1;
-        }
-        
-        /* 기간 설정 요약 박스 */
-        .date-summary-box {
-            padding: 1rem;
-            border: 1px solid var(--color-border);
-            border-radius: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 1rem;
-            cursor: pointer;
-            background-color: var(--color-content-bg);
-            transition: background-color 0.2s;
-        }
-        .date-summary-box:hover {
-            background-color: #f7f7f7;
-        }
-        .date-summary-box span {
-            font-weight: 600;
-            color: var(--color-accent);
-        }
-        
-        /* ------------------ 모달 및 Bottom Sheet 공통 스타일 ------------------ */
-        /* 메시지 모달 스타일 */
-        #modal {
-            display: none; 
-            position: fixed; 
-            z-index: 2000; 
-            left: 0; 
-            top: 0; 
-            width: 100%; 
-            height: 100%; 
-            overflow: auto; 
-            background-color: rgba(0, 0, 0, 0.4); 
-            justify-content: center; 
-            align-items: center;
-        }
-        .modal-content {
-            background-color: var(--color-white);
-            margin: 15% auto;
-            padding: 30px;
-            border-radius: 16px;
-            max-width: 90%;
-            min-width: 300px;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            transform: scale(0.9);
-            opacity: 0;
-            transition: transform 0.2s ease-out, opacity 0.2s ease-out;
-        }
-        .modal-title {
-            margin-top: 0;
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: var(--color-accent);
-            margin-bottom: 10px;
-        }
-        .modal-text {
-            margin-bottom: 0;
-            font-size: 1rem;
-            color: #555;
-            line-height: 1.4;
-        }
-        /* 버튼이 삭제되었으므로, 관련 스타일은 제거됩니다. */
-
-
-        /* Bottom Sheet Styles (기간 설정 모달) */
-        .bottom-sheet {
-            display: none; 
-            position: fixed; 
-            z-index: 1000; 
-            left: 0; 
-            top: 0; 
-            width: 100%; 
-            height: 100%; 
-            overflow: hidden; 
-            background-color: rgba(0, 0, 0, 0.4); 
-            justify-content: center; 
-            align-items: flex-end; 
-        }
-
-        .bottom-sheet-content {
-            background-color: var(--color-content-bg);
-            width: 100%;
-            max-width: 600px; 
-            border-top-left-radius: 20px;
-            border-top-right-radius: 20px;
-            padding: 10px 20px 0 20px;
-            transform: translateY(100%);
-            transition: transform 0.3s ease-out;
-            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1); 
-            display: flex;
-            flex-direction: column;
-            max-height: 90vh; 
-        }
-        
-        /* 핸들바 스타일 */
-        .handle-bar {
-            width: 40px;
-            height: 4px;
-            background-color: #ddd;
-            border-radius: 2px;
-            margin: 0 auto 10px;
-        }
-
-
-        .bottom-sheet.show .bottom-sheet-content {
-            transform: translateY(0);
-        }
-
-        .bottom-sheet-header {
-            display: flex;
-            justify-content: flex-start; /* 닫기 버튼 삭제로 인해 시작점에 정렬 */
-            align-items: center;
-            padding: 10px 0;
-            margin-bottom: 10px;
-            border-bottom: 1px solid var(--color-border);
-        }
-
-        .bottom-sheet-title {
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin: 0;
-        }
-
-        /* 닫기 버튼 스타일은 삭제됩니다. */
-        
-        .date-selection-area {
-             flex-grow: 1;
-             overflow-y: auto; 
-             padding-bottom: 20px; 
-        }
-        
-        /* 모달 내 하단 고정 버튼 컨테이너 - 중앙 정렬 및 크기 조정 */
-        .modal-footer {
-            padding: 10px 20px 20px 20px; 
-            background-color: var(--color-content-bg);
-            border-top: 1px solid var(--color-border);
-            position: sticky;
-            bottom: 0;
-            width: 100%;
-            display: flex; 
-            justify-content: center; 
-        }
-        .modal-footer .submit-button {
-            width: 100%; 
-            max-width: 500px; 
-        }
-
-
-        /* ------------------ 커스텀 달력 스타일 ------------------ */
-        .calendar-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 0;
-            margin-bottom: 10px;
-        }
-        .calendar-nav-button {
-            background: none;
-            border: none;
-            color: var(--color-accent);
-            font-size: 1.5rem;
-            padding: 5px;
-        }
-        .calendar-month-year {
-            font-size: 1.2rem;
-            font-weight: 700;
-        }
-        
-        .calendar-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 5px;
-            text-align: center;
-        }
-        .calendar-weekday {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: #555;
-            padding: 8px 0;
-        }
-        .calendar-weekday:first-child { color: var(--color-danger); } /* 일요일 */
-        .calendar-weekday:last-child { color: var(--color-accent); } /* 토요일 */
-
-        /* 달력 날짜를 작고 동그란 원으로 수정 */
-        .calendar-day {
-            width: 36px; 
-            height: 36px; 
-            line-height: 36px; 
-            margin: 0 auto; 
-            padding: 0;
-            font-size: 1rem;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            display: block; 
-            text-align: center;
-        }
-
-        .calendar-day.inactive {
-            color: #bbb;
-            cursor: default;
-        }
-        .calendar-day.today {
-            font-weight: 700;
-            border: 2px solid var(--color-accent);
-            color: var(--color-accent);
-            background-color: var(--color-light-accent);
-        }
-        .calendar-day.selected {
-            background-color: var(--color-accent);
-            color: var(--color-white) !important;
-            font-weight: 700;
-            border: none;
-        }
-        .calendar-day:not(.inactive):not(.selected):hover {
-            background-color: #eee;
-        }
-
-        /* 제외일 설정 옵션 */
-        .exclude-options {
-            display: flex;
-            gap: 20px;
-            margin-top: 20px;
-            padding-top: 15px;
-            border-top: 1px dashed var(--color-border);
-            flex-wrap: wrap; /* 모바일에서 깨짐 방지 */
-        }
-        .exclude-options label {
-            display: flex;
-            align-items: center;
-            font-size: 0.95rem;
-            font-weight: 500;
-        }
-        .exclude-options input[type="checkbox"] {
-            margin-right: 5px;
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
-            accent-color: var(--color-accent); /* 체크박스 색상 지정 */
-        }
-        
-        .end-date-display-modal {
-            text-align: center;
-            padding: 1rem;
-            background-color: #f7f7f7;
-            border-radius: 12px;
-            margin-top: 20px;
-            margin-bottom: 20px;
-        }
-        .end-date-display-modal p {
-            margin: 0;
-            font-weight: 500;
-            color: #333;
-        }
-        .end-date-display-modal span {
-            font-weight: 700;
-            color: var(--color-danger); /* 종료일 강조 */
-        }
-        /* 기간 입력 필드 */
-        .duration-input-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .duration-input-group span {
-            font-size: 1rem;
-            font-weight: 600;
-        }
-
+        /* Message Modal */
+        #modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.4); justify-content: center; align-items: center; }
+        .modal-content { background-color: #fff; padding: 30px; border-radius: 16px; max-width: 90%; min-width: 300px; text-align: center; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); transform: scale(0.9); opacity: 0; transition: transform 0.2s, opacity 0.2s; }
+        .modal-title { margin-top: 0; font-size: 1.2rem; font-weight: 700; color: var(--c-acc); margin-bottom: 10px; }
+        .modal-text { margin-bottom: 0; font-size: 1rem; color: #555; line-height: 1.4; }
     </style>
 </head>
 <body>
 
 <div id="app-container">
     
-    <!-- 헤더 -->
-    <header class="header">
-        <!-- 뒤로가기 버튼 -->
-        <button class="back-button interactive" onclick="window.history.back()">
+    <header class="h-main">
+        <button class="back-btn i" onclick="window.history.back()">
             <i class="material-icons">arrow_back_ios</i>
         </button>
-        <h1 class="header-title">챌린지 만들기</h1>
+        <h1 class="h-main-title">챌린지 만들기</h1>
     </header>
 
-    <!-- ------------------ 뷰 컨테이너 (폼) ------------------ -->
-    <div id="create-challenge-view" class="view">
-        <form id="challenge-form" class="form-card" onsubmit="event.preventDefault(); handleCreateChallenge();">
+    <div id="create-challenge-view" class="v">
+        <form id="challenge-form" class="f-card" onsubmit="event.preventDefault(); hdlCrt();">
             
-            <!-- 1. 챌린지 제목 -->
-            <div class="form-group">
-                <label for="title" class="form-label">챌린지 제목</label>
-                <input type="text" id="title" class="form-input" placeholder="매일 아침 6시에 일어나기" required maxlength="50">
+            <div class="f-grp">
+                <label for="title" class="f-lbl">챌린지 제목</label>
+                <input type="text" id="title" class="f-inp" placeholder="매일 아침 6시에 일어나기" required maxlength="50">
             </div>
             
-            <!-- (만든 사람 이름 필드는 요청에 따라 완전히 제거됨) -->
-
-            <!-- 2. 챌린지 타입 -->
-            <div class="form-group">
-                <label class="form-label">챌린지 타입</label>
-                <div class="challenge-type-toggle" id="challenge-type-toggle">
-                    <div class="type-option active interactive" data-public="false">
-                        <span class="type-title">챌린지</span>
-                        <p class="type-desc">목표를 달성해 보세요!</p>
+            <div class="f-grp">
+                <label class="f-lbl">챌린지 타입</label>
+                <div class="t-toggle" id="type-toggle">
+                    <div class="t-opt active i" data-public="false">
+                        <span class="t-opt-title">개인 챌린지</span>
+                        <p class="t-opt-desc">나만의 목표를 달성해 보세요!</p>
                     </div>
-                    <div class="type-option interactive" data-public="true">
-                        <span class="type-title">팀 챌린지</span>
-                        <p class="type-desc">사람들과 함께 목표를 달성해 보세요!</p>
+                    <div class="t-opt i" data-public="true">
+                        <span class="t-opt-title">팀 챌린지</span>
+                        <p class="t-opt-desc">사람들과 함께 목표를 달성해 보세요!</p>
                     </div>
                 </div>
                 <input type="hidden" id="isPublic" value="false" required>
             </div>
 
-
-            <!-- 3. 목표 설정 (Multi-Goal List) -->
-            <div class="form-group">
-                <label class="form-label" id="goal-label">목표</label>
-                
-                <div class="goal-input-container">
-                    <input type="text" id="currentGoalInput" class="form-input" placeholder="새로운 목표를 입력하세요 (예: 매일 1시간 독서)" maxlength="100">
-                    <button type="button" id="addGoalButton" class="add-goal-button interactive">+</button>
+            <div class="f-grp">
+                <label class="f-lbl" id="goal-lbl">목표</label>
+                <div class="g-inp-c">
+                    <input type="text" id="goalInp" class="f-inp" placeholder="새로운 목표를 입력하세요 (예: 매일 1시간 독서)" maxlength="100">
+                    <button type="button" id="addGoalBtn" class="g-add-btn i">+</button>
                 </div>
-
-                <div id="goalListContainer">
-                    <!-- 목표 항목들이 여기에 추가됩니다 -->
-                </div>
-                
-                <input type="hidden" id="goalsHidden" required> <!-- JSON string for submission -->
+                <div id="goalListCont"></div>
+                <input type="hidden" id="goalsHidden" required> 
             </div>
             
-            <!-- 3.5. 참가 최대 인원 (maxParticipants) (팀 챌린지일 때만 표시) -->
-            <div class="form-group hidden" id="max-participants-group">
-                <label for="maxParticipants" class="form-label">최대 참가 인원</label>
-                <input type="number" id="maxParticipants" class="form-input" value="10" min="2" max="100" placeholder="2명 이상 100명 이하 (기본값: 10)">
+            <div class="f-grp h" id="max-p-grp">
+                <label for="maxP" class="f-lbl">최대 참가 인원</label>
+                <input type="number" id="maxP" class="f-inp" value="10" min="2" max="100" placeholder="2명 이상 100명 이하 (기본값: 10)">
             </div>
             
-            <!-- 4. 보상 설정 (개인 챌린지일 때만 표시) -->
-            <div class="form-group" id="reward-group">
-                <label for="reward" class="form-label">나만의 보상 (선택 사항)</label>
-                <input type="text" id="reward" class="form-input" placeholder="챌린지 성공 시 나에게 주는 보상 (예: 제주도 여행)" maxlength="100">
+            <div class="f-grp" id="reward-grp">
+                <label for="reward" class="f-lbl">나만의 보상 (선택 사항)</label>
+                <input type="text" id="reward" class="f-inp" placeholder="챌린지 성공 시 나에게 주는 보상 (예: 제주도 여행)" maxlength="100">
             </div>
             
-            <!-- 4.5. 검색/분류용 태그 (tags) -->
-            <div class="form-group">
-                <label for="tags" class="form-label">태그 (선택 사항) - 입력 후 Enter</label>
-                
-                <div id="tagContainer" class="mb-2">
-                    <!-- 태그 칩이 여기에 추가됩니다 -->
-                </div>
-                
-                <input type="text" id="tags" class="form-input" placeholder="예: #독서, 운동, 재테크 (최대 5개)">
-                <small class="text-gray-500 block mt-1 text-xs">쉼표, 공백, Enter 키로 태그를 추가할 수 있습니다.</small>
+            <div class="f-grp">
+                <label for="tags" class="f-lbl">태그 (선택 사항) - 입력 후 Enter</label>
+                <div id="tagCont"></div>
+                <input type="text" id="tags" class="f-inp" placeholder="예: #독서, 운동, 재테크 (최대 5개)">
+                <small class="block mt-1 text-xs text-gray-500">쉼표, 공백, Enter 키로 태그를 추가할 수 있습니다.</small>
             </div>
-
             
-            <!-- 5. 기간 설정 (커스텀 UI) -->
-            <div class="form-group">
-                <label class="form-label">기간 설정</label>
-                <div class="date-summary-box interactive" onclick="showDateModal()">
-                    <span id="dateSummaryText">기간을 설정해 주세요</span>
+            <div class="f-grp">
+                <label class="f-lbl">분류 (카테고리)</label>
+                <div class="sum-box i" onclick="showCatMdl()">
+                    <span id="catSumTxt">분류를 선택해 주세요 (최대 3개)</span>
                     <i class="material-icons">chevron_right</i>
                 </div>
-                
-                <input type="hidden" id="startDateHidden" required>
-                <input type="hidden" id="durationDaysHidden" required>
-                <input type="hidden" id="endDateHidden" required>
-                <input type="hidden" id="excludeWeekendsHidden" value="false">
+                <input type="hidden" id="catsHidden" value="[]" required>
+            </div>
+
+            <div class="f-grp">
+                <label class="f-lbl">기간 설정</label>
+                <div class="sum-box i" onclick="showDateMdl()">
+                    <span id="dateSumTxt">기간을 설정해 주세요</span>
+                    <i class="material-icons">chevron_right</i>
+                </div>
+                <input type="hidden" id="startDH" required>
+                <input type="hidden" id="durationDH" required>
+                <input type="hidden" id="endDH" required>
+                <input type="hidden" id="excludeWH" value="false">
             </div>
             
-            <!-- 제출 버튼 -->
-            <button type="submit" id="submit-button" class="submit-button interactive">
+            <button type="submit" id="submit-button" class="s-btn i">
                 챌린지 시작하기
             </button>
         </form>
@@ -686,841 +189,547 @@
     
 </div>
 
-<!-- ------------------ 기간 설정 모달 (Bottom Sheet) ------------------ -->
-<div id="dateModal" class="bottom-sheet">
-    <div class="bottom-sheet-content">
-        <div class="handle-bar"></div> <!-- 핸들바 -->
-        <div class="bottom-sheet-header">
-            <h3 class="bottom-sheet-title">챌린지 기간 설정</h3>
-            <!-- 닫기 버튼 삭제됨 -->
+<!-- Category Modal -->
+<div id="catMdl" class="bs">
+    <div class="bs-cont">
+        <div class="h-bar"></div>
+        <div class="bs-head">
+            <h3 class="bs-title">분류 선택 (카테고리)</h3>
+            <button class="bs-close i" onclick="hideCatMdl()"><i class="material-icons">close</i></button>
         </div>
-        
-        <div class="date-selection-area">
-            
-            <!-- 1. 시작일 설정 (커스텀 달력) -->
-            <div class="form-group">
-                <label class="form-label">시작일 선택</label>
-                <div id="calendarContainer">
-                    <!-- 달력 헤더 -->
-                    <div class="calendar-header">
-                        <button id="prevMonth" class="calendar-nav-button interactive"><i class="material-icons">chevron_left</i></button>
-                        <span id="currentMonthYear" class="calendar-month-year"></span>
-                        <button id="nextMonth" class="calendar-nav-button interactive"><i class="material-icons">chevron_right</i></button>
+        <div class="bs-area">
+            <p style="font-size: 0.9rem; color: #555; margin-top: 0; margin-bottom: 15px;">챌린지를 대표할 분류를 최대 3개까지 선택해 주세요.</p>
+            <div class="cat-grp">
+                <h4 class="cat-grp-title">선택된 분류: <span id="catCountDisp">0</span>/3</h4>
+                <div id="selCatList" class="cat-sel-list">
+                    <p id="noCatSel" style="font-size: 0.85rem; color: #888; margin: 0;">선택된 분류가 없습니다.</p>
+                </div>
+            </div>
+            <div id="catsListCont"></div>
+        </div>
+        <div class="bs-foot">
+            <button class="s-btn i" id="confCatBtn" onclick="confCatSel()">분류 선택 완료</button>
+        </div>
+    </div>
+</div>
+
+<!-- Date Modal -->
+<div id="dateMdl" class="bs">
+    <div class="bs-cont">
+        <div class="h-bar"></div>
+        <div class="bs-head">
+            <h3 class="bs-title">챌린지 기간 설정</h3>
+             <button class="bs-close i" onclick="hideDateMdl()"><i class="material-icons">close</i></button>
+        </div>
+        <div class="bs-area">
+            <div class="f-grp">
+                <label class="f-lbl">시작일 선택</label>
+                <div id="calCont">
+                    <div class="cal-head">
+                        <button id="prevMonth" class="cal-nav i"><i class="material-icons">chevron_left</i></button>
+                        <span id="curMY" class="text-lg font-bold"></span>
+                        <button id="nextMonth" class="cal-nav i"><i class="material-icons">chevron_right</i></button>
                     </div>
-                    <!-- 달력 그리드 -->
-                    <div class="calendar-grid" id="calendarGrid">
-                        <!-- 요일 -->
-                        <div class="calendar-weekday">일</div>
-                        <div class="calendar-weekday">월</div>
-                        <div class="calendar-weekday">화</div>
-                        <div class="calendar-weekday">수</div>
-                        <div class="calendar-weekday">목</div>
-                        <div class="calendar-weekday">금</div>
-                        <div class="calendar-weekday">토</div>
-                        <!-- 날짜는 JS로 채워짐 -->
+                    <div class="cal-grid" id="calGrid">
+                        <div class="cal-wday">일</div><div class="cal-wday">월</div><div class="cal-wday">화</div><div class="cal-wday">수</div><div class="cal-wday">목</div><div class="cal-wday">금</div><div class="cal-wday">토</div>
                     </div>
                 </div>
             </div>
             
-            <!-- 2. 기간 및 제외일 설정 -->
-            <div class="form-group">
-                <label class="form-label">기간 설정</label>
-                <div class="duration-input-group">
-                    <input type="number" id="modalDurationDaysInput" class="form-input" value="7" min="1" max="365" required style="width: 100px; text-align: right;">
+            <div class="f-grp">
+                <label class="f-lbl">기간 설정</label>
+                <div class="dur-grp">
+                    <input type="number" id="modalDurInp" class="f-inp" value="7" min="1" max="365" required style="width: 100px; text-align: right;">
                     <span>일 간</span>
                 </div>
-                
-                <!-- 제외일 옵션 (주말 제외만 남김) -->
-                <div class="exclude-options">
+                <div class="exc-opt">
                     <label>
-                        <input type="checkbox" id="excludeWeekendsCheckbox">
+                        <input type="checkbox" id="excWkndChk">
                         주말(토/일) 제외
                     </label>
                 </div>
             </div>
             
-            <!-- 종료일 표시 -->
-            <div class="end-date-display-modal">
-                <p>챌린지 종료일: <span id="modalEndDateDisplay">시작일과 기간을 설정해 주세요</span></p>
-                <p style="font-size: 0.8rem; margin-top: 5px; color:#555;">(실제 수행 일수: <span id="actualDurationDaysDisplay" style="color:var(--color-black);">0</span>일)</p>
+            <div class="end-disp">
+                <p style="margin: 0; font-weight: 500; color: #333;">챌린지 종료일: <span id="modalEndDisp">시작일과 기간을 설정해 주세요</span></p>
+                <p style="font-size: 0.8rem; margin-top: 5px; color:#555;">(실제 수행 일수: <span id="actualDurDisp" style="color:#000;">0</span>일)</p>
             </div>
         </div>
 
-        <div class="modal-footer">
-            <button class="submit-button interactive" id="confirmDateButton" onclick="confirmDateSelection()">기간 설정 완료</button>
+        <div class="bs-foot">
+            <button class="s-btn i" id="confDateBtn" onclick="confDateSel()">기간 설정 완료</button>
         </div>
     </div>
 </div>
 
-<!-- 모달 팝업 구조 (메시지 박스 용도) - 버튼 삭제됨 -->
+<!-- Message Modal -->
 <div id="modal">
     <div class="modal-content">
         <h3 class="modal-title" id="modal-title"></h3>
         <p class="modal-text" id="modal-text"></p>
-        <!-- '확인' 및 '닫기' 버튼이 완전히 삭제되었습니다. -->
     </div>
 </div>
 
 <script type="module">
-    // Firebase SDK Import
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { 
-        getAuth, 
-        onAuthStateChanged,
-        signInWithCustomToken 
-    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { 
-        getFirestore, 
-        collection, 
-        addDoc
-    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    // --- Firebase 설정 및 초기화 ---
-    const userFirebaseConfig = { 
-        apiKey: "AIzaSyBMowSIHMdz69dYY-mAW8l6VjKxBW54SfU",
-        authDomain: "doing-a.firebaseapp.com",
-        projectId: "doing-a",
-        storageBucket: "doing-a.firebasestorage.app",
-        messagingSenderId: "24279439955",
-        appId: "1:24279439955:web:2bf5c965de1b0a236884a6",
-        measurementId: "G-VJ5YQRGNE3"
-    };
-    
-    // 환경 변수에서 설정 가져오기 (없으면 임시 설정 사용)
-    const firebaseConfig = typeof __firebase_config !== 'undefined' && JSON.parse(__firebase_config).apiKey 
-        ? JSON.parse(__firebase_config) 
-        : userFirebaseConfig;
-        
+    // Firebase 설정
+    const uConfig = { apiKey: "AIzaSyBMowSIHMdz69dYY-mAW8l6VjKxBW54SfU", authDomain: "doing-a.firebaseapp.com", projectId: "doing-a", storageBucket: "doing-a.firebasestorage.app", messagingSenderId: "24279439955", appId: "1:24279439955:web:2bf5c965de1b0a236884a6", measurementId: "G-VJ5YQRGNE3" };
+    const fConfig = typeof __firebase_config !== 'undefined' && JSON.parse(__firebase_config).apiKey ? JSON.parse(__firebase_config) : uConfig;
     const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
 
-    const app = initializeApp(firebaseConfig);
+    const app = initializeApp(fConfig);
     const db = getFirestore(app);
     const auth = getAuth(app);
     
     // 글로벌 상태
-    let currentUserId = null;
-    let isAuthAttempted = false; 
-    let goals = []; // 챌린지 목표 리스트 상태
-    let currentTags = []; // 현재 추가된 태그 리스트
-    
-    // 기간 설정 관련 상태
-    let selectedDate = new Date(); // 달력에서 선택된 날짜 (시작일)
-    let currentCalendarDate = new Date(); // 현재 달력에 표시되는 월
-    let modalCloseCallback = null; // 모달이 닫힐 때 실행될 콜백 함수
-    
-    // --- DOM 요소 캐싱 ---
-    const modal = document.getElementById('modal');
-    const submitButton = document.getElementById('submit-button');
-    const rewardGroup = document.getElementById('reward-group');
-    const goalLabel = document.getElementById('goal-label');
-    const currentGoalInput = document.getElementById('currentGoalInput');
-    const addGoalButton = document.getElementById('addGoalButton');
-    const goalListContainer = document.getElementById('goalListContainer');
-    const goalsHidden = document.getElementById('goalsHidden');
+    let uId = null;
+    let isAuth = false; 
+    let gs = []; // Goals (목표)
+    let ts = []; // Tags (태그)
+    let cs = []; // Categories (분류)
+    let selDate = new Date(); // Selected Start Date
+    let calDate = new Date(); // Current Calendar Month
+    let mdlCb = null; // Modal Callback
 
-    // 새로 추가/수정된 DOM 요소
-    // const creatorNameInput = document.getElementById('creatorName'); // (제거됨)
-    const maxParticipantsGroup = document.getElementById('max-participants-group');
-    const maxParticipantsInput = document.getElementById('maxParticipants');
-    const tagsInput = document.getElementById('tags');
-    const tagContainer = document.getElementById('tagContainer'); // 태그 칩 컨테이너
+    // DOM 요소
+    const mdl = document.getElementById('modal');
+    const sBtn = document.getElementById('submit-button');
+    const rGrp = document.getElementById('reward-grp');
+    const gLbl = document.getElementById('goal-lbl');
+    const gInp = document.getElementById('goalInp');
+    const gListCont = document.getElementById('goalListCont');
+    const goalsH = document.getElementById('goalsHidden');
+    const mPGrp = document.getElementById('max-p-grp');
+    const mPInp = document.getElementById('maxP');
+    const tInp = document.getElementById('tags');
+    const tCont = document.getElementById('tagCont');
+    const dateMdl = document.getElementById('dateMdl');
+    const calGrid = document.getElementById('calGrid');
+    const curMY = document.getElementById('curMY');
+    const modalDurInp = document.getElementById('modalDurInp');
+    const excWkndChk = document.getElementById('excWkndChk');
+    const modalEndDisp = document.getElementById('modalEndDisp');
+    const actualDurDisp = document.getElementById('actualDurDisp');
+    const dateSumTxt = document.getElementById('dateSumTxt');
+    const startDH = document.getElementById('startDH');
+    const durationDH = document.getElementById('durationDH');
+    const endDH = document.getElementById('endDH');
+    const excludeWH = document.getElementById('excludeWH');
+    const catMdl = document.getElementById('catMdl');
+    const catSumTxt = document.getElementById('catSumTxt');
+    const catsH = document.getElementById('catsHidden');
+    const catsListCont = document.getElementById('catsListCont');
+    const selCatList = document.getElementById('selCatList');
+    const catCountDisp = document.getElementById('catCountDisp');
+    const noCatSel = document.getElementById('noCatSel');
 
-    // 기간 설정 모달 요소
-    const dateModal = document.getElementById('dateModal');
-    const calendarGrid = document.getElementById('calendarGrid');
-    const currentMonthYear = document.getElementById('currentMonthYear');
-    const modalDurationDaysInput = document.getElementById('modalDurationDaysInput');
-    const excludeWeekendsCheckbox = document.getElementById('excludeWeekendsCheckbox');
-    const modalEndDateDisplay = document.getElementById('modalEndDateDisplay');
-    const actualDurationDaysDisplay = document.getElementById('actualDurationDaysDisplay');
-    const dateSummaryText = document.getElementById('dateSummaryText');
-    const startDateHidden = document.getElementById('startDateHidden');
-    const durationDaysHidden = document.getElementById('durationDaysHidden');
-    const endDateHidden = document.getElementById('endDateHidden');
-    const excludeWeekendsHidden = document.getElementById('excludeWeekendsHidden');
+    // 카테고리 정의
+    const CATS = {
+        '성장/자기계발': ['독서', '외국어 학습', '글쓰기', '자격증 준비', '강의 수강'],
+        '건강/운동': ['러닝/조깅', '홈트레이닝', '요가/필라테스', '헬스/웨이트', '식단 관리'],
+        '재테크/금전': ['가계부 작성', '절약/소비 통제', '투자 공부', '재테크 독서'],
+        '업무/생산성': ['업무 시간 확보', '기획/보고서 작성', '시간 관리', '퇴근 후 자기계발'],
+        '취미/여가': ['악기 연습', '그림 그리기', '사진 찍기', '영상 편집'],
+        '생활/습관': ['아침 일찍 일어나기', '청소/정리', '물 마시기', '명상', '일기 쓰기'],
+    };
 
+    // --- UI/UX & 유틸리티 ---
 
-    // --- UI/UX 함수 ---
-    
-    /**
-     * 모달을 표시하고 콜백 함수를 저장합니다.
-     */
-    window.showModal = function(title, text, callback = null) {
+    window.showModal = function(title, text, cb = null) {
         document.getElementById('modal-title').textContent = title;
         document.getElementById('modal-text').textContent = text;
-        modalCloseCallback = callback; // 콜백 저장
-        
-        modal.style.display = 'flex';
+        mdlCb = cb;
+        mdl.style.display = 'flex';
         setTimeout(() => {
-            modal.querySelector('.modal-content').style.transform = 'scale(1)';
-            modal.querySelector('.modal-content').style.opacity = '1';
+            mdl.querySelector('.modal-content').style.transform = 'scale(1)';
+            mdl.querySelector('.modal-content').style.opacity = '1';
         }, 10); 
     }
-
-    /**
-     * 모달을 숨깁니다.
-     */
     window.hideModal = function() {
-        modal.querySelector('.modal-content').style.transform = 'scale(0.9)';
-        modal.querySelector('.modal-content').style.opacity = '0';
-        setTimeout(() => {
-            modal.style.display = 'none';
-        }, 200); 
-    }
-    
-    window.showDateModal = function() {
-        // 모달 열 때 현재 달력의 월을 오늘 날짜로 초기화
-        currentCalendarDate = new Date(selectedDate); 
-        renderCalendar(currentCalendarDate.getFullYear(), currentCalendarDate.getMonth());
-        updateModalDateUI(); // 시작일, 기간, 종료일 계산/표시
-        
-        dateModal.style.display = 'flex';
-        setTimeout(() => {
-            dateModal.classList.add('show');
-        }, 10);
+        mdl.querySelector('.modal-content').style.transform = 'scale(0.9)';
+        mdl.querySelector('.modal-content').style.opacity = '0';
+        setTimeout(() => { mdl.style.display = 'none'; }, 200); 
     }
 
-    window.hideDateModal = function() {
-        dateModal.classList.remove('show');
-        setTimeout(() => {
-            dateModal.style.display = 'none';
-        }, 300);
+    window.showDateMdl = function() {
+        calDate = new Date(selDate); 
+        renderCal(calDate.getFullYear(), calDate.getMonth());
+        updMdlDateUI();
+        dateMdl.style.display = 'flex';
+        setTimeout(() => { dateMdl.classList.add('show'); }, 10);
+    }
+    window.hideDateMdl = function() {
+        dateMdl.classList.remove('show');
+        setTimeout(() => { dateMdl.style.display = 'none'; }, 300);
     }
     
-    /**
-     * Date 객체를 "YYYY-MM-DD" 형식의 ISO 문자열로 포맷합니다.
-     */
-    function formatDateIso(date) {
-        if (!date) return '';
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
+    window.showCatMdl = function() {
+        renderCatsList();
+        renderSelCatSum();
+        catMdl.style.display = 'flex';
+        setTimeout(() => { catMdl.classList.add('show'); }, 10);
+    }
+    window.hideCatMdl = function() {
+        catMdl.classList.remove('show');
+        setTimeout(() => { catMdl.style.display = 'none'; }, 300);
+    }
+
+    function fmtIso(d) {
+        if (!d) return '';
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
     }
 
-    /**
-     * ISO 형식의 날짜 문자열을 "YYYY년 MM월 DD일" 형식으로 포맷합니다.
-     */
-    function formatDateDisplay(date) {
-        if (typeof date === 'string') {
-            date = new Date(date.replace(/-/g, '/')); // Safari 호환성을 위해 수정
-        }
-        if (!(date instanceof Date) || isNaN(date)) return '';
-        
-        const year = date.getFullYear();
-        const month = date.getMonth() + 1;
-        const day = date.getDate();
-        return `${year}년 ${String(month).padStart(2, '0')}월 ${String(day).padStart(2, '0')}일`;
+    function fmtDisp(d) {
+        if (typeof d === 'string') d = new Date(d.replace(/-/g, '/'));
+        if (!(d instanceof Date) || isNaN(d)) return '';
+        return `${d.getFullYear()}년 ${String(d.getMonth() + 1).padStart(2, '0')}월 ${String(d.getDate()).padStart(2, '0')}일`;
     }
 
-    /**
-     * 시작일과 총 기간, 주말 제외 옵션을 기반으로 실제 종료일과 수행 일수를 계산합니다.
-     * @returns {object} {endDate: Date, actualDuration: Number}
-     */
-    function calculateChallengePeriod(startDate, totalDurationDays, excludeWeekends) {
-        if (!(startDate instanceof Date) || isNaN(totalDurationDays) || totalDurationDays < 1) {
-            return { endDate: null, actualDuration: 0 };
-        }
-        
-        let actualDuration = 0; // 실제로 수행해야 하는 날짜 카운트
-        let daysPassed = 0;    // 시작일로부터 경과한 실제 일수 (루프 카운터)
-        let endDate = null;
-        
-        // 날짜를 하루씩 증가시키면서 목표 수행 일수에 도달할 때까지 반복
-        while (actualDuration < totalDurationDays) {
-            
-            // currentDate를 시작일로부터 daysPassed만큼 더하여 정확한 날짜를 계산
-            let currentDate = new Date(startDate);
-            currentDate.setDate(startDate.getDate() + daysPassed);
+    function calcPeriod(sDate, dur, excWknd) {
+        if (!(sDate instanceof Date) || isNaN(dur) || dur < 1) return { eDate: null, aDur: 0 };
+        let aDur = 0, dPass = 0, eDate = null;
+        while (aDur < dur) {
+            let cDate = new Date(sDate);
+            cDate.setDate(sDate.getDate() + dPass);
+            const dOW = cDate.getDay();
+            const isWknd = dOW === 0 || dOW === 6;
 
-            const dayOfWeek = currentDate.getDay(); // 0: 일요일, 6: 토요일
-            const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
-
-            if (excludeWeekends && isWeekend) {
-                // 주말이면 날짜만 증가
-            } else {
-                // 수행해야 하는 날짜인 경우 카운트 증가
-                actualDuration++;
-            }
+            if (!excWknd || !isWknd) aDur++;
             
-            if (actualDuration === totalDurationDays) {
-                // 목표 수행 일수에 도달했을 때의 날짜가 종료일
-                endDate = currentDate;
+            if (aDur === dur) {
+                eDate = cDate;
                 break;
             }
-
-            daysPassed++;
-            
-            // 무한 루프 방지
-            if (daysPassed > 365 * 2) { 
-                console.error("Duration calculation loop limit reached.");
-                return { endDate: null, actualDuration: 0 };
-            }
+            dPass++;
+            if (dPass > 365 * 2) break; // Safety
         }
-        
-        return { endDate: endDate, actualDuration: totalDurationDays };
+        return { eDate: eDate, aDur: dur };
     }
 
-
-    /**
-     * 기간 설정 모달 UI 업데이트 및 종료일 계산
-     */
-    function updateModalDateUI() {
-        const totalDurationDays = parseInt(modalDurationDaysInput.value, 10);
-        const excludeWeekends = excludeWeekendsCheckbox.checked;
-        
+    function updMdlDateUI() {
+        const dur = parseInt(modalDurInp.value, 10);
+        const excWknd = excWkndChk.checked;
         const today = new Date();
-        const start = selectedDate; 
+        const start = selDate; 
         
-        // 시작일이 오늘보다 이전이면 오늘로 강제 설정 (챌린지는 과거에 시작할 수 없음)
         if (start < today && start.toDateString() !== today.toDateString()) {
-             selectedDate = today;
-             renderCalendar(currentCalendarDate.getFullYear(), currentCalendarDate.getMonth());
-             return updateModalDateUI(); 
+             selDate = today;
+             renderCal(calDate.getFullYear(), calDate.getMonth());
+             return updMdlDateUI(); 
         }
 
-        if (totalDurationDays && totalDurationDays >= 1) {
-            const { endDate, actualDuration } = calculateChallengePeriod(
-                start, 
-                totalDurationDays, 
-                excludeWeekends
-            );
+        if (dur && dur >= 1) {
+            const { eDate, aDur } = calcPeriod(start, dur, excWknd);
             
-            if (endDate) {
-                modalEndDateDisplay.textContent = formatDateDisplay(endDate);
-                actualDurationDaysDisplay.textContent = actualDuration;
-                
-                // 임시로 숨겨진 필드에 저장
-                startDateHidden.value = formatDateIso(start);
-                endDateHidden.value = formatDateIso(endDate);
-                durationDaysHidden.value = totalDurationDays;
-                excludeWeekendsHidden.value = excludeWeekends;
+            if (eDate) {
+                modalEndDisp.textContent = fmtDisp(eDate);
+                actualDurDisp.textContent = aDur;
+                startDH.value = fmtIso(start);
+                endDH.value = fmtIso(eDate);
+                durationDH.value = dur;
+                excludeWH.value = excWknd;
             } else {
-                modalEndDateDisplay.textContent = '기간 계산 오류';
-                actualDurationDaysDisplay.textContent = 0;
+                modalEndDisp.textContent = '기간 계산 오류'; actualDurDisp.textContent = 0;
             }
         } else {
-            modalEndDateDisplay.textContent = '시작일과 유효한 기간을 설정해 주세요';
-            actualDurationDaysDisplay.textContent = 0;
-            startDateHidden.value = '';
-            endDateHidden.value = '';
-            durationDaysHidden.value = '';
-            excludeWeekendsHidden.value = false;
+            modalEndDisp.textContent = '시작일과 유효한 기간을 설정해 주세요'; actualDurDisp.textContent = 0;
+            startDH.value = endDH.value = durationDH.value = ''; excludeWH.value = false;
         }
     }
     
-    /**
-     * 커스텀 달력 렌더링
-     */
-    function renderCalendar(year, month) {
-        const firstDayOfMonth = new Date(year, month, 1);
-        const lastDayOfMonth = new Date(year, month + 1, 0);
-        const today = new Date();
-        const startDay = firstDayOfMonth.getDay(); // 0(일) ~ 6(토)
+    function renderCal(y, m) {
+        const first = new Date(y, m, 1), last = new Date(y, m + 1, 0), today = new Date();
+        const startD = first.getDay(); 
+        curMY.textContent = `${y}년 ${m + 1}월`;
         
-        currentMonthYear.textContent = `${year}년 ${month + 1}월`;
-        
-        // 기존 날짜 제거 (요일 헤더는 남김)
-        let childrenToRemove = calendarGrid.children.length - 7;
-        while(childrenToRemove > 0) {
-            calendarGrid.removeChild(calendarGrid.lastChild);
-            childrenToRemove--;
-        }
+        let removeCount = calGrid.children.length - 7;
+        while(removeCount-- > 0) calGrid.removeChild(calGrid.lastChild);
 
-        // 이전 달 날짜 채우기 (빈 칸)
-        for (let i = 0; i < startDay; i++) {
-            const emptyDay = document.createElement('div');
-            emptyDay.className = 'calendar-day inactive';
-            calendarGrid.appendChild(emptyDay);
-        }
+        let html = '';
+        for (let i = 0; i < startD; i++) html += '<div class="cal-day in"></div>';
 
-        // 현재 달 날짜 채우기
-        for (let day = 1; day <= lastDayOfMonth.getDate(); day++) {
-            const date = new Date(year, month, day);
-            const dayElement = document.createElement('div');
-            dayElement.textContent = day;
-            dayElement.className = 'calendar-day interactive';
+        for (let day = 1; day <= last.getDate(); day++) {
+            const date = new Date(y, m, day);
+            const isPast = date < today && date.toDateString() !== today.toDateString();
+            const isToday = date.toDateString() === today.toDateString();
+            const isSel = date.toDateString() === selDate.toDateString();
+            const classes = ['cal-day', isPast ? 'in' : 'i', isToday ? 'td' : '', isSel ? 'sel' : ''].join(' ');
             
-            // 지난 날짜는 선택 불가
-            if (date < today && date.toDateString() !== today.toDateString()) {
-                dayElement.classList.add('inactive');
-                dayElement.classList.remove('interactive');
-            } else {
-                // 날짜 클릭 이벤트
-                dayElement.addEventListener('click', () => {
-                    if (dayElement.classList.contains('inactive')) return;
-                    selectedDate = date;
-                    renderCalendar(year, month); // 재렌더링하여 선택 표시 업데이트
-                    updateModalDateUI();
-                });
-            }
-
-            // 오늘 날짜 표시
-            if (date.toDateString() === today.toDateString()) {
-                dayElement.classList.add('today');
-            }
-            
-            // 선택된 날짜 표시
-            if (date.toDateString() === selectedDate.toDateString()) {
-                dayElement.classList.add('selected');
-            }
-
-            calendarGrid.appendChild(dayElement);
+            html += `<div class="${classes}" data-date="${y}-${m + 1}-${day}">${day}</div>`;
         }
-    }
-
-    /**
-     * 달력 네비게이션 및 제외 옵션 변경 리스너 설정
-     */
-    function setupCalendarNavigation() {
-        document.getElementById('prevMonth').addEventListener('click', () => {
-            currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1);
-            // 오늘보다 이전 월은 표시하지 않음 (선택 가능 날짜는 오늘 이후)
-            const today = new Date();
-            if (currentCalendarDate < new Date(today.getFullYear(), today.getMonth(), 1)) {
-                 currentCalendarDate.setMonth(currentCalendarDate.getMonth() + 1);
-                 return;
-            }
-            renderCalendar(currentCalendarDate.getFullYear(), currentCalendarDate.getMonth());
-        });
-
-        document.getElementById('nextMonth').addEventListener('click', () => {
-            currentCalendarDate.setMonth(currentCalendarDate.getMonth() + 1);
-            renderCalendar(currentCalendarDate.getFullYear(), currentCalendarDate.getMonth());
-        });
+        calGrid.insertAdjacentHTML('beforeend', html);
         
-        // 기간 입력 필드 및 제외일 체크박스 변경 감지
-        modalDurationDaysInput.addEventListener('input', updateModalDateUI);
-        excludeWeekendsCheckbox.addEventListener('change', updateModalDateUI);
-    }
-    
-    /**
-     * 모달에서 선택된 날짜와 기간을 메인 폼으로 전송
-     */
-    window.confirmDateSelection = function() {
-        const startDate = startDateHidden.value;
-        const durationDays = parseInt(durationDaysHidden.value, 10);
-        const endDate = endDateHidden.value;
-        const excludeWeekends = excludeWeekendsHidden.value === 'true';
-
-        if (!startDate || !endDate || isNaN(durationDays) || durationDays < 1) {
-            showModal('기간 설정 오류', '시작일과 유효한 기간(1~365일)을 설정해 주세요.');
-            return;
-        }
-        
-        const displayStart = formatDateDisplay(startDate);
-        const displayEnd = formatDateDisplay(endDate);
-        const actualDuration = actualDurationDaysDisplay.textContent;
-        
-        let excludeText = '';
-        if (excludeWeekends) {
-            excludeText += ' (주말 제외)';
-        }
-        
-        // 메인 폼 요약 텍스트 업데이트
-        dateSummaryText.innerHTML = `${displayStart}부터 ${durationDays}일 간 ${excludeText} (<span style="color: var(--color-danger);">${displayEnd} 종료</span>)`;
-        
-        hideDateModal();
-    }
-    
-    
-    // --- 목표 리스트 관리 ---
-    function renderGoals() {
-        goalListContainer.innerHTML = '';
-        if (goals.length === 0) {
-            goalListContainer.innerHTML = '<p style="color:#888; font-size: 0.9rem; margin-top: 10px;">+ 버튼을 눌러 목표를 추가하세요.</p>';
-        }
-
-        goals.forEach((goalText, index) => {
-            const item = document.createElement('div');
-            item.className = 'goal-item';
-            item.innerHTML = `
-                <span>${goalText}</span>
-                <button type="button" class="delete-goal-button interactive" data-index="${index}">
-                    <i class="material-icons" style="font-size: 1.1rem;">close</i>
-                </button>
-            `;
-            goalListContainer.appendChild(item);
-        });
-        
-        goalsHidden.value = JSON.stringify(goals);
-
-        document.querySelectorAll('.delete-goal-button').forEach(button => {
-            button.addEventListener('click', (e) => {
-                const index = parseInt(e.currentTarget.getAttribute('data-index'), 10);
-                deleteGoal(index);
+        calGrid.querySelectorAll('.cal-day.i').forEach(el => {
+            el.addEventListener('click', (e) => {
+                const parts = e.target.getAttribute('data-date').split('-');
+                selDate = new Date(parts[0], parts[1] - 1, parts[2]);
+                renderCal(y, m);
+                updMdlDateUI();
             });
         });
+    }
+
+    window.confDateSel = function() {
+        const sD = startDH.value, dur = durationDH.value, eD = endDH.value, excW = excludeWH.value === 'true';
+        if (!sD || !eD || isNaN(dur) || dur < 1) return showModal('기간 설정 오류', '시작일과 유효한 기간(1~365일)을 설정해 주세요.');
+        
+        const dStart = fmtDisp(sD), dEnd = fmtDisp(eD);
+        let excTxt = excW ? ' (주말 제외)' : '';
+        dateSumTxt.innerHTML = `${dStart}부터 ${dur}일 간 ${excTxt} (<span style="color: var(--c-dan);">${dEnd} 종료</span>)`;
+        hideDateMdl();
+    }
+    
+    // --- Category Logic ---
+    function renderCatsList() {
+        catsListCont.innerHTML = '';
+        let html = '';
+        for (const mainCat in CATS) {
+            html += `<div class="cat-grp"><h4 class="cat-grp-title">${mainCat}</h4><div class="cat-chips">`;
+            CATS[mainCat].forEach(subCat => {
+                const sel = cs.includes(subCat) ? 'selected' : '';
+                html += `<div class="cat-chip i ${sel}" data-cat="${subCat}">${subCat}</div>`;
+            });
+            html += `</div></div>`;
+        }
+        catsListCont.innerHTML = html;
+        catsListCont.querySelectorAll('.cat-chip').forEach(el => el.addEventListener('click', (e) => toggleCatSel(e.target.getAttribute('data-cat'))));
+    }
+
+    function toggleCatSel(cat) {
+        const idx = cs.indexOf(cat);
+        if (idx === -1) {
+            if (cs.length < 3) cs.push(cat);
+        } else {
+            cs.splice(idx, 1);
+        }
+        renderCatsList(); 
+        renderSelCatSum(); 
+    }
+    
+    function renderSelCatSum() {
+        selCatList.innerHTML = '';
+        catCountDisp.textContent = cs.length;
+
+        if (cs.length === 0) {
+            noCatSel.style.display = 'block';
+            selCatList.appendChild(noCatSel);
+        } else {
+            noCatSel.style.display = 'none';
+            cs.forEach(cat => {
+                const item = document.createElement('div');
+                item.className = 'cat-sel-item i';
+                item.textContent = cat;
+                item.addEventListener('click', () => toggleCatSel(cat));
+                selCatList.appendChild(item);
+            });
+        }
+    }
+    
+    window.confCatSel = function() {
+        if (cs.length === 0) return showModal('분류 선택 필요', '최소 1개 이상의 분류를 선택해 주세요.');
+        catSumTxt.textContent = `${cs.join(', ')} (${cs.length}개 선택)`;
+        catsH.value = JSON.stringify(cs);
+        hideCatMdl();
+    }
+    
+    // --- Goal/Tag Logic ---
+    function renderGoals() {
+        gListCont.innerHTML = gs.length === 0 
+            ? '<p style="color:#888; font-size: 0.9rem; margin-top: 10px;">+ 버튼을 눌러 목표를 추가하세요.</p>'
+            : gs.map((txt, i) => `<div class="g-item"><span>${txt}</span><button type="button" class="g-del-btn i" data-idx="${i}"><i class="material-icons" style="font-size: 1.1rem;">close</i></button></div>`).join('');
+        
+        goalsH.value = JSON.stringify(gs); 
+
+        gListCont.querySelectorAll('.g-del-btn').forEach(btn => btn.addEventListener('click', (e) => {
+            gs.splice(parseInt(e.currentTarget.getAttribute('data-idx'), 10), 1);
+            renderGoals();
+        }));
     }
 
     function addGoal() {
-        const goalText = currentGoalInput.value.trim();
-        if (goalText && !goals.includes(goalText)) {
-            goals.push(goalText);
-            currentGoalInput.value = '';
+        const txt = gInp.value.trim();
+        if (txt && !gs.includes(txt)) {
+            gs.push(txt);
+            gInp.value = '';
             renderGoals();
-        } else if (goals.includes(goalText)) {
-            currentGoalInput.value = '';
-        } else {
-            // 입력 오류 메시지 삭제됨.
+        } else if (gs.includes(txt)) {
+            gInp.value = '';
         }
     }
+    
+    function addTags(val) {
+        const raw = val || tInp.value.trim();
+        if (!raw) return;
 
-    function deleteGoal(index) {
-        goals.splice(index, 1);
-        renderGoals();
-    }
-
-
-    // --- 태그 관리 ---
-
-    /**
-     * 사용자 입력에서 태그를 파싱하고 state에 추가합니다.
-     */
-    function addTagsFromInput(value) {
-        const rawTags = value || tagsInput.value.trim();
-        if (!rawTags) return;
-
-        // 쉼표, 공백, Enter 키로 태그 분리 및 필터링
-        // tagsInput.value.split(/[,\s#]+/) 대신, Enter 처리 후 남은 값만 분리
-        const newTags = rawTags.split(/[,\s#]+/)
-            .map(tag => tag.trim())
-            .filter(tag => tag.length > 0)
-            .slice(0, 5 - currentTags.length); // 추가할 수 있는 최대 개수까지만 허용
-
-        newTags.forEach(tag => {
-            if (currentTags.length < 5 && !currentTags.includes(tag)) {
-                currentTags.push(tag);
-            }
+        const newTags = raw.split(/[,\s#]+/).map(t => t.trim()).filter(t => t.length > 0).slice(0, 5 - ts.length);
+        newTags.forEach(t => {
+            if (ts.length < 5 && !ts.includes(t)) ts.push(t);
         });
 
-        tagsInput.value = '';
+        tInp.value = '';
         renderTags();
     }
 
-    /**
-     * 태그를 state에서 제거합니다.
-     */
-    function deleteTag(tagToDelete) {
-        currentTags = currentTags.filter(tag => tag !== tagToDelete);
-        renderTags();
-    }
-
-    /**
-     * 태그 칩 UI를 렌더링합니다.
-     */
     function renderTags() {
-        tagContainer.innerHTML = '';
-        
-        // 최대 5개 제한
-        currentTags = currentTags.slice(0, 5); 
+        ts = ts.slice(0, 5);
+        tCont.innerHTML = ts.map(t => 
+            `<div class="t-chip i">#${t}<span class="r-tag material-icons i" data-tag="${t}" style="font-size: 0.9rem;">close</span></div>`
+        ).join('');
 
-        currentTags.forEach(tag => {
-            const chip = document.createElement('div');
-            chip.className = 'tag-chip interactive';
-            chip.innerHTML = `
-                #${tag}
-                <span class="remove-tag material-icons" data-tag="${tag}">close</span>
-            `;
-            tagContainer.appendChild(chip);
-        });
-
-        // 삭제 버튼 리스너
-        document.querySelectorAll('.remove-tag').forEach(button => {
-            button.addEventListener('click', (e) => {
-                const tagToDelete = e.currentTarget.getAttribute('data-tag');
-                deleteTag(tagToDelete);
-            });
-        });
+        tCont.querySelectorAll('.r-tag').forEach(btn => btn.addEventListener('click', (e) => {
+            ts = ts.filter(t => t !== e.currentTarget.getAttribute('data-tag'));
+            renderTags();
+        }));
         
-        // 태그 입력 필드의 placeholder 업데이트 (5개 이상 시 알림)
-        if (currentTags.length >= 5) {
-            tagsInput.placeholder = '최대 5개 태그만 가능합니다.';
-            tagsInput.disabled = true;
-        } else {
-            tagsInput.placeholder = '예: #독서, 운동, 재테크 (최대 5개)';
-            tagsInput.disabled = false;
-        }
+        tInp.disabled = ts.length >= 5;
+        tInp.placeholder = ts.length >= 5 ? '최대 5개 태그만 가능합니다.' : '예: #독서, 운동, 재테크 (최대 5개)';
     }
 
-
-    // --- 챌린지 타입 토글 설정 및 동적 폼 필드 관리 ---
-    function setupChallengeTypeToggle() {
-        
-        const isPublic = document.getElementById('isPublic').value === 'true';
-        updateDynamicFields(isPublic);
-
-        document.querySelectorAll('.type-option').forEach(option => {
-            option.addEventListener('click', (e) => {
-                const newIsPublic = e.currentTarget.getAttribute('data-public') === 'true';
-
-                // UI 업데이트
-                document.querySelectorAll('.type-option').forEach(o => o.classList.remove('active'));
-                e.currentTarget.classList.add('active');
-                
-                // Hidden Input 업데이트
-                document.getElementById('isPublic').value = newIsPublic;
-                
-                // 동적 필드 업데이트
-                updateDynamicFields(newIsPublic);
-            });
-        });
+    // --- Dynamic UI ---
+    function setupTypeToggle() {
+        document.querySelectorAll('.t-opt').forEach(opt => opt.addEventListener('click', (e) => {
+            const isP = e.currentTarget.getAttribute('data-public') === 'true';
+            document.querySelectorAll('.t-opt').forEach(o => o.classList.remove('active'));
+            e.currentTarget.classList.add('active');
+            document.getElementById('isPublic').value = isP;
+            updDynFields(isP);
+        }));
+        updDynFields(document.getElementById('isPublic').value === 'true');
     }
 
-    /**
-     * isPublic 값에 따라 폼 필드를 동적으로 변경합니다.
-     */
-    function updateDynamicFields(isPublic) {
-        if (isPublic) {
-            // 팀 챌린지 (공개)
-            rewardGroup.classList.add('hidden'); // 보상 숨김
-            maxParticipantsGroup.classList.remove('hidden'); // 최대 인원 표시
-            maxParticipantsInput.setAttribute('required', 'required'); // 필수 입력 설정
-            maxParticipantsInput.value = maxParticipantsInput.value || '10'; // 기본값 설정
-            goalLabel.textContent = `챌린지 소개 및 상세 목표`;
-        } else {
-            // 챌린지 (개인)
-            rewardGroup.classList.remove('hidden'); // 보상 표시
-            maxParticipantsGroup.classList.add('hidden'); // 최대 인원 숨김
-            maxParticipantsInput.removeAttribute('required'); // 필수 입력 해제
-            goalLabel.textContent = `목표`;
-        }
+    function updDynFields(isP) {
+        rGrp.classList.toggle('h', isP);
+        mPGrp.classList.toggle('h', !isP);
+        isP ? mPInp.setAttribute('required', 'required') : mPInp.removeAttribute('required');
+        gLbl.textContent = isP ? `챌린지 소개 및 상세 목표` : `목표`;
     }
 
+    // --- Submission ---
+    window.hdlCrt = async function() {
+        if (!uId) return showModal('인증 오류', '사용자 정보가 없습니다.');
 
-    // --- 챌린지 생성 처리 ---
-    window.handleCreateChallenge = async function() {
-        if (!currentUserId) {
-            showModal('인증 오류', '사용자 정보가 없어 챌린지를 생성할 수 없습니다. 다시 로그인해 주세요.');
-            return;
-        }
-
-        // 폼 데이터 가져오기
         const title = document.getElementById('title').value.trim();
         const reward = document.getElementById('reward').value.trim();
-        const isPublic = document.getElementById('isPublic').value === 'true'; 
-        const startDate = startDateHidden.value; 
-        const endDate = endDateHidden.value;
-        const durationDays = parseInt(durationDaysHidden.value, 10);
-        const excludeWeekends = excludeWeekendsHidden.value === 'true';
+        const isP = document.getElementById('isPublic').value === 'true'; 
+        const sD = startDH.value, eD = endDH.value, dur = parseInt(durationDH.value, 10);
+        const excW = excludeWH.value === 'true';
         
-        const tags = currentTags; // currentTags 배열 사용
-        let maxParticipants = isPublic ? parseInt(maxParticipantsInput.value, 10) : 0; 
+        // 요청 4 반영: 디스플레이네임 (UID 기반 간소화)
+        const creatorName = `User_${uId.substring(0, 8)}`; 
+        let maxP = isP ? parseInt(mPInp.value, 10) : 0; 
         
-        // *******************************************
-        // 만든 사람 이름 자동 생성 (UI에서 제거되었으나 데이터 저장을 위해 필요)
-        // *******************************************
-        const creatorName = `사용자_${currentUserId.substring(0, 4)}`;
+        if (gs.length === 0) return showModal('필수 정보 누락', '최소 1개 이상의 목표를 추가해 주세요.');
+        if (cs.length === 0) return showModal('필수 정보 누락', '최소 1개 이상의 분류(카테고리)를 선택해 주세요.');
+        if (!title || !sD || !eD || isNaN(dur)) return showModal('필수 정보 누락', '제목 및 기간 설정은 필수 입력 사항입니다.');
+        if (isP && (isNaN(maxP) || maxP < 2 || maxP > 100)) return showModal('최대 인원 오류', '팀 챌린지는 최소 2명 이상, 100명 이하로 설정해야 합니다.');
 
-        // 목표 유효성 검사
-        if (goals.length === 0) {
-            showModal('필수 정보 누락', '최소 1개 이상의 목표를 추가해 주세요.');
-            return;
+        sBtn.disabled = true;
+        sBtn.innerHTML = `<span class="s-spin"></span> 챌린지 생성 중...`;
+        
+        try {
+            const cPath = isP ? `/artifacts/${appId}/public/data/challenges` : `/artifacts/${appId}/users/${uId}/challenges`;
+
+            let data = {
+                title: title,
+                goalsList: gs, // 요청 1 반영: 배열로 저장
+                description: "",
+                creatorId: uId, creatorName: creatorName, 
+                createdAt: Date.now(), updatedAt: Date.now(), 
+                startDate: sD, endDate: eD, durationDays: dur, excludeWeekends: excW, 
+                isPublic: isP, status: 'active',
+                participants: 1, participantIds: [uId], 
+                tags: ts, categories: cs, // 요청 2 반영: 분류 배열 저장
+            };
+
+            if (isP) data = { ...data, maxParticipants: maxP };
+            
+            if (!isP) {
+                const { aDur } = calcPeriod(new Date(sD.replace(/-/g, '/')), dur, excW);
+                data = { ...data, actualDurationDays: aDur, currentCertCount: 0, lastCertifiedDate: "", reward: reward || null };
+            }
+            
+            const dRef = await addDoc(collection(db, cPath), data);
+
+            // 요청 3 반영: 즉시 리디렉션
+            window.location.href = `/challenge/view.html?uid=${dRef.id}`;
+
+        } catch (err) {
+            console.error("Error creating challenge: ", err);
+            showModal('생성 실패', '챌린지 생성 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.', () => {
+                sBtn.disabled = false;
+                sBtn.innerHTML = '챌린지 시작하기';
+            });
         }
+    }
 
-        // 필수 필드 검증 (제목, 기간 설정)
-        if (!title || !startDate || !endDate || isNaN(durationDays)) {
-            showModal('필수 정보 누락', '제목 및 기간 설정은 필수 입력 사항입니다.');
-            return;
-        }
-
-        // 공개 챌린지 추가 검증
-        if (isPublic) {
-            if (isNaN(maxParticipants) || maxParticipants < 2 || maxParticipants > 100) {
-                showModal('최대 인원 오류', '팀 챌린지는 최소 2명 이상, 100명 이하로 설정해야 합니다.');
+    // --- Auth ---
+    onAuthStateChanged(auth, async (user) => {
+        if (!isAuth) {
+            const tkn = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+            isAuth = true; 
+            if (!user && tkn) {
+                try { await signInWithCustomToken(auth, tkn); return; } catch (e) { console.error("Login failed.", e); return; }
+            } else if (!user) {
+                // Not authenticated, but allowing anonymous sign-in for canvas setup 
+                // In a real app, this should redirect to auth
                 return;
             }
         }
-        
-        // 버튼 로딩 상태 설정
-        submitButton.disabled = true;
-        submitButton.innerHTML = `<span class="loading-spinner"></span> 챌린지 생성 중...`;
-        
-        try {
-            const collectionPath = isPublic 
-                ? `/artifacts/${appId}/public/data/challenges`
-                : `/artifacts/${appId}/users/${currentUserId}/challenges`;
-
-            let challengeData = {
-                title: title,
-                // description 필드는 목표 리스트를 JSON 문자열로 저장
-                description: JSON.stringify(goals), 
-                
-                creatorId: currentUserId,
-                creatorName: creatorName, // 내부 생성된 이름 사용
-                
-                createdAt: Date.now(),
-                updatedAt: Date.now(), 
-                
-                startDate: startDate, 
-                endDate: endDate,     
-                durationDays: durationDays,
-                excludeWeekends: excludeWeekends === 'true', // Boolean으로 저장
-                
-                isPublic: isPublic,
-                status: 'active', // 진행 상태는 'active'로 시작
-                
-                participants: 1, 
-                participantIds: [currentUserId], // 생성자를 첫 참가자로 추가
-                tags: tags, // 파싱된 태그 배열 사용
-            };
-
-            if (isPublic) {
-                 challengeData = {
-                    ...challengeData,
-                    maxParticipants: maxParticipants, 
-                 }
-            }
-            
-            if (!isPublic) {
-                // 개인 챌린지의 경우 실제 수행 일수 및 보상 추가
-                const { actualDuration } = calculateChallengePeriod(
-                    new Date(startDate.replace(/-/g, '/')), 
-                    durationDays, 
-                    excludeWeekends === 'true'
-                );
-                
-                challengeData = {
-                    ...challengeData,
-                    actualDurationDays: actualDuration, 
-                    currentCertCount: 0, 
-                    lastCertifiedDate: "", 
-                    reward: reward || null,
-                }
-            }
-            
-            const docRef = await addDoc(collection(db, collectionPath), challengeData);
-            console.log("Challenge created with ID:", docRef.id, "Path:", collectionPath);
-
-            // 성공 시, 모달이 닫힐 때 실행될 콜백 전달
-            showModal('챌린지 생성 완료!', `'${title}' 챌린지가 성공적으로 시작되었습니다.`, () => {
-                // window.location.href = "/challenge"; // 실제 이동 시 주석 해제
-                window.location.reload(); // 테스트를 위해 새로고침
-            });
-
-        } catch (error) {
-            console.error("Error creating challenge: ", error);
-            
-            // 실패 시, 모달이 닫힐 때 실행될 콜백 전달 (버튼 상태 복구)
-            showModal('생성 실패', '챌린지 생성 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.', () => {
-                submitButton.disabled = false;
-                submitButton.innerHTML = '챌린지 시작하기';
-            });
-        }
-    }
-
-
-    // --- 인증 및 초기화 ---
-    onAuthStateChanged(auth, async (user) => {
-        if (!isAuthAttempted) {
-            const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-            isAuthAttempted = true; 
-
-            if (!user && initialAuthToken) {
-                try {
-                    await signInWithCustomToken(auth, initialAuthToken);
-                    return; 
-                } catch (error) {
-                    console.error("Custom token login failed. Forcing redirect to /auth", error);
-                    return;
-                }
-            } else if (!user) {
-                console.warn("User not authenticated. Forcing redirect to /auth");
-                return; 
-            }
-        }
-
         if (user) {
-            currentUserId = user.uid;
-            if (user.isAnonymous) {
-                 console.warn("Anonymous user detected. Forcing redirect to /auth");
-                 return;
-            }
-            
-            // creatorName 필드가 제거되었으므로 관련 UI 업데이트 로직은 삭제됩니다.
-        } else if (isAuthAttempted) {
-             console.warn("Authentication failed or logged out. Forcing redirect to /auth");
-             return;
+            uId = user.uid;
+            document.fonts.ready.then(() => document.getElementById('app-container').classList.add('font-loaded'));
         }
-        
-        document.fonts.ready.then(() => {
-             document.getElementById('app-container').classList.add('font-loaded');
-        });
     });
 
-
-    // --- 초기화 로직 ---
+    // --- Init ---
     window.addEventListener('load', () => {
-        const appContainer = document.getElementById('app-container');
-        appContainer.style.minHeight = `${window.innerHeight}px`;
+        const appCont = document.getElementById('app-container');
+        appCont.style.minHeight = `${window.innerHeight}px`;
+        window.addEventListener('resize', () => appCont.style.minHeight = `${window.innerHeight}px`);
         
-        window.addEventListener('resize', () => {
-            appContainer.style.minHeight = `${window.innerHeight}px`;
+        mdl.addEventListener('click', (e) => {
+            if (e.target === mdl) { if (mdlCb) { mdlCb(); mdlCb = null; } hideModal(); }
         });
+        dateMdl.addEventListener('click', (e) => { if (e.target === dateMdl) hideDateMdl(); });
+        catMdl.addEventListener('click', (e) => { if (e.target === catMdl) hideCatMdl(); });
         
-        // ********************
-        // 모달 외부 클릭 리스너 수정 (콜백 실행 로직 추가)
-        // ********************
-        modal.addEventListener('click', (event) => {
-            if (event.target === modal) {
-                if (modalCloseCallback) {
-                    modalCloseCallback(); // 저장된 콜백 실행
-                    modalCloseCallback = null; // 콜백 초기화
-                }
-                hideModal();
-            }
+        setupTypeToggle();
+        
+        document.getElementById('prevMonth').addEventListener('click', () => {
+            calDate.setMonth(calDate.getMonth() - 1);
+            const today = new Date();
+            if (calDate < new Date(today.getFullYear(), today.getMonth(), 1)) calDate.setMonth(calDate.getMonth() + 1);
+            renderCal(calDate.getFullYear(), calDate.getMonth());
         });
-        
-        // 기간 설정 모달 외부 클릭 시 닫기
-        dateModal.addEventListener('click', (event) => {
-            if (event.target === dateModal) {
-                hideDateModal();
-            }
+        document.getElementById('nextMonth').addEventListener('click', () => {
+            calDate.setMonth(calDate.getMonth() + 1);
+            renderCal(calDate.getFullYear(), calDate.getMonth());
         });
-        
-        setupChallengeTypeToggle();
-        setupCalendarNavigation();
+        modalDurInp.addEventListener('input', updMdlDateUI);
+        excWkndChk.addEventListener('change', updMdlDateUI);
 
-        // 목표 추가 이벤트 리스너
-        addGoalButton.addEventListener('click', addGoal);
-        currentGoalInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                addGoal();
-            }
-        });
+        document.getElementById('addGoalBtn').addEventListener('click', addGoal);
+        gInp.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); addGoal(); } });
         
-        // 태그 입력 Enter 키 리스너 (요청에 따라 엔터 시 태그 추가)
-        tagsInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                addTagsFromInput(tagsInput.value);
-            }
-        });
-
-        // 태그 입력 필드에서 값 변경 시 (쉼표나 공백으로 입력된 경우 처리)
-        tagsInput.addEventListener('input', (e) => {
-             // 쉼표나 공백이 포함되어 있으면 즉시 태그 추가 로직 실행
-             if (e.target.value.includes(',') || e.target.value.includes(' ')) {
-                 addTagsFromInput(e.target.value);
-             }
-        });
+        tInp.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); addTags(tInp.value); } });
+        tInp.addEventListener('input', (e) => { if (e.target.value.includes(',') || e.target.value.includes(' ')) addTags(e.target.value); });
         
-        // 초기 시작일 오늘로 설정
         const today = new Date();
-        selectedDate = today; 
-        currentCalendarDate = new Date(today.getFullYear(), today.getMonth(), 1); 
+        selDate = today; calDate = new Date(today.getFullYear(), today.getMonth(), 1); 
 
-        // 초기 목표 리스트 렌더링
-        renderGoals();
+        renderGoals(); renderTags();
+        dateSumTxt.textContent = "기간을 설정해 주세요 (클릭)";
+        renderCal(today.getFullYear(), today.getMonth());
+        updMdlDateUI();
         
-        // 초기 태그 리스트 렌더링
-        renderTags();
-        
-        // 초기 기간 설정 요약 텍스트 및 달력 렌더링
-        dateSummaryText.textContent = "기간을 설정해 주세요 (클릭)";
-        renderCalendar(today.getFullYear(), today.getMonth());
-        updateModalDateUI();
+        catSumTxt.textContent = `분류를 선택해 주세요 (최대 3개)`; 
+        catsH.value = JSON.stringify(cs); 
     });
 </script>
 </body>
