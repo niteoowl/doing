@@ -15,7 +15,7 @@
         :root {
             --color-white: #ffffff;
             --color-black: #000000;
-            --color-accent: #1E90FF; /* 포인트 블루 (Dodger Blue) */
+            --color-accent: #1E90FF; /* 포인트 블루 (Doing! 글자색) */
             --color-app-bg: #ffffff; 
             --color-content-bg: #ffffff; 
             --color-border: #e8e8e8; 
@@ -80,7 +80,7 @@
         .header-title {
             font-size: 1.4rem; 
             font-weight: 700; 
-            color: var(--color-accent); 
+            color: var(--color-accent); /* Doing! 로고색 */
             letter-spacing: -0.5px;
             text-align: center;
             flex-grow: 1; 
@@ -134,13 +134,14 @@
             margin-bottom: 0.5rem;
         }
         
+        /* 메타 데이터 (기간, 참여 등) 스타일 변경: 검정색 아이콘 */
         .detail-meta {
             display: flex;
             flex-wrap: wrap;
             gap: 15px;
             font-size: 0.95rem;
-            color: #555;
-            margin-bottom: 1rem;
+            color: var(--color-black);
+            margin-bottom: 1.5rem;
         }
         .meta-item {
             display: flex;
@@ -150,20 +151,38 @@
         .meta-item i {
             font-size: 18px;
             margin-right: 4px;
-            color: var(--color-accent);
+            color: var(--color-black); /* 아이콘을 검정색으로 변경 */
         }
 
-        .detail-description {
+        /* 상세 설명 스타일 변경: 일반 텍스트 및 토글 구현 */
+        .description-container {
+            margin-bottom: 1.5rem;
+            padding: 0 var(--padding-x-mobile);
+        }
+        .detail-description-text {
             font-size: 1rem;
             color: #444;
             line-height: 1.6;
-            border-left: 3px solid var(--color-accent);
-            padding-left: 10px;
-            background-color: #f5faff; /* Light accent background */
-            padding: 10px;
-            border-radius: 8px;
+            max-height: 5em; /* 약 3줄로 초기 높이 설정 */
+            overflow: hidden;
+            transition: max-height 0.3s ease-in-out;
+            white-space: pre-wrap; /* 줄바꿈 유지 */
         }
-        
+        .detail-description-text.expanded {
+            max-height: 1000px; /* 전체 내용 표시 */
+        }
+        .read-more-button {
+            background: none;
+            border: none;
+            color: var(--color-accent); /* Doing! 블루 사용 */
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 5px 0;
+            margin-top: 5px;
+            display: block;
+        }
+
         /* 오늘의 인증/참여 카드 */
         .action-card {
             background-color: #f9f9f9;
@@ -172,13 +191,13 @@
             border-radius: 16px;
             margin-left: var(--padding-x-mobile);
             margin-right: var(--padding-x-mobile);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            /* box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); 그림자 제거 요청으로 제거 */
             border: 1px solid var(--color-border);
         }
 
         .action-status {
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-start; /* 왼쪽 정렬 */
             align-items: center;
             margin-bottom: 1rem;
         }
@@ -191,17 +210,17 @@
             border-radius: 12px;
             cursor: pointer;
             transition: all 0.2s ease;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            box-shadow: none; /* 그림자 제거 요청 */
             border: none;
         }
         
+        /* 버튼 배경을 단일 Accent 색상으로 변경 */
         .action-button.ready {
-            background: linear-gradient(135deg, var(--color-accent), #0d79e6);
+            background-color: var(--color-accent); 
             color: var(--color-white);
         }
         .action-button.ready:hover {
             opacity: 0.9;
-            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
         }
         
         .action-button.done {
@@ -209,7 +228,6 @@
             color: var(--color-white);
             opacity: 0.85;
             cursor: default;
-            box-shadow: none;
         }
 
         /* ------------------ 도장판 섹션 스타일 (개선됨) ------------------ */
@@ -235,6 +253,7 @@
         }
         
         .stamp-item {
+            /* ... (기존 스타일 유지) ... */
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -335,7 +354,7 @@
         .participation-overlay p {
             font-size: 1.1rem;
             font-weight: 600;
-            color: var(--color-accent);
+            color: var(--color-black); /* 색상 강조 대신 검정색 사용 */
             margin-bottom: 10px;
         }
 
@@ -350,7 +369,7 @@
                 padding-top: 2rem; 
                 padding-bottom: calc(2rem + var(--bottom-nav-height-pc)); 
             }
-            .challenge-summary, .stamp-plate-section {
+            .challenge-summary, .stamp-plate-section, .description-container {
                 padding-left: var(--padding-x-pc);
                 padding-right: var(--padding-x-pc);
             }
@@ -457,6 +476,7 @@
                 <p id="challenge-type" style="color: var(--color-accent); font-weight: 700;"></p>
                 <h2 id="challenge-title" class="detail-title"></h2>
                 
+                <!-- 메타 정보: 아이콘/텍스트 검정색으로 통일 -->
                 <div class="detail-meta">
                     <span class="meta-item" id="meta-duration">
                         <i class="material-icons">schedule</i>
@@ -468,12 +488,17 @@
                     </span>
                     <span class="meta-item" id="meta-success-rate">
                         <i class="material-icons">trending_up</i>
-                        <span id="meta-success-rate-text">0% 달성</span>
+                        <span id="meta-success-rate-text">0/0일 (0%)</span>
                     </span>
                 </div>
                 
-                <p id="challenge-description" class="detail-description"></p>
             </section>
+            
+            <!-- 상세 설명 및 자세히 보기 토글 (챌린지 요약 섹션 밖으로 분리하여 여백 통일) -->
+            <div class="description-container">
+                <p id="challenge-description-text" class="detail-description-text"></p>
+                <button id="read-more-button" class="read-more-button hidden interactive" onclick="toggleDescription()">자세히 보기</button>
+            </div>
             
             <!-- 인증 및 참여 카드 컨테이너 -->
             <div id="action-card-container">
@@ -490,14 +515,13 @@
                 <!-- 2. 오늘의 인증 카드 (참여중일 경우) -->
                 <section id="proof-card" class="action-card hidden">
                     <div class="action-status">
+                        <!-- '오늘의 목표 달성 확인'만 남기고 상태 표시를 제거 -->
                         <h3 class="font-bold text-lg">오늘의 목표 달성 확인</h3>
-                        <span id="daily-proof-status" class="font-semibold text-sm">
-                            <!-- '미인증' 또는 '인증 완료' 상태 표시 -->
-                        </span>
                     </div>
                     <button id="proof-button" class="action-button ready interactive" onclick="handleProofSubmission()">
-                        오늘의 인증하기
+                        <!-- JS에서 '오늘의 인증하기' 또는 '인증 완료'로 변경됨 -->
                     </button>
+                    <!-- 하단 메시지로 현재 상태와 안내를 대체 -->
                     <p id="proof-message" class="text-xs mt-2 text-center text-gray-500"></p>
                 </section>
             </div>
@@ -511,7 +535,7 @@
                 </div>
                 <!-- 참여 필요 시 도장판 위에 오버레이 -->
                 <div id="stamp-plate-overlay" class="participation-overlay hidden">
-                    <i class="material-icons text-6xl" style="color: var(--color-accent); opacity: 0.8;">lock</i>
+                    <i class="material-icons text-6xl" style="color: var(--color-black); opacity: 0.6;">lock</i> <!-- 아이콘도 검정색으로 변경 -->
                     <p>챌린지에 참여해야 도장판을 사용할 수 있습니다.</p>
                     <span class="text-sm text-gray-500">위의 '팀 챌린지 참여하기' 버튼을 눌러주세요.</span>
                 </div>
@@ -617,6 +641,17 @@
 
 
     // --- UI/UX 함수 ---
+    
+    /**
+     * 상세 설명 텍스트의 확장/축소를 토글합니다. (요청 사항 반영)
+     */
+    window.toggleDescription = function() {
+        const textEl = document.getElementById('challenge-description-text');
+        const buttonEl = document.getElementById('read-more-button');
+        const isExpanded = textEl.classList.toggle('expanded');
+        buttonEl.textContent = isExpanded ? '접기' : '자세히 보기';
+    }
+
     const modal = document.getElementById('modal');
     const modalTitle = document.getElementById('modal-title');
     const modalText = document.getElementById('modal-text');
@@ -708,7 +743,7 @@
             gridEl.appendChild(item);
         });
         
-        // 달성률 계산 및 표시
+        // 달성률 계산 및 표시 (요청된 포맷: 0/0일 (0%))
         const totalPossibleDays = pastDaysCount;
         const successRate = totalPossibleDays > 0 ? ((stampedCount / totalPossibleDays) * 100).toFixed(1) : 0;
         document.querySelector('#meta-success-rate-text').textContent = `${stampedCount}/${totalPossibleDays}일 (${successRate}%)`;
@@ -728,7 +763,6 @@
      */
     function renderChallenge(data, currentIsPublicChallenge) {
         if (!data) {
-            // 데이터가 유효하지 않으면 로딩 메시지를 업데이트하고 상세 내용을 숨김
             document.getElementById('loading-state').textContent = '챌린지 데이터가 유효하지 않습니다.';
             document.getElementById('loading-state').classList.remove('hidden');
             document.getElementById('challenge-details-content').classList.add('hidden');
@@ -738,31 +772,43 @@
         challengeData = data;
         isPublicChallenge = currentIsPublicChallenge;
         
-        // --- [수정] participants가 배열인지 확인하여 includes() 오류 방지 ---
         const participants = data.participants;
         const validParticipants = Array.isArray(participants) ? participants : [];
         
-        // 참여 상태 업데이트: validParticipants 사용
         isParticipant = !isPublicChallenge || validParticipants.includes(currentUserId);
 
         const todayKey = getTodayDateKey();
-        
-        // 날짜 계산 (챌린지 시작일: YYYY-MM-DD 문자열)
         const startDateString = data.startDate || todayKey; 
         
         // 1. 기본 정보 업데이트
         document.getElementById('page-title').textContent = `Doing! - ${data.title}`;
-        // 성공적으로 데이터를 받으면 상세 내용을 표시하고 로딩 상태를 숨김
         document.getElementById('challenge-details-content').classList.remove('hidden');
         document.getElementById('loading-state').classList.add('hidden');
         
         document.getElementById('challenge-type').textContent = isPublicChallenge ? '✨ 팀 챌린지 (공개)' : '💪 개인 챌린지 (비공개)';
         document.getElementById('challenge-title').textContent = data.title;
-        document.getElementById('challenge-description').textContent = data.description || '상세 설명이 없습니다.';
         
+        // 상세 설명 업데이트 (새로운 구조에 맞게)
+        const descriptionText = data.description || '상세 설명이 없습니다.';
+        const descriptionEl = document.getElementById('challenge-description-text');
+        const readMoreBtn = document.getElementById('read-more-button');
+        
+        descriptionEl.textContent = descriptionText;
+        descriptionEl.classList.remove('expanded'); // 상태 초기화
+        
+        // 3줄 이상의 내용일 경우에만 '자세히 보기' 버튼 표시
+        if (descriptionText.split('\n').length > 3 || descriptionText.length > 120) {
+            readMoreBtn.classList.remove('hidden');
+            readMoreBtn.textContent = '자세히 보기';
+        } else {
+            readMoreBtn.classList.add('hidden');
+        }
+
+
         // startDateString이 'YYYY-MM-DD' 형태라고 가정하고 Date 객체를 생성하여 포맷팅
         const displayStartDate = new Date(startDateString);
-        const startDateFormatted = displayStartDate.toLocaleDateString('ko-KR');
+        // 날짜 포맷팅 (예: 2025. 12. 4.)
+        const startDateFormatted = displayStartDate.toLocaleDateString('ko-KR', { year: 'numeric', month: 'numeric', day: 'numeric' }).replace(/\s/g, '');
 
         document.querySelector('#meta-duration span').textContent = `${data.durationDays || 30}일 기간 (${startDateFormatted} 시작)`;
         document.querySelector('#meta-participants span').textContent = `${validParticipants.length || 1}명 참여 중 (${isPublicChallenge ? '팀원' : '나만'})`;
@@ -770,12 +816,14 @@
         // 2. 액션 카드 및 인증 상태 업데이트
         const proofCardEl = document.getElementById('proof-card');
         const participationCardEl = document.getElementById('participation-card');
+        const buttonEl = document.getElementById('proof-button');
+        const messageEl = document.getElementById('proof-message');
+
 
         if (isPublicChallenge && !isParticipant) {
             // 팀 챌린지 & 미참여: 참여하기 카드 표시
             proofCardEl.classList.add('hidden');
             participationCardEl.classList.remove('hidden');
-            document.getElementById('proof-message').textContent = ''; // 불필요 메시지 제거
         } else {
             // 개인 챌린지 OR 팀 챌린지 & 참여중: 인증 카드 표시
             participationCardEl.classList.add('hidden');
@@ -784,30 +832,25 @@
             const history = data.proofHistory || {};
             isTodayVerified = history[todayKey] === true;
             
-            const statusEl = document.getElementById('daily-proof-status');
-            const buttonEl = document.getElementById('proof-button');
-            const messageEl = document.getElementById('proof-message');
-
+            // 요청 사항 반영: 상태 표시 span (#daily-proof-status) 제거하고 버튼과 메시지로만 상태 표현
             if (isTodayVerified) {
-                statusEl.textContent = '✅ 인증 완료';
-                statusEl.style.color = 'var(--color-success)';
-                buttonEl.textContent = '오늘의 인증 완료!';
+                buttonEl.textContent = '인증 완료 (내일 다시 도전)';
                 buttonEl.classList.remove('ready');
                 buttonEl.classList.add('done');
                 buttonEl.disabled = true;
-                messageEl.textContent = `오늘은 ${todayKey}에 인증을 완료했습니다. 내일 다시 도전하세요.`;
+                // 인증 완료 메시지: 오늘의 인증 완료! + 날짜
+                messageEl.textContent = `오늘은 목표 달성을 완료했습니다!`;
             } else {
-                statusEl.textContent = '❌ 미인증';
-                statusEl.style.color = 'var(--color-missed)';
                 buttonEl.textContent = '오늘의 인증하기';
                 buttonEl.classList.remove('done');
                 buttonEl.classList.add('ready');
                 buttonEl.disabled = false;
+                // 미인증 메시지: 오늘의 목표를 달성하셨다면 버튼을 눌러 인증하세요!
                 messageEl.textContent = `오늘의 목표를 달성하셨다면 버튼을 눌러 인증하세요!`;
             }
         }
 
-        // 3. 도장판 렌더링 (참여 여부에 따라 도장판 사용 가능 여부 결정)
+        // 3. 도장판 렌더링
         const history = data.proofHistory || {};
         renderStampPlate(data.durationDays || 30, startDateString, history, isParticipant);
     }
