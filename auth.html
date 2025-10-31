@@ -116,22 +116,11 @@
             transform: translateX(-100%);
         }
         
-        /* Step 1 환영 메시지 스타일 (삭제됨) */
-        .welcome-text {
-            /* 이 요소는 HTML에서 삭제되었지만, 스타일 정의는 유지합니다. */
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--color-gray);
-            margin-bottom: 0.5rem;
-            padding: 0;
-            flex-shrink: 0;
-        }
-
         /* 단계별 제목 */
         .step-title {
             font-size: 1.8rem;
             font-weight: 700;
-            margin-bottom: 4rem; /* 5rem에서 4rem으로 줄여서 제목 위치 조정 */
+            margin-bottom: 4rem; 
             line-height: 1.4;
             padding: 0; 
             flex-shrink: 0; 
@@ -146,13 +135,13 @@
             align-items: center; 
             padding-bottom: 20vh; 
             width: 100%;
-            gap: 1rem; /* 1.5rem에서 1rem으로 버튼 간격 축소 */
+            gap: 1rem; /* 버튼 간격 1rem 유지 */
         }
         
         /* Step 1 선택 버튼 공통 스타일 */
         .choice-button {
             width: 100%;
-            padding: 1.2rem; /* 패딩 증가 */
+            padding: 1.2rem; 
             border: none;
             border-radius: 16px; 
             font-size: 1.1rem;
@@ -163,7 +152,7 @@
         
         /* Step 1 로그인 버튼 스타일 (보조 액션) */
         .login-button {
-            background-color: #f0f0f0; /* #e8e8e8에서 더 연한 회색으로 변경 */
+            background-color: #f0f0f0; /* 연한 회색 유지 */
             color: var(--color-black);
         }
 
@@ -173,15 +162,6 @@
             color: var(--color-white);
         }
         
-        /* 로그인/회원가입 힌트 메시지 (Step 2에 추가) */
-        .login-hint {
-            font-size: 0.95rem; 
-            color: var(--color-accent); 
-            margin-top: -1.5rem; 
-            margin-bottom: 2rem;
-            font-weight: 500;
-        }
-
         /* 입력 필드 그룹 */
         .input-group {
             position: relative;
@@ -419,7 +399,6 @@
         
         <!-- 단계 1: 로그인/회원가입 선택 -->
         <div id="step-1" class="step-screen">
-            <!-- 요청에 따라 'Doing!에 어서오세요!' 메시지 삭제 -->
             <h1 class="step-title">로그인 또는<br>회원가입을 진행합니다.</h1>
             
             <!-- 버튼 컨테이너 -->
@@ -445,19 +424,22 @@
                 <!-- 0. 이메일 주소 입력 (Step 1에서 이동) -->
                 <div id="input-group-email" class="input-group">
                     <div class="input-label">이메일 주소</div>
-                    <input type="email" id="input-email" class="auth-input" placeholder="이메일 주소 입력" required oninput="checkInputValidity()" autocomplete="email">
+                    <!-- name 속성 추가 및 required 속성 유지 -->
+                    <input type="email" id="input-email" name="email" class="auth-input" placeholder="이메일 주소 입력" required oninput="checkInputValidity()" autocomplete="email">
                 </div>
 
                 <!-- 1. 사용자 이름 (회원가입 시에만 표시됨) -->
                 <div id="input-group-nickname" class="input-group" style="display: none;">
                     <div class="input-label">사용자 이름</div>
-                    <input type="text" id="input-nickname" class="auth-input" placeholder="이름 또는 닉네임 입력" required oninput="checkInputValidity()" autocomplete="username">
+                    <!-- required 속성을 HTML에서 제거하고 JS에서 동적 관리 -->
+                    <input type="text" id="input-nickname" name="nickname" class="auth-input" placeholder="이름 또는 닉네임 입력" oninput="checkInputValidity()" autocomplete="username">
                 </div>
 
                 <!-- 2. 비밀번호 그룹 (로그인/회원가입 공통) -->
                 <div class="input-group">
                     <div class="input-label">비밀번호</div>
-                    <input type="password" id="input-password" class="auth-input" placeholder="비밀번호 입력" required oninput="checkInputValidity()" autocomplete="new-password">
+                    <!-- name 속성 추가 및 required 속성 유지 -->
+                    <input type="password" id="input-password" name="password" class="auth-input" placeholder="비밀번호 입력" required oninput="checkInputValidity()" autocomplete="new-password">
                     <button type="button" class="password-toggle interactive" onclick="togglePasswordVisibility('input-password', this)">
                         <div id="toggle-icon-password"></div>
                     </button>
@@ -467,7 +449,8 @@
                 <div id="input-group-confirm-password" style="display: none;">
                     <div class="input-group">
                         <div class="input-label">비밀번호 확인</div>
-                        <input type="password" id="input-confirm-password" class="auth-input" placeholder="비밀번호 재입력" oninput="checkInputValidity()" autocomplete="new-password">
+                        <!-- required 속성을 HTML에서 제거하고 JS에서 동적 관리 -->
+                        <input type="password" id="input-confirm-password" name="confirm_password" class="auth-input" placeholder="비밀번호 재입력" oninput="checkInputValidity()" autocomplete="new-password">
                         <button type="button" class="password-toggle interactive" onclick="togglePasswordVisibility('input-confirm-password', this)">
                             <div id="toggle-icon-confirm-password"></div>
                         </button>
@@ -538,7 +521,6 @@
         getAuth, 
         signInWithEmailAndPassword, 
         createUserWithEmailAndPassword,
-        // fetchSignInMethodsForEmail, // 사용자 선택으로 대체되어 주석 처리
         setPersistence,
         browserLocalPersistence, 
         updateProfile 
@@ -584,14 +566,11 @@
     const fixedFooterContainer = document.getElementById('fixed-footer-container');
     const btnFinalAction = document.getElementById('btn-final-action'); 
     
-    // Step 1 (선택) 요소: 이제 폼이 없습니다.
-
     // Step 2 (정보 입력) 요소
     const step2Title = document.getElementById('step-2-title');
-    const step2LoginHint = document.getElementById('step-2-login-hint'); 
     const inputGroupNickname = document.getElementById('input-group-nickname');
     const inputGroupConfirmPassword = document.getElementById('input-group-confirm-password');
-    const emailInput = document.getElementById('input-email'); // Step 2로 이동
+    const emailInput = document.getElementById('input-email'); 
     const passwordInput = document.getElementById('input-password');
     const confirmPasswordInput = document.getElementById('input-confirm-password');
     const nicknameInput = document.getElementById('input-nickname');
@@ -638,7 +617,7 @@
 
         // 입력 필드 초기화 및 포커스
         if (newStep === 2) {
-            emailInput.value = ''; // 이메일도 Step 2에서 새로 입력받음
+            emailInput.value = ''; 
             passwordInput.value = '';
             confirmPasswordInput.value = '';
             nicknameInput.value = '';
@@ -648,8 +627,6 @@
             if (agreeAllCheckbox) agreeAllCheckbox.checked = false;
             privacyAgreeCheckbox.checked = false;
             termsAgreeCheckbox.checked = false;
-        } else if (newStep === 1) {
-             // Step 1에는 포커스할 입력 필드가 없습니다.
         }
     }
 
@@ -676,12 +653,21 @@
                 step2Title.innerHTML = '회원가입 정보를<br>입력해주세요.'; 
                 inputGroupNickname.style.display = 'block';
                 inputGroupConfirmPassword.style.display = 'block';
+                
+                // FIX: 회원가입 모드일 때 필수 속성 추가
+                nicknameInput.setAttribute('required', 'required');
+                confirmPasswordInput.setAttribute('required', 'required');
+
             } else {
                 // 로그인 모드
                 buttonText = '로그인';
                 step2Title.innerHTML = '로그인 정보를<br>입력해주세요.'; 
                 inputGroupNickname.style.display = 'none';
                 inputGroupConfirmPassword.style.display = 'none';
+                
+                // FIX: 로그인 모드일 때 필수 속성 제거 (requestSubmit 오류 방지)
+                nicknameInput.removeAttribute('required');
+                confirmPasswordInput.removeAttribute('required');
             }
         } else if (currentStep === 3) {
              buttonText = '회원가입 완료하고 시작하기';
@@ -714,7 +700,8 @@
                 
                 isValid = isValid && 
                           (nickname.length > 0) && 
-                          (password === confirmPassword);
+                          (password === confirmPassword) &&
+                          (confirmPassword.length >= 6); // 비밀번호 확인 길이 체크 추가
             }
         } else if (currentStep === 3) {
             const isPrivacyAgreed = privacyAgreeCheckbox.checked;
@@ -733,8 +720,10 @@
             activeForm = formStep3;
         }
 
+        // requestSubmit() 전에 폼의 필수 속성 오류를 피하기 위해 JavaScript 유효성 검사를 한 번 더 확인
         if (activeForm && btnFinalAction.disabled === false) {
-            activeForm.requestSubmit();
+             // 폼의 모든 입력 필드에 name 속성이 있으므로, requestSubmit을 사용하여 유효성 검사를 실행합니다.
+             activeForm.requestSubmit();
         }
     }
 
@@ -800,10 +789,8 @@
                 console.error("Firebase Login Error:", error.code, error.message);
                 if (error.code === 'auth/wrong-password') {
                     errorMessage = '비밀번호가 일치하지 않습니다.';
-                } else if (error.code === 'auth/user-not-found') {
-                     errorMessage = '해당 이메일로 등록된 계정을 찾을 수 없습니다. 회원가입을 이용해주세요.';
-                } else if (error.code === 'auth/invalid-credential') {
-                     errorMessage = '자격 증명이 유효하지 않습니다.';
+                } else if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
+                     errorMessage = '해당 이메일로 등록된 계정을 찾을 수 없거나 자격 증명이 유효하지 않습니다. 회원가입을 이용해주세요.';
                 }
                 window.showModal('로그인 오류', errorMessage);
             } finally {
@@ -830,7 +817,7 @@
     }
 
     /**
-     * Step 3: 최종 회원가입을 실행합니다. (기존과 동일)
+     * Step 3: 최종 회원가입을 실행합니다.
      */
     window.handleFinalSignup = async function() {
         btnFinalAction.disabled = true;
