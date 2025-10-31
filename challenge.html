@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Doing! - 나의 도전</title>
+    <title>Doing! - 챌린지</title>
     <!-- Pretendard 폰트 CDN 적용 -->
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
     <!-- Google Material Icons (필수적인 내비게이션 및 UI 요소에만 사용) -->
@@ -52,6 +52,8 @@
         }
         
         #app-container.font-loaded { opacity: 1; }
+        
+        .hidden { display: none !important; }
 
         /* ------------------ PC/Desktop Layout ------------------ */
         @media (min-width: 640px) {
@@ -66,15 +68,19 @@
             .nav-item { flex-direction: row; gap: 8px; font-size: 0.9rem; }
             .header { padding: 0.5rem 3rem; }
             
-            /* PC: 커뮤니티 도전 3개 가로 정렬 */
-            #all-challenge-list {
-                display: flex;
+            /* PC: 커뮤니티형 목록 2개 가로 정렬 */
+            #public-challenge-list {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
                 gap: 1.5rem; /* 카드 사이 간격 */
-                overflow-x: hidden;
             }
-            .community-card {
-                width: calc(33.333% - 1rem); /* 3개 정렬 */
-                margin-right: 0 !important; /* JS의 margin-right 오버라이드 */
+            .challenge-tabs { margin-left: 0; margin-right: auto; } /* PC는 왼쪽 정렬 */
+            
+            /* 검색창 스타일 (PC) */
+            .search-container {
+                max-width: 500px;
+                margin-left: 0;
+                margin-right: auto;
             }
         }
         
@@ -90,17 +96,8 @@
             .nav-item i.material-icons { font-size: 28px; margin-bottom: 2px; }
             .nav-item { flex-direction: column; font-size: 0.75rem; line-height: 1.2; }
             
-            /* 모바일: 가로 스크롤 영역에 패딩 적용 */
-            .horizontal-scroll-container {
-                padding-left: 1.5rem;
-                padding-right: 1.5rem;
-                margin-left: -1.5rem;
-                margin-right: -1.5rem;
-            }
-            /* 마지막 카드 오른쪽 여백 추가로 스크롤 끝에 공간 확보 */
-            .horizontal-scroll-container .community-card:last-child {
-                margin-right: calc(1.5rem); /* 뷰 패딩만큼 여백 */
-            }
+            /* 모바일: 중앙 정렬 유지 */
+            .challenge-tabs { margin: 0 auto 2rem auto; } 
         }
 
         /* 공통 헤더 스타일 (1px 선 유지) */
@@ -146,46 +143,47 @@
             background-color: var(--color-app-bg); 
         }
         
-        /* ------------------ 나의 도전 목록 (세로 목록) ------------------ */
-
-        /* 나의 도전 목록 컨테이너 */
-        .challenge-list {
-            display: block; 
-            gap: 0; 
-        }
-
-        /* 나의 도전 카드 스타일 (목록 아이템) */
-        .challenge-card {
-            background-color: var(--color-content-bg);
-            padding: 1.25rem 0; 
-            border-bottom: 1px solid var(--color-border); /* 깔끔한 구분선 유지 */
+        /* ------------------ 챌린지 탭 UI (pill-shaped) ------------------ */
+        .challenge-tabs {
             display: flex;
-            flex-direction: row; 
-            justify-content: space-between; 
-            align-items: center;
-            transition: background-color 0.15s ease;
-            box-shadow: none; 
+            gap: 10px;
+            margin-bottom: 2rem; 
+            padding: 0; 
+            border-radius: 9999px; 
+            width: fit-content; 
+            max-width: 100%;
+        }
+
+        .pill-tab {
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 9999px;
             cursor: pointer;
-            margin-bottom: 0 !important; 
+            transition: all 0.2s ease;
+            text-align: center;
+            /* 비활성 스타일: 흰색 배경, 검은색 텍스트, 회색 보더 */
+            background-color: var(--color-white); 
+            color: var(--color-black); 
+            border: 1px solid var(--color-border); /* 기본 테두리 추가 */
         }
-        .challenge-card:hover {
-            background-color: #f7f7f7; 
-            border-color: var(--color-border);
+
+        /* 활성 스타일 */
+        .pill-tab.active {
+            background-color: var(--color-black); 
+            color: var(--color-white); 
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
+            border-color: var(--color-black);
         }
         
-        /* 나의 챌린지 카드 마지막 아이템 구분선 제거 */
-        #my-challenge-list .challenge-card:last-child {
-            border-bottom: none;
-        }
-        
-        /* 나의 도전 섹션 제목 컨테이너 */
-        .my-challenge-header {
+        /* ------------------ 공통: 챌린지 헤더 (제목 + 만들기 버튼) ------------------ */
+        .challenge-content-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 1.5rem;
         }
-
+        
         /* 챌린지 생성 버튼 (우측 상단, 작게) */
         .create-challenge-small-button {
             color: var(--color-accent); 
@@ -202,44 +200,107 @@
             background-color: rgba(30, 144, 255, 0.05); 
         }
         
-        /* ------------------ 커뮤니티 도전 가로 카드형 (새로 추가) ------------------ */
-        
-        /* 가로 스크롤 컨테이너 */
-        .horizontal-scroll-container {
-            display: flex;
-            overflow-x: scroll; /* 가로 스크롤 허용 */
-            padding-bottom: 1rem; /* 스크롤바 공간 확보 및 여백 */
-            gap: 1rem; /* 카드 사이 간격 */
-            /* 모바일에서 스크롤바 숨기기 */
-            -ms-overflow-style: none; /* IE and Edge */
-            scrollbar-width: none; /* Firefox */
+        /* ------------------ 챌린지 목록 (세로 목록) ------------------ */
+
+        /* 챌린지 목록 컨테이너 */
+        .challenge-list {
+            display: block; 
+            gap: 0; 
         }
-        .horizontal-scroll-container::-webkit-scrollbar {
-            display: none; /* Chrome, Safari, Opera*/
-        }
-        
-        /* 커뮤니티 카드 스타일 (깔끔한 세로 카드형) */
-        .community-card {
-            flex-shrink: 0; /* 카드가 줄어들지 않도록 설정 */
-            width: 280px; /* 고정 너비 설정 (모바일 스크롤에 적합) */
+
+        /* 챌린지 카드 스타일 (목록 아이템) */
+        .challenge-card {
             background-color: var(--color-content-bg);
-            border: 1px solid var(--color-border); /* 얇은 테두리로 깔끔함 유지 */
+            padding: 1rem 0; /* 패딩 약간 줄임 */
+            border-bottom: 1px solid var(--color-border); 
+            display: flex;
+            flex-direction: row; 
+            justify-content: space-between; 
+            align-items: center;
+            transition: background-color 0.15s ease;
+            box-shadow: none; 
+            cursor: pointer;
+            margin-bottom: 0 !important; 
+        }
+        .challenge-card:hover {
+            background-color: #f7f7f7; 
+            border-color: var(--color-border);
+        }
+        
+        /* 챌린지 카드 마지막 아이템 구분선 제거 */
+        #personal-challenge-list .challenge-card:last-child {
+            border-bottom: none;
+        }
+        
+        /* ------------------ 팀 챌린지 (커뮤니티형 목록) ------------------ */
+        
+        /* 팀 챌린지 목록 (세로 쫘라라락) */
+        #public-challenge-list {
+            display: flex; 
+            flex-direction: column; 
+            gap: 1.5rem; /* 카드 사이 간격 */
+            margin-bottom: 2rem;
+        }
+        
+        @media (max-width: 639px) {
+            #public-challenge-list {
+                gap: 1rem;
+            }
+        }
+        
+        /* 팀 챌린지 카드 스타일 (커뮤니티형 세로 목록) */
+        .public-list-card {
+            background-color: var(--color-content-bg);
+            border: 1px solid var(--color-border); 
             border-radius: 12px;
             padding: 1.25rem;
-            box-shadow: none !important; /* 그림자 없음 요청 반영 */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03); 
             transition: all 0.2s ease;
             cursor: pointer;
             display: flex;
             flex-direction: column;
-            justify-content: space-between; /* 내용 상하 배치 */
-            height: 160px; /* 카드 높이를 고정하여 통일감 부여 */
+            justify-content: space-between; 
+            height: auto; /* 높이 자동 조절 */
         }
         
-        .community-card:hover {
+        .public-list-card:hover {
             background-color: #f7f7f7;
-            border-color: var(--color-accent); /* 호버 시 강조 */
+            border-color: var(--color-accent); 
+            transform: translateY(-2px); 
         }
-
+        
+        /* 검색창 스타일 */
+        .search-container {
+            position: relative;
+            margin-bottom: 2rem;
+            width: 100%;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            padding-left: 3.5rem; /* 아이콘 공간 확보 */
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .search-input:focus {
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 2px rgba(30, 144, 255, 0.1);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            font-size: 1.5rem;
+            pointer-events: none; /* 클릭 이벤트 방지 */
+        }
 
         /* 하단 내비게이션 바 */
         .bottom-nav {
@@ -264,30 +325,6 @@
         
         .nav-item { color: #999; text-decoration: none; display: flex; align-items: center; justify-content: center; padding: 0.5rem; border-radius: 12px; transition: color 0.2s ease; }
         .nav-item.active { color: var(--color-accent); font-weight: 600; }
-        
-        /* 커뮤니티 섹션 더보기 버튼 (크기 축소 및 중앙 정렬) */
-        .more-challenges-button {
-            display: block;
-            width: 250px; /* 고정 너비 지정 */
-            max-width: 100%; /* 모바일 대응 */
-            margin-left: auto; /* 중앙 정렬 */
-            margin-right: auto; /* 중앙 정렬 */
-            text-align: center;
-            padding: 0.75rem; /* 사이즈 조정 */
-            margin-top: 1.5rem;
-            background-color: var(--color-content-bg);
-            border: 1px solid var(--color-border);
-            border-radius: 8px; /* 둥근 모서리 조정 */
-            color: #555;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        /* 더보기 버튼 호버 색상 요청에 따라 수정: 검은색 텍스트, 회색 배경 */
-        .more-challenges-button:hover {
-            background-color: #ededed;
-            color: #333; /* 검은색 계열로 변경 */
-        }
         
         /* 모달 스타일은 유지 */
         #modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0, 0, 0, 0.4); justify-content: center; align-items: center; }
@@ -328,41 +365,68 @@
     <!-- ------------------ 뷰 컨테이너 ------------------ -->
     <div id="challenge-view" class="view active">
         
-        <!-- 나의 도전 섹션 (가장 위, 핵심) -->
-        <div class="my-challenge-section">
-            <div class="my-challenge-header">
+        <!-- New: 챌린지 타입 탭 (Pill-shaped Filter) - 2개 탭으로 수정 -->
+        <div class="challenge-tabs mx-auto">
+            <!-- 탭 명칭: 나의 도전 -> 챌린지 -->
+            <div id="tab-personal" class="pill-tab active interactive" data-tab-name="personal" onclick="switchTab('personal')">
+                챌린지
+            </div>
+            <!-- 탭 명칭: 공개 챌린지 -> 팀 챌린지 -->
+            <div id="tab-public" class="pill-tab interactive" data-tab-name="public" onclick="switchTab('public')">
+                팀 챌린지
+            </div>
+            <!-- 커뮤니티 도전 (삭제됨) -->
+        </div>
+        
+        <!-- ------------------ 챌린지 섹션 (탭 콘텐츠 1) ------------------ -->
+        <div id="personal-challenge-content" class="tab-content active">
+            <!-- 공통 헤더: 제목 + 만들기 버튼 -->
+            <div class="challenge-content-header">
                 <h2 style="font-weight: 700; font-size: 1.5rem; color: var(--color-black);">
-                    나의 진행 중인 도전
+                    나의 챌린지 목록
                 </h2>
-                <!-- 챌린지 생성 버튼 (우측 상단, 작게) -->
+                <!-- 만들기 버튼 (개인 챌린지 생성으로 이동) -->
                 <button class="create-challenge-small-button interactive" onclick="handleCreateChallenge()">
                     만들기
                 </button>
             </div>
             
-            <!-- 나의 도전 목록 (세로 목록) -->
-            <div id="my-challenge-list" class="challenge-list" style="margin-bottom: 3rem;">
-                <!-- 나의 도전 데이터가 여기에 삽입됩니다 -->
-                <p id="my-loading-message" style="text-align: center; color: #777;">나의 도전을 불러오는 중...</p>
+            <!-- 나의 챌린지 목록 (세로 목록) -->
+            <div id="personal-challenge-list" class="challenge-list" style="margin-bottom: 3rem;">
+                <!-- 나의 챌린지 데이터가 여기에 삽입됩니다 -->
+                <p id="personal-loading-message" style="text-align: center; color: #777;">챌린지 목록을 불러오는 중...</p>
             </div>
         </div>
 
-        <!-- 커뮤니티 도전 샘플 섹션 (3개만 강조) -->
-        <div class="challenge-section">
-            <h2 style="font-weight: 700; font-size: 1.5rem; margin-bottom: 1.5rem; color: #333;">
-                다른 사람들의 도전
-            </h2>
-            <!-- 커뮤니티 도전 목록 (가로 카드형) -->
-            <div id="all-challenge-list">
-                <!-- 공개 챌린지 샘플 데이터가 여기에 삽입됩니다 (최대 3개) -->
-                <p id="loading-message" style="text-align: center; color: #777;">도전 목록을 불러오는 중...</p>
+        <!-- ------------------ 팀 챌린지 섹션 (탭 콘텐츠 2) - 커뮤니티형 목록 유지 ------------------ -->
+        <div id="public-challenge-content" class="tab-content hidden">
+            
+            <!-- 공통 헤더: 제목 + 만들기 버튼 -->
+            <div class="challenge-content-header">
+                <h2 style="font-weight: 700; font-size: 1.5rem; color: var(--color-black);">
+                    모든 팀 챌린지
+                </h2>
+                <!-- 만들기 버튼 (팀  챌린지 생성은 현재 준비 중) -->
+                <button class="create-challenge-small-button interactive" onclick="showModal('팀 챌린지 만들기', '팀 챌린지 생성 기능은 현재 준비 중입니다. 현재는 개인 챌린지만 만들 수 있습니다.')">
+                    만들기
+                </button>
+            </div>
+
+            <!-- 검색 기능 유지 -->
+            <div class="search-container">
+                <i class="material-icons search-icon">search</i>
+                <input type="text" id="challenge-search-input" class="search-input" placeholder="챌린지 제목 또는 주제를 검색하세요" oninput="searchChallenges(this.value)">
             </div>
             
-            <!-- 더보기 버튼 -->
-            <button class="more-challenges-button interactive" onclick="showModal('더보기', '더 많은 챌린지는 전체 챌린지 페이지에서 볼 수 있습니다. (데모)')">
-                더 많은 도전 보러가기
-            </button>
+            <div class="challenge-section">
+                <!-- 팀 챌린지 목록 (커뮤니티형: 세로 쫘라라락, PC는 2열) -->
+                <div id="public-challenge-list">
+                    <!-- 팀 챌린지 데이터가 여기에 삽입됩니다 -->
+                    <p id="public-loading-message" style="text-align: center; color: #777; width: 100%;">팀 챌린지 목록을 불러오는 중...</p>
+                </div>
+            </div>
         </div>
+        
     </div>
     
 </div>
@@ -416,6 +480,8 @@
     // 글로벌 변수
     let currentUserId = null;
     let isAuthAttempted = false; 
+    let allPublicChallenges = []; // 검색을 위해 모든 팀 챌린지를 저장할 배열
+    let currentSearchTerm = ''; // 현재 검색어를 저장할 변수
 
     // --- UI/UX 함수 ---
     const modal = document.getElementById('modal');
@@ -440,7 +506,7 @@
         }, 200); 
     }
 
-    // 새 챌린지 생성 버튼 핸들러 
+    // 새 챌린지 생성 버튼 핸들러 (개인 챌린지)
     window.handleCreateChallenge = function() {
         if (!currentUserId) {
             showModal('인증 필요', '로그인이 필요합니다.');
@@ -449,32 +515,68 @@
 
         window.location.href = "/challenge/create"; 
     }
+    
+    /**
+     * 탭 전환 로직
+     */
+    window.switchTab = function(tabName) {
+        // 모든 탭 버튼의 active 클래스 제거
+        document.querySelectorAll('.pill-tab').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        
+        // 클릭된 탭 버튼에 active 클래스 추가
+        const activeTabButton = document.querySelector(`.pill-tab[data-tab-name="${tabName}"]`);
+        if (activeTabButton) {
+            activeTabButton.classList.add('active');
+        }
+
+        // 모든 탭 콘텐츠 숨기기
+        document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.add('hidden');
+        });
+
+        // 선택된 탭 콘텐츠 보이기
+        const activeContent = document.getElementById(`${tabName}-challenge-content`);
+        if (activeContent) {
+            activeContent.classList.remove('hidden');
+        }
+    }
 
 
     // --- 데이터 및 비즈니스 로직 ---
 
     /**
-     * 나의 챌린지 목록을 렌더링합니다. (세로 목록 디자인 유지)
+     * 개인 챌린지 목록을 렌더링합니다.
      */
     function renderMyChallenges(challenges) {
-        const listContainer = document.getElementById('my-challenge-list');
+        // ID를 personal-challenge-list로 변경
+        const listContainer = document.getElementById('personal-challenge-list');
         listContainer.innerHTML = ''; 
         
         challenges.forEach(challenge => {
             const card = document.createElement('div');
-            // 목록 스타일 적용
             card.className = 'challenge-card interactive my-challenge-card'; 
             
-            // **수정: 챌린지 뷰 링크를 challenge/view.html?uid=... 로 변경**
+            // 챌린지 뷰 링크
             card.setAttribute('onclick', `window.location.href='/challenge/view.html?uid=${challenge.id}'`);
+
+            // 아이콘은 임의로 고정
+            const icon = challenge.isPublic ? 
+                '<i class="material-icons text-sm text-gray-400 mr-1" style="vertical-align: middle;">group</i>' : 
+                '<i class="material-icons text-sm text-gray-400 mr-1" style="vertical-align: middle;">person</i>';
 
             const daysRemaining = challenge.daysRemaining || 30; // 데모용 임시 값
             
             // 목록 항목 구조: 제목/설명 + 간단 정보 + > 아이콘
             card.innerHTML = `
                 <div class="flex flex-col flex-grow min-w-0 pr-4">
-                    <h3 class="card-title font-semibold text-base mb-1 truncate" style="font-weight: 600;">${challenge.title}</h3>
-                    <p class="text-sm text-gray-500 truncate">D-${daysRemaining} • ${challenge.description || '진행 중인 나의 도전'}</p>
+                    <h3 class="card-title font-semibold text-base mb-1 truncate" style="font-weight: 600;">
+                        ${challenge.title}
+                    </h3>
+                    <p class="text-sm text-gray-500 truncate">
+                        ${icon} D-${daysRemaining} • ${challenge.description || '진행 중인 나의 챌린지'}
+                    </p>
                 </div>
                 <!-- 우측 이동 아이콘 -->
                 <i class="material-icons text-gray-400">chevron_right</i>
@@ -483,9 +585,9 @@
         });
         
         if (challenges.length === 0) {
-            listContainer.innerHTML = '<p class="text-center text-gray-500 p-8" style="grid-column: 1 / -1; color: #aaa; background-color: transparent; padding-top: 3rem; padding-bottom: 3rem;">아직 진행 중인 도전이 없습니다.</p>';
+            listContainer.innerHTML = '<p class="text-center text-gray-500 p-8" style="grid-column: 1 / -1; color: #aaa; background-color: transparent; padding-top: 3rem; padding-bottom: 3rem;">아직 진행 중인 챌린지가 없습니다.<br>상단의 "만들기" 버튼으로 새로운 도전을 시작해보세요!</p>';
         }
-        document.getElementById('my-loading-message')?.remove(); 
+        document.getElementById('personal-loading-message')?.remove(); 
     }
 
     /**
@@ -520,49 +622,52 @@
 
 
     /**
-     * 공개 챌린지 목록을 렌더링합니다. (샘플 3개만, 가로 카드형 디자인)
+     * 팀 챌린지 목록을 렌더링합니다. (검색 결과에 따라 필터링)
      */
     function renderPublicChallenges(challenges) {
-        const listContainer = document.getElementById('all-challenge-list');
+        const listContainer = document.getElementById('public-challenge-list');
         listContainer.innerHTML = ''; 
         
-        // **변경: 가로 스크롤을 위한 클래스 추가**
-        listContainer.className = 'horizontal-scroll-container';
+        // 검색 필터링
+        const searchTerm = currentSearchTerm.toLowerCase().trim();
+        const filteredChallenges = searchTerm 
+            ? challenges.filter(c => 
+                c.title.toLowerCase().includes(searchTerm) || 
+                (c.description && c.description.toLowerCase().includes(searchTerm))
+              )
+            : challenges;
 
-        // 챌린지 목록을 3개로 제한
-        const featuredChallenges = challenges.slice(0, 3);
-        
-        featuredChallenges.forEach(challenge => {
+        filteredChallenges.forEach(challenge => {
             const durationDays = challenge.durationDays || 30;
             const participants = challenge.participants || 0; 
             
             const card = document.createElement('div');
-            // **변경: 커뮤니티 카드 스타일 적용**
-            card.className = 'community-card interactive'; 
+            // 팀 챌린지 커뮤니티형 목록 스타일 적용
+            card.className = 'public-list-card interactive'; 
             
-            // **수정: 챌린지 뷰 링크를 challenge/view.html?uid=... 로 변경**
+            // 챌린지 뷰 링크
             card.setAttribute('onclick', `window.location.href='/challenge/view.html?uid=${challenge.id}'`);
 
-            // **변경: 세로 카드형 구조 적용**
+            // 세로 목록형 구조 적용
             card.innerHTML = `
                 <div class="flex flex-col flex-grow min-w-0">
                     <!-- 챌린지 제목 -->
-                    <h3 class="card-title font-bold text-lg mb-2 truncate" style="line-height: 1.4;">
+                    <h3 class="card-title font-bold text-xl mb-2 line-clamp-2" style="line-height: 1.4; min-height: 2.8rem;">
                         ${challenge.title}
                     </h3>
                     
                     <!-- 간단한 기본 정보 (설명) -->
-                    <p class="text-sm text-gray-600 mb-4 line-clamp-3" style="min-height: 3rem;">
+                    <p class="text-base text-gray-600 mb-4 line-clamp-3" style="min-height: 3rem;">
                         ${challenge.description || '이 챌린지의 간단한 목표 설명입니다.'}
                     </p>
 
                     <!-- 메타 정보 (참여자, 기간) -->
-                    <div class="mt-auto pt-2 border-t border-gray-100 flex justify-between items-center">
-                        <span class="text-xs font-medium text-gray-500">
-                            참여자 ${participants}명
+                    <div class="mt-auto pt-3 border-t border-gray-100 flex justify-between items-center">
+                        <span class="text-sm font-medium text-gray-500 flex items-center">
+                            <i class="material-icons text-base mr-1" style="font-size: 18px;">group</i> 참여자 ${participants}
                         </span>
-                        <span class="text-xs font-medium text-gray-500">
-                            ${durationDays}일 도전
+                        <span class="text-sm font-medium text-gray-500 flex items-center">
+                            <i class="material-icons text-base mr-1" style="font-size: 18px;">schedule</i> ${durationDays}일 진행
                         </span>
                     </div>
                 </div>
@@ -570,15 +675,25 @@
             listContainer.appendChild(card);
         });
         
-        if (featuredChallenges.length === 0) {
-            // 빈 목록 메시지는 listContainer의 부모 요소인 .challenge-section의 중앙에 위치하도록 조정
-            listContainer.innerHTML = '<p class="text-center text-gray-500 p-8" style="width: 100%; color: #aaa;">현재 등록된 도전 샘플이 없습니다.</p>';
+        if (filteredChallenges.length === 0) {
+            listContainer.innerHTML = `<p class="text-center text-gray-500 p-8" style="width: 100%; color: #aaa;">
+                ${searchTerm ? `'${searchTerm}'에 대한 검색 결과가 없습니다.` : '현재 등록된 팀 챌린지가 없습니다.'}
+            </p>`;
         }
-        document.getElementById('loading-message')?.remove(); 
+        document.getElementById('public-loading-message')?.remove(); 
     }
+    
+    /**
+     * 검색 기능 핸들러
+     */
+    window.searchChallenges = function(term) {
+        currentSearchTerm = term;
+        // 이미 allPublicChallenges에 모든 데이터가 있으므로, 필터링만 다시 실행
+        renderPublicChallenges(allPublicChallenges);
+    };
 
     /**
-     * Firestore에서 공개 챌린지 목록을 실시간으로 가져옵니다.
+     * Firestore에서 팀 챌린지 목록을 실시간으로 가져옵니다.
      */
     function fetchPublicChallenges() {
         // 공개 데이터 경로: /artifacts/{appId}/public/data/challenges
@@ -596,16 +711,18 @@
                     id: doc.id, 
                     ...data,
                     participants: data.participants || 0,
-                    durationDays: data.durationDays || 30
+                    durationDays: data.durationDays || 30,
+                    title: data.title || '제목 없음', // 검색을 위해 타이틀 기본값 설정
                 });
             });
-            // 3개만 렌더링하도록 전달
-            renderPublicChallenges(challenges);
+            
+            allPublicChallenges = challenges; // 모든 데이터를 전역 변수에 저장
+            renderPublicChallenges(allPublicChallenges);
             console.log("Firestore Public Challenges Updated:", challenges.length);
 
         }, (error) => {
             console.error("Firestore Error:", error);
-            showModal('데이터 오류', '공개 챌린지 목록을 불러오는 중 오류가 발생했습니다.');
+            showModal('데이터 오류', '팀 챌린지 목록을 불러오는 중 오류가 발생했습니다.');
         });
         
         return unsubscribe;
@@ -691,6 +808,9 @@
                 hideModal();
             }
         });
+        
+        // 초기에는 'personal' 탭의 콘텐츠를 보여줍니다.
+        switchTab('personal');
     });
 </script>
 </body>
