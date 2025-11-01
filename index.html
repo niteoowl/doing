@@ -8,8 +8,6 @@
     <!-- Pretendard 폰트 CDN 적용 --><link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
     <!-- Google Material Icons (Google Fonts Icons) 추가 --><link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
-    <!-- 기존 Tailwind CSS CDN 삭제됨 -->
-
     <!-- 공통 및 메인 페이지 스타일 (리디자인 적용) --><style>
         /* 기본 스타일 및 iOS 안전 영역 지원 */
         :root {
@@ -24,7 +22,7 @@
             --pc-max-width: 1200px; 
             /* 헤더 높이 변수 추가 (모바일 기준 약 4.5rem) */
             --header-height-mobile: 4.5rem; 
-            /* [수정] 탭바 높이 (약 2.5rem) + 탭바 마진(1.5rem) = 4.0rem. 이를 View 패딩 계산에 사용 */
+            /* 탭바 높이 (약 2.5rem) + 탭바 마진(1.5rem) = 4.0rem. 이를 View 패딩 계산에 사용 */
             --tab-area-total-height: 4.0rem; 
         }
 
@@ -109,7 +107,7 @@
             font-size: 2rem; 
             font-weight: 800; 
             color: var(--color-black); 
-            /* [수정] 높이 및 수직 중앙 정렬을 위해 flex 및 min-height 적용 */
+            /* 높이 및 수직 중앙 정렬을 위해 flex 및 min-height 적용 */
             display: flex;
             align-items: center; 
             min-height: var(--header-height-mobile); /* 4.5rem 높이 고정 */
@@ -172,7 +170,7 @@
             background-color: #f7f7f7; 
             border-radius: 16px; 
             padding: 1.25rem;
-            margin-bottom: 1.5rem; /* 2rem에서 1.5rem으로 간격 조정 */
+            margin-bottom: 1rem; /* [수정] 1.5rem에서 1rem으로 간격 추가 조정 */
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -275,6 +273,7 @@
         .challenge-section h2 {
             font-size: 1.25rem; /* text-xl */
             font-weight: 700; /* font-bold */
+            margin-top: 0; /* [수정] 상단 마진 제거 */
             margin-bottom: 1rem; /* mb-4 (1rem) */
             color: #1f2937; /* text-gray-800 근사치 */
             text-align: left;
