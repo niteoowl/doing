@@ -24,7 +24,7 @@
             --pc-max-width: 1200px; 
             /* 헤더 높이 변수 추가 (모바일 기준 약 4.5rem) */
             --header-height-mobile: 4.5rem; 
-            /* [수정] 탭바 순수 높이로 조정 (약 3.0rem). 마진은 제거하여 카드를 상단에 붙임 */
+            /* 탭바 순수 높이 (약 3.0rem). 마진 제거됨 */
             --tab-area-total-height: 3.0rem; 
         }
 
@@ -80,6 +80,14 @@
             
             .main-header { padding: 1rem 3rem; position: static; } /* PC 고정 해제 (기존 유지) */
             .tab-bar { padding: 0 3rem; position: static; margin-top: 0; } /* PC 고정 해제 (기존 유지) */
+
+            /* PC에서는 기존 디자인 유지 */
+            .sprout-card {
+                border-radius: 16px;
+                margin-left: 0;
+                margin-right: 0;
+                width: auto;
+            }
         }
         
         /* ------------------ Mobile Layout (639px 이하) ------------------ */
@@ -91,11 +99,20 @@
             .view {
                 /* Header Height (4.5rem) + Tab Area Total Height (3.0rem) */
                 padding-top: calc(var(--header-height-mobile) + var(--tab-area-total-height)); 
-                padding-left: 1.5rem;
-                padding-right: 1.5rem;
+                padding-left: 1.5rem; /* 좌우 패딩 유지 (다른 컨텐츠용) */
+                padding-right: 1.5rem; /* 좌우 패딩 유지 (다른 컨텐츠용) */
                 padding-bottom: calc(1.5rem + var(--bottom-nav-height-mobile));
             }
             
+            /* [핵심 수정] 새싹 카드: 부모의 좌우 패딩을 상쇄하여 화면 전체 너비로 확장 및 상단 모서리 제거 */
+            .sprout-card {
+                margin-left: -1.5rem; /* 부모 .view의 padding-left: 1.5rem 상쇄 */
+                margin-right: -1.5rem; /* 부모 .view의 padding-right: 1.5rem 상쇄 */
+                width: calc(100% + 3rem); /* 꽉 찬 너비 계산 */
+                border-top-left-radius: 0; /* 상단 모서리 둥글기 제거 */
+                border-top-right-radius: 0; /* 상단 모서리 둥글기 제거 */
+            }
+
             /* 모바일: 아이콘과 텍스트 세로 정렬 (기본값) */
             .nav-item { flex-direction: column; gap: 2px; font-size: 0.75rem; } 
             .nav-item i.material-icons { font-size: 24px; }
@@ -108,7 +125,6 @@
             font-size: 2rem; 
             font-weight: 800; 
             color: var(--color-black); 
-            /* [수정] position: sticky 속성 다시 추가 */
             position: sticky; 
             top: 0; 
             z-index: 10;
@@ -122,13 +138,12 @@
         /* 탭 바 */
         .tab-bar {
             display: flex;
-            /* [수정] position: sticky 속성 다시 추가 */
             position: sticky; 
             top: var(--header-height-mobile); /* 헤더 바로 아래에 고정 */
             z-index: 10; 
             background-color: var(--color-app-bg);
             border-bottom: 1px solid var(--color-border);
-            /* [수정] 새싹 카드 상단 여백 제거를 위해 margin-bottom: 1.5rem; 삭제 */
+            /* 모바일에서 새싹 카드와의 수직 여백 제거를 위해 margin-bottom: 0 */
             padding: 0 1.5rem; 
         }
         
@@ -167,7 +182,7 @@
             border-radius: 9999px;
         }
         
-        /* 새싹 레벨 카드 */
+        /* 새싹 레벨 카드 (모바일 전용 오버라이드는 @media 쿼리 안에 있음) */
         .sprout-card {
             background-color: #f7f7f7; 
             border-radius: 16px; 
@@ -463,7 +478,8 @@
     <!-- ------------------ 뷰 컨테이너 ------------------ --><div id="home-view" class="view active">
         
         <!-- 탭 내용 컨테이너 --><div id="tab-content-challenge">
-            <!-- 새싹 레벨 카드 --><div class="sprout-card interactive">
+            <!-- 새싹 레벨 카드 -->
+            <!-- 모바일에서 좌우 여백 없이 꽉 채워집니다. --><div class="sprout-card interactive">
                 <div class="sprout-card-content"> <!-- flex items-center -> sprout-card-content로 변경 -->
                     <!-- 새싹 이미지 --><img src="/image/sprout.webp" alt="새싹 아이콘" 
                          onerror="this.onerror=null; this.src='https://placehold.co/45x45/ffffff/000?text=🌱'; this.alt='새싹 이모지';" />
