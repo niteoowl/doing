@@ -2,30 +2,27 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <!-- 뷰포트 메타 태그: 반응형 디자인 및 노치(safe area) 처리를 위해 수정 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"> 
     <title>Doing! - 홈</title>
     <!-- Favicon 경로 설정 --><link rel="icon" type="image/x-icon" href="/image/favicon.ico">
     <!-- Pretendard 폰트 CDN 적용 --><link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
     <!-- Google Material Icons (Google Fonts Icons) 추가 --><link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
-    <!-- 기존 Tailwind CSS CDN 삭제됨 -->
-
-    <!-- 공통 및 메인 페이지 스타일 (리디자인 적용) --><style>
-        /* 기본 스타일 및 iOS 안전 영역 지원 */
+    <!-- 공통 및 반응형 스타일 적용 -->
+    <style>
+        /* 기본 스타일 및 반응형 변수 */
         :root {
             --color-white: #ffffff;
             --color-black: #000000;
             --color-accent: #1E90FF; /* 포인트 블루 (Dodger Blue) */
-            --color-app-bg: #ffffff; /* 앱 배경 흰색 */
-            --color-content-bg: #ffffff; /* 컨텐츠 카드 및 헤더 배경 */
+            --color-app-bg: #ffffff; 
+            --color-content-bg: #ffffff; 
             --color-border: #e0e0e0;
-            --bottom-nav-height-mobile: 80px;
-            --bottom-nav-height-pc: 60px; 
-            --pc-max-width: 1200px; 
-            /* 헤더 높이 변수 추가 (모바일 기준 약 4.5rem) */
-            --header-height-mobile: 4.5rem; 
-            /* 탭바 순수 높이 (약 3.0rem). 마진 제거됨 */
-            --tab-area-total-height: 3.0rem; 
+            --bottom-nav-height: 60px; /* 기본/PC 하단 내비게이션 높이 */ 
+            --pc-max-width: 1200px; /* PC 최대 너비 */ 
+            --header-height: 4.5rem; /* 헤더 높이 */ 
+            --mobile-padding-x: 1.5rem; /* 모바일 기본 좌우 패딩 */
         }
 
         * { box-sizing: border-box; }
@@ -36,7 +33,9 @@
             padding: 0;
             background-color: var(--color-white); 
             display: flex;
-            justify-content: center;
+            /* 모바일 기본: 좌측 상단부터 시작 */
+            justify-content: flex-start;
+            align-items: flex-start; 
             min-height: 100vh;
             color: var(--color-black);
             -webkit-tap-highlight-color: transparent;
@@ -45,6 +44,8 @@
 
         #app-container {
             width: 100%;
+            /* 모바일 기본: 최대 너비 없음 */
+            max-width: 100%; 
             background-color: var(--color-app-bg); 
             display: flex;
             flex-direction: column;
@@ -52,355 +53,51 @@
             min-height: 100vh;
             opacity: 0;
             transition: opacity 0.5s ease;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.05); /* 모바일에서 컨테이너 경계선 느낌을 위해 약한 그림자 유지 */
         }
         
         #app-container.font-loaded { opacity: 1; }
 
-        /* ------------------ PC/Desktop Layout (640px 이상) ------------------ */
-        @media (min-width: 640px) {
-            body { 
-                align-items: flex-start; 
-                justify-content: center; 
-                background-color: var(--color-white); 
-            }
-            #app-container { 
-                max-width: var(--pc-max-width); 
-                box-shadow: none; 
-            }
-            /* PC에서는 헤더와 탭바가 고정되지 않고 흐름을 따르도록 패딩 조정 */
-            .view {
-                padding: 1rem 3rem; 
-                padding-bottom: calc(1.5rem + var(--bottom-nav-height-pc)); 
-            }
-            .bottom-nav { height: var(--bottom-nav-height-pc); }
-            
-            /* PC: 아이콘과 텍스트 가로 정렬, 아이콘 크기/간격 조정 */
-            .nav-item i.material-icons { font-size: 20px; margin-bottom: 0; }
-            .nav-item { flex-direction: row; gap: 8px; font-size: 0.9rem; padding: 0.5rem 1rem; } 
-            
-            .main-header { padding: 1rem 3rem; position: static; } /* PC 고정 해제 (기존 유지) */
-            .tab-bar { padding: 0 3rem; position: static; margin-top: 0; } /* PC 고정 해제 (기존 유지) */
-
-            /* PC에서는 기존 디자인 유지 */
-            .sprout-card {
-                border-radius: 16px;
-                margin-left: 0;
-                margin-right: 0;
-                width: auto;
-            }
+        /* ------------------ 모바일 기본 스타일 (Default) ------------------ */
+        
+        /* 뷰 컨텐츠 패딩: 모바일 패딩 적용. 하단은 하단바 높이 + Safe Area 확보 */
+        .view {
+            padding: 1.5rem var(--mobile-padding-x); 
+            padding-bottom: calc(1.5rem + var(--bottom-nav-height) + max(0px, env(safe-area-inset-bottom))); 
+            padding-top: 0; 
         }
-        
-        /* ------------------ Mobile Layout (639px 이하) ------------------ */
-        @media (max-width: 639px) {
-            #app-container { max-width: 100%; box-shadow: none; }
-            .bottom-nav { max-width: 100%; height: var(--bottom-nav-height-mobile); } 
-            
-            /* [수정] 헤더/탭바를 sticky로 고정했으므로, 컨텐츠가 가려지지 않도록 상단 패딩을 조정 */
-            .view {
-                /* Header Height (4.5rem) + Tab Area Total Height (3.0rem) */
-                padding-top: calc(var(--header-height-mobile) + var(--tab-area-total-height)); 
-                padding-left: 1.5rem; /* 좌우 패딩 유지 (다른 컨텐츠용) */
-                padding-right: 1.5rem; /* 좌우 패딩 유지 (다른 컨텐츠용) */
-                padding-bottom: calc(1.5rem + var(--bottom-nav-height-mobile));
-            }
-            
-            /* [핵심 수정] 새싹 카드: 부모의 좌우 패딩을 상쇄하여 화면 전체 너비로 확장 및 상단 모서리 제거 */
-            .sprout-card {
-                margin-left: -1.5rem; /* 부모 .view의 padding-left: 1.5rem 상쇄 */
-                margin-right: -1.5rem; /* 부모 .view의 padding-right: 1.5rem 상쇄 */
-                width: calc(100% + 3rem); /* 꽉 찬 너비 계산 */
-                border-top-left-radius: 0; /* 상단 모서리 둥글기 제거 */
-                border-top-right-radius: 0; /* 상단 모서리 둥글기 제거 */
-            }
 
-            /* 모바일: 아이콘과 텍스트 세로 정렬 (기본값) */
-            .nav-item { flex-direction: column; gap: 2px; font-size: 0.75rem; } 
-            .nav-item i.material-icons { font-size: 24px; }
-        }
-        
-        /* ------------------ 리디자인 스타일 ------------------ */
-        
-        /* 메인 헤더 */
+        /* 메인 헤더: 모바일 패딩 및 폰트 크기 조정 */
         .main-header {
-            font-size: 2rem; 
+            font-size: 1.75rem; /* 모바일 폰트 크기 */
             font-weight: 800; 
             color: var(--color-black); 
-            position: sticky; 
-            top: 0; 
-            z-index: 10;
             display: flex;
             align-items: center; 
-            min-height: var(--header-height-mobile); 
-            padding: 0 1.5rem; 
+            min-height: var(--header-height); 
+            padding: 0 var(--mobile-padding-x); /* 모바일 좌우 패딩 */
+            position: sticky; 
+            top: 0;
+            z-index: 10;
             background-color: var(--color-app-bg);
         }
 
-        /* 탭 바 */
+        /* 탭 바: 모바일 패딩 적용 */
         .tab-bar {
             display: flex;
             position: sticky; 
-            top: var(--header-height-mobile); /* 헤더 바로 아래에 고정 */
-            z-index: 10; 
+            top: var(--header-height); /* 헤더 바로 아래에 붙도록 */
+            z-index: 10;
             background-color: var(--color-app-bg);
             border-bottom: 1px solid var(--color-border);
-            /* 모바일에서 새싹 카드와의 수직 여백 제거를 위해 margin-bottom: 0 */
-            padding: 0 1.5rem; 
+            margin-bottom: 1.5rem; 
+            padding: 0 var(--mobile-padding-x); /* 모바일 좌우 패딩 */
         }
         
-        /* 탭 아이템 컨테이너 */
-        .tab-item-container {
-            flex: 1; 
-            display: flex;
-            justify-content: center;
-        }
-
-        .tab-item {
-            padding: 0.8rem 0;
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #ccc; 
-            cursor: pointer;
-            position: relative;
-            transition: color 0.2s ease;
-            width: 100%;
-            text-align: center;
-        }
-
-        .tab-item.active {
-            color: var(--color-black);
-        }
-
-        /* 탭 활성화 밑줄 디자인 */
-        .tab-item.active::after {
-            content: '';
-            position: absolute;
-            bottom: -1px; 
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background-color: var(--color-black);
-            border-radius: 9999px;
-        }
-        
-        /* 새싹 레벨 카드 (모바일 전용 오버라이드는 @media 쿼리 안에 있음) */
-        .sprout-card {
-            background-color: #f7f7f7; 
-            border-radius: 16px; 
-            padding: 1.25rem;
-            margin-bottom: 2rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        
-        /* Tailwind: flex items-center 대체 */
-        .sprout-card-content {
-            display: flex;
-            align-items: center;
-        }
-
-        .sprout-card img {
-            width: 45px;
-            height: 45px;
-            margin-right: 1rem;
-        }
-        
-        .sprout-text-primary {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--color-black);
-            line-height: 1.3;
-            margin: 0; /* P 태그의 기본 마진 제거하여 배지와의 간격 좁힘 */
-        }
-        
-        /* 배지 색상 */
-        .sprout-badge {
-            display: inline-block;
-            background-color: #966A45; 
-            color: #ffffff; 
-            padding: 0.2rem 0.5rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-top: 4px;
-        }
-        
-        /* Tailwind: text-xl text-gray-400 대체 */
-        .sprout-card .material-icons.arrow-icon {
-            font-size: 1.25rem; /* text-xl */
-            color: #9ca3af; /* text-gray-400 */
-        }
-
-        /* 챌린지 리스트 아이템 */
-        .challenge-list-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 1rem 0;
-            border-bottom: 1px solid #f0f0f0;
-            transition: background-color 0.15s ease;
-        }
-        
-        .challenge-list-item:last-child {
-            border-bottom: none;
-        }
-        
-        .challenge-info h3 {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--color-black);
-            margin: 0;
-        }
-        
-        .challenge-info p {
-            font-size: 0.85rem;
-            color: #888;
-            margin-top: 4px;
-        }
-        
-        /* 불꽃 아이콘 영역 */
-        .fire-icon-wrap {
-            position: relative;
-            width: 56px; 
-            height: 56px; 
-            border-radius: 50%; 
-            background-color: #f5f5f5; 
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-        
-        .fire-icon-wrap img {
-            width: 30px; 
-            height: 30px; 
-            margin-bottom: 4px; 
-        }
-        
-        .fire-count {
-            position: static; 
-            font-size: 0.875rem; 
-            font-weight: 700;
-            color: var(--color-black);
-            transform: none; 
-        }
-        
-        /* Challenge Section H2 (Tailwind: text-xl font-bold mb-4 text-gray-800 대체) */
-        .challenge-section h2 {
-            font-size: 1.25rem; /* text-xl */
-            font-weight: 700; /* font-bold */
-            margin-bottom: 1rem; /* mb-4 (1rem) */
-            color: #1f2937; /* text-gray-800 근사치 */
-            text-align: left;
-        }
-
-        /* 챌린지 로딩 메시지 */
-        #loading-message {
-            text-align: center; 
-            color: #777; 
-            padding: 2rem 0;
-        }
-
-        /* 팀 챌린지 섹션 (요청된 디자인 반영) */
-        .team-challenge-section {
-            margin-top: 3rem;
-            text-align: center;
-        }
-        
-        .team-challenge-section h2 {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--color-black);
-            text-align: left;
-            margin-bottom: 1.5rem;
-        }
-        
-        .team-challenge-section-content {
-            padding: 40px 20px; /* 상하 패딩 늘림 */
-            background-color: var(--color-app-bg); /* 배경 흰색 */
-            border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .team-challenge-section img {
-            width: 140px; /* 이미지 크기 키움 */
-            height: auto;
-            margin-bottom: 30px; /* 아래쪽 여백 추가 */
-        }
-        
-        .team-challenge-section p {
-            font-size: 1.3rem; /* 폰트 크기 키움 */
-            font-weight: 700; /* 폰트 굵게 */
-            color: var(--color-black); /* 텍스트 색상 검은색 */
-            margin-bottom: 30px;
-        }
-        
-        .team-challenge-section .explore-button {
-            width: 100%; /* 버튼 너비 최대로 */
-            max-width: 300px; /* 최대 너비 제한 (선택적) */
-            padding: 0.75rem 1.5rem; /* 더 작게 조정 */
-            background-color: var(--color-black);
-            color: var(--color-white);
-            border: none;
-            border-radius: 9999px; /* 완전히 둥글게 수정 */
-            font-size: 1rem; /* 폰트 크기 작게 조정 */
-            font-weight: 700; /* 폰트 굵게 */
-            cursor: pointer;
-            transition: opacity 0.2s;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        .team-challenge-section .explore-button:hover {
-            opacity: 0.9;
-        }
-        
-        /* 인사이트 탭 내용 (Tailwind: py-8 text-center text-gray-500 대체) */
-        #tab-content-insight {
-            padding-top: 2rem;
-            padding-bottom: 2rem; 
-            text-align: center;
-            color: #6b7280; /* text-gray-500 */
-            /* style="display: none;"은 HTML에 유지 */
-        }
-
-        /* 인사이트 탭 H3 (Tailwind: text-lg font-semibold mb-3 대체) */
-        #tab-content-insight h3 {
-            font-size: 1.125rem; /* text-lg */
-            font-weight: 600; /* font-semibold */
-            margin-bottom: 0.75rem; /* mb-3 */
-        }
-
-        /* ------------------ Ripple Effect (물결 효과) ------------------ */
-        .interactive {
-            position: relative;
-            overflow: hidden;
-            transform: translate3d(0, 0, 0); 
-        }
-        
-        .ripple {
-            position: absolute;
-            border-radius: 50%;
-            transform: scale(0);
-            animation: ripple-animation 0.5s linear;
-            background-color: rgba(0, 0, 0, 0.1); 
-            pointer-events: none;
-            z-index: 100;
-        }
-
-        @keyframes ripple-animation {
-            to {
-                transform: scale(4);
-                opacity: 0;
-            }
-        }
-        
-        /* 하단 내비게이션 바 */
+        /* 하단 내비게이션 바 (모바일) */
         .bottom-nav {
             width: 100%;
+            height: var(--bottom-nav-height); 
             background-color: var(--color-content-bg);
             display: flex;
             justify-content: space-around;
@@ -409,21 +106,31 @@
             position: fixed;
             bottom: 0;
             top: auto;
-            padding-bottom: env(safe-area-inset-bottom); 
+            /* 모바일 안전 영역 패딩 적용 (노치 디자인 대응) */
+            padding-bottom: max(0px, env(safe-area-inset-bottom)); 
             border-top: 1px solid var(--color-border); 
-            box-shadow: 0 -1px 8px rgba(0, 0, 0, 0.03); 
-            left: 50%;
-            transform: translateX(-50%);
-            max-width: var(--pc-max-width);
+            box-shadow: 0 -1px 8px rgba(0, 0, 0, 0.05); 
+            /* 모바일: 화면 전체 너비 사용 */
+            left: 0;
+            transform: none;
+            max-width: none;
         }
         
+        /* 내비게이션 아이템 (모바일 기본: 세로 정렬) */
+        .nav-item i.material-icons { 
+            font-size: 24px; /* 모바일 아이콘 크기 키움 */
+            margin-bottom: 2px; /* 텍스트와의 간격 */
+        }
         .nav-item {
             color: #999; 
             text-decoration: none;
             display: flex;
+            flex-direction: column; /* 세로 정렬 */
             align-items: center; 
             justify-content: center; 
-            padding: 0.5rem;
+            gap: 0; 
+            font-size: 0.75rem; /* 모바일 텍스트 크기 */
+            padding: 0.5rem; 
             border-radius: 12px;
             transition: color 0.2s ease, background-color 0.2s ease;
         }
@@ -432,6 +139,101 @@
             color: var(--color-accent); 
             font-weight: 600;
         }
+        
+        /* ------------------ PC 환경 (Min-width: 640px) 오버라이드 ------------------ */
+        @media (min-width: 640px) {
+            
+            /* PC Body 중앙 정렬 */
+            body {
+                justify-content: center;
+                align-items: flex-start; 
+            }
+        
+            #app-container {
+                /* PC: 최대 너비 적용 */
+                max-width: var(--pc-max-width); 
+                box-shadow: none; /* PC에서는 그림자 제거 */
+            }
+        
+            /* 뷰 컨텐츠 PC 패딩 */
+            .view {
+                padding: 1.5rem 3rem; 
+                /* PC 하단 패딩: Safe Area 패딩 제거 */
+                padding-bottom: calc(1.5rem + var(--bottom-nav-height)); 
+            }
+            
+            /* 메인 헤더 PC 스타일 */
+            .main-header {
+                padding: 0 3rem; 
+                font-size: 2rem; 
+            }
+        
+            /* 탭 바 PC 스타일 */
+            .tab-bar {
+                padding: 0 3rem; 
+            }
+            
+            /* 하단 내비게이션 PC 스타일 */
+            .bottom-nav {
+                /* 최대 너비 및 중앙 정렬 */
+                left: 50%;
+                transform: translateX(-50%);
+                max-width: var(--pc-max-width);
+                padding-bottom: 0; /* PC 안전 영역 패딩 제거 */
+            }
+        
+            /* 내비게이션 아이템 PC 스타일 (가로 정렬) */
+            .nav-item i.material-icons { 
+                font-size: 20px; 
+                margin-bottom: 0; 
+            }
+            .nav-item { 
+                flex-direction: row; 
+                gap: 8px; 
+                font-size: 0.9rem; 
+                padding: 0.5rem 1rem; 
+            } 
+        }
+
+        /* ------------------ 공통 리디자인 스타일 (PC/모바일 공용) ------------------ */
+        
+        .tab-item-container { flex: 1; display: flex; justify-content: center; }
+        .tab-item { padding: 0.8rem 0; font-size: 1.1rem; font-weight: 600; color: #ccc; cursor: pointer; position: relative; transition: color 0.2s ease; width: 100%; text-align: center; }
+        .tab-item.active { color: var(--color-black); }
+        .tab-item.active::after { content: ''; position: absolute; bottom: -1px; left: 0; width: 100%; height: 3px; background-color: var(--color-black); border-radius: 9999px; }
+        
+        .sprout-card { background-color: #f7f7f7; border-radius: 16px; padding: 1.25rem; margin-bottom: 2rem; display: flex; align-items: center; justify-content: space-between; }
+        .sprout-card-content { display: flex; align-items: center; }
+        .sprout-card img { width: 45px; height: 45px; margin-right: 1rem; }
+        .sprout-text-primary { font-size: 1.1rem; font-weight: 700; color: var(--color-black); line-height: 1.3; margin: 0; }
+        .sprout-badge { display: inline-block; background-color: #966A45; color: #ffffff; padding: 0.2rem 0.5rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; margin-top: 4px; }
+        .sprout-card .material-icons.arrow-icon { font-size: 1.25rem; color: #9ca3af; }
+
+        .challenge-list-item { display: flex; align-items: center; justify-content: space-between; padding: 1rem 0; border-bottom: 1px solid #f0f0f0; transition: background-color 0.15s ease; }
+        .challenge-list-item:last-child { border-bottom: none; }
+        .challenge-info h3 { font-size: 1.25rem; font-weight: 700; color: var(--color-black); margin: 0; }
+        .challenge-info p { font-size: 0.85rem; color: #888; margin-top: 4px; }
+        .fire-icon-wrap { position: relative; width: 56px; height: 56px; border-radius: 50%; background-color: #f5f5f5; display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; }
+        .fire-icon-wrap img { width: 30px; height: 30px; margin-bottom: 4px; }
+        .fire-count { position: static; font-size: 0.875rem; font-weight: 700; color: var(--color-black); transform: none; }
+        .challenge-section h2 { font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem; color: #1f2937; text-align: left; }
+        #loading-message { text-align: center; color: #777; padding: 2rem 0; }
+
+        .team-challenge-section { margin-top: 3rem; text-align: center; }
+        .team-challenge-section h2 { font-size: 1.25rem; font-weight: 700; color: var(--color-black); text-align: left; margin-bottom: 1.5rem; }
+        .team-challenge-section-content { padding: 40px 20px; background-color: var(--color-app-bg); border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .team-challenge-section img { width: 140px; height: auto; margin-bottom: 30px; }
+        .team-challenge-section p { font-size: 1.3rem; font-weight: 700; color: var(--color-black); margin-bottom: 30px; }
+        .team-challenge-section .explore-button { width: 100%; max-width: 300px; padding: 0.75rem 1.5rem; background-color: var(--color-black); color: var(--color-white); border: none; border-radius: 9999px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: opacity 0.2s; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); }
+        .team-challenge-section .explore-button:hover { opacity: 0.9; }
+
+        #tab-content-insight { padding-top: 2rem; padding-bottom: 2rem; text-align: center; color: #6b7280; }
+        #tab-content-insight h3 { font-size: 1.125rem; font-weight: 600; margin-bottom: 0.75rem; }
+
+        /* Ripple Effect (물결 효과) */
+        .interactive { position: relative; overflow: hidden; transform: translate3d(0, 0, 0); }
+        .ripple { position: absolute; border-radius: 50%; transform: scale(0); animation: ripple-animation 0.5s linear; background-color: rgba(0, 0, 0, 0.1); pointer-events: none; z-index: 100; }
+        @keyframes ripple-animation { to { transform: scale(4); opacity: 0; } }
         
         /* 모달 스타일 */
         #modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0, 0, 0, 0.4); justify-content: center; align-items: center; }
@@ -446,7 +248,7 @@
 <body>
 
 <div id="app-container">
-    <!-- 하단 내비게이션 바 (디자인 유지) --><div class="bottom-nav">
+    <!-- 하단 내비게이션 바 --><div class="bottom-nav">
         <a class="nav-item interactive active" href="/">
             <i class="material-icons">home</i>
             <span>홈</span>
@@ -478,9 +280,8 @@
     <!-- ------------------ 뷰 컨테이너 ------------------ --><div id="home-view" class="view active">
         
         <!-- 탭 내용 컨테이너 --><div id="tab-content-challenge">
-            <!-- 새싹 레벨 카드 -->
-            <!-- 모바일에서 좌우 여백 없이 꽉 채워집니다. --><div class="sprout-card interactive">
-                <div class="sprout-card-content"> <!-- flex items-center -> sprout-card-content로 변경 -->
+            <!-- 새싹 레벨 카드 --><div class="sprout-card interactive">
+                <div class="sprout-card-content"> 
                     <!-- 새싹 이미지 --><img src="/image/sprout.webp" alt="새싹 아이콘" 
                          onerror="this.onerror=null; this.src='https://placehold.co/45x45/ffffff/000?text=🌱'; this.alt='새싹 이모지';" />
                     <div>
@@ -488,11 +289,11 @@
                         <!-- 배지 --><span class="sprout-badge">도전 1개 더 완료시 레벨업!</span>
                     </div>
                 </div>
-                <!-- 오른쪽 화살표 --><i class="material-icons arrow-icon">chevron_right</i> <!-- text-xl text-gray-400 -> arrow-icon으로 변경 -->
+                <!-- 오른쪽 화살표 --><i class="material-icons arrow-icon">chevron_right</i> 
             </div>
     
             <!-- 나의 진행 중인 챌린지 리스트 --><div class="challenge-section">
-                <h2 class="text-gray-800"> <!-- text-xl font-bold mb-4 삭제됨 (CSS로 이동) -->
+                <h2> 
                     내 챌린지
                 </h2>
                 <div id="challenge-list" class="challenge-list">
@@ -500,8 +301,8 @@
                 </div>
             </div>
             
-            <!-- 팀 챌린지 섹션 (요청 디자인 반영) --><div class="team-challenge-section">
-                <h2> <!-- text-xl font-bold mb-4 삭제됨 (CSS로 이동) -->
+            <!-- 팀 챌린지 섹션 --><div class="team-challenge-section">
+                <h2> 
                     팀챌린지
                 </h2>
                 <div class="team-challenge-section-content">
@@ -515,8 +316,8 @@
             </div>
         </div>
         
-        <!-- 인사이트 탭 내용 (임시) --><div id="tab-content-insight" style="display: none;"> <!-- py-8 text-center text-gray-500 삭제됨 (CSS로 이동) -->
-            <h3>인사이트 준비 중</h3> <!-- text-lg font-semibold mb-3 삭제됨 (CSS로 이동) -->
+        <!-- 인사이트 탭 내용 (임시) --><div id="tab-content-insight" style="display: none;"> 
+            <h3>인사이트 준비 중</h3> 
             <p>나의 도전 기록을 분석하여 통찰력을 제공해 드릴 예정입니다.</p>
         </div>
     </div>
@@ -545,7 +346,7 @@
         collection, 
         query, 
         onSnapshot, 
-        // serverTimestamp // 사용하지 않으므로 제거
+        // serverTimestamp 
     } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     // --- Firebase 설정 및 초기화 ---
@@ -806,6 +607,7 @@
     // --- 초기화 로직 ---
     window.addEventListener('load', () => {
         const appContainer = document.getElementById('app-container');
+        // PC 환경이므로, 뷰포트 높이 대신 최소 높이만 설정 유지
         appContainer.style.minHeight = `${window.innerHeight}px`;
         
         window.addEventListener('resize', () => {
