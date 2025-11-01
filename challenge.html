@@ -441,8 +441,7 @@
         const fireCount = challenge.dailyCheckCount || 0;
         const totalDays = challenge.totalDays || 1;
         const remainingDays = Math.max(0, totalDays - fireCount);
-        // lastCheckInDate가 문자열이 아닌 Firestore Timestamp일 경우를 대비해 toDateString() 대신 문자열 비교
-        const lastCheckInDate = challenge.lastCheckInDate ? challenge.lastCheckInDate.toString().substring(0, 10) : ''; 
+        // lastCheckInDate 필드는 toDateString() 포맷으로 저장된다고 가정
         const statusText = `${remainingDays}일 남음 · ${fireCount}/${totalDays}일`;
         
         return `
@@ -507,8 +506,16 @@
         
         challenges.forEach(challenge => {
             // Firestore 필드 lastCheckInDate가 오늘 날짜와 같으면 참여로 간주
-            const isParticipatedToday = challenge.lastCheckInDate === today; 
-            const itemHTML = createChallengeItemHTML(challenge);
+            // Firestore Timestamp 객체일 경우 toDate().toDateString()을 호출해야 하므로, 문자열이라면 그대로 사용
+            const lastCheckInDateString = (challenge.lastCheckInDate && typeof challenge.lastCheckInDate.toDate === 'function') 
+                ? challenge.lastCheckInDate.toDate().toDateString()
+                : challenge.lastCheckInDate;
+
+            const isParticipatedToday = lastCheckInDateString === today; 
+            const itemHTML = createChallengeItemHTML({
+                ...challenge,
+                lastCheckInDate: lastCheckInDateString // HTML 생성 함수에 문자열로 전달
+            });
             
             if (isParticipatedToday) {
                 participatedList.innerHTML += itemHTML;
@@ -536,7 +543,7 @@
     }
 
     /**
-     * Firestore 리스너 해지
+     * 챌린지 데이터 리스너 해지
      */
     function unsubscribeAll() {
         if (unsubscribeMyChallenges) {
@@ -586,8 +593,9 @@
             loadingSpinner.style.display = 'none';
             const challenges = [];
             snapshot.forEach(doc => {
-                // lastCheckInDate 필드가 존재하고 Timestamp 객체인 경우 문자열로 변환 (Firebase Timestamp 호환성을 위해)
                 const data = doc.data();
+                // Timestamp 객체를 toDateString()으로 변환 (날짜 비교를 위해)
+                // Firestore Timestamp 객체일 경우 toDate().toDateString()을 호출해야 함.
                 if (data.lastCheckInDate && typeof data.lastCheckInDate.toDate === 'function') {
                     data.lastCheckInDate = data.lastCheckInDate.toDate().toDateString();
                 }
@@ -601,8 +609,8 @@
             // Firestore 접속 오류 또는 권한 문제 발생 시
             console.error("Error listening to challenges:", error);
             loadingSpinner.style.display = 'none';
-            showModal('데이터 오류', `챌린지 데이터를 불러오는 데 문제가 발생했습니다. (경로: ${collectionPath}) UI 구조 유지를 위해 임시 데이터를 표시합니다.`);
-            // 오류 발생 시에만 더미 데이터 표시
+            showModal('데이터 로드 실패', `챌린지 데이터를 불러오는 데 실패했습니다. (경로: ${collectionPath}) 권한 또는 데이터 구조를 확인하세요.`);
+            // 오류 발생 시 더미 데이터 표시
             renderChallenges(dummyChallenges, targetElementId, true); 
         });
 
@@ -676,24 +684,25 @@
         });
         
         // 1. Firebase 설정 및 초기화
-        let firebaseConfig;
-        try {
-            firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
-            
-            // 필수 설정 항목 검증
-            if (!firebaseConfig || !firebaseConfig.projectId) {
-                console.error("CRITICAL: Firebase configuration (projectId) is missing. Cannot initialize Firebase services.");
-                document.getElementById('loading-spinner').style.display = 'none';
-                showModal('Firebase 설정 오류', 'Firebase 설정이 올바르지 않습니다. 환경 설정을 확인해주세요.');
-                return; // 설정 문제로 Firebase 초기화 중단
-            }
+        // 사용자가 제공한 실제 Firebase Config 사용
+        const firebaseConfig = {
+            apiKey: "AIzaSyBMowSIHMdz69dYY-mAW8l6VjKxBW54SfU",
+            authDomain: "doing-a.firebaseapp.com",
+            projectId: "doing-a",
+            storageBucket: "doing-a.firebasestorage.app",
+            messagingSenderId: "24279439955",
+            appId: "1:24279439955:web:2bf5c965de1b0a236884a6",
+            measurementId: "G-VJ5YQRGNE3"
+        };
 
+
+        try {
             const app = initializeApp(firebaseConfig);
             db = getFirestore(app);
             auth = getAuth(app);
             setLogLevel('debug'); // Firestore 로그 레벨 설정
 
-            // 2. 인증 처리
+            // 2. 인증 처리: __initial_auth_token이 있으면 Custom Token으로, 없으면 익명으로 로그인
             if (initialAuthToken) {
                 await signInWithCustomToken(auth, initialAuthToken);
             } else {
@@ -707,9 +716,10 @@
                     setupChallengeListener(currentTab);
                 } else {
                     console.log("No user signed in. Using anonymous fallback.");
-                    currentUserId = 'anonymous-user-id'; // 임시 ID 설정
+                    // 익명 로그인 실패나 로그아웃 발생 시
+                    currentUserId = 'anonymous-user-id'; 
                     document.getElementById('loading-spinner').style.display = 'none';
-                    // 인증 실패 시 빈 상태로 시작 (데이터 로드가 불가능함을 알림)
+                    // 빈 상태로 시작 
                     renderChallenges([], 'tab-content-my'); 
                 }
             });
@@ -717,10 +727,10 @@
         } catch (error) {
             console.error("Firebase Initialization or Auth Error:", error);
             document.getElementById('loading-spinner').style.display = 'none';
-            // Firebase SDK 오류 또는 JSON 파싱 오류 시
-            showModal('오류 발생', `Firebase 초기화 또는 인증에 실패했습니다: ${error.message}. 콘솔을 확인해주세요.`);
-            // 오류 발생 시 빈 상태로 시작
-            renderChallenges([], 'tab-content-my'); 
+            // Firebase SDK 또는 다른 초기화 오류 시
+            showModal('초기화 오류', `Firebase 연결에 실패했습니다: ${error.message}. 콘솔을 확인해주세요.`);
+            // 오류 발생 시 더미 데이터로 시작
+            renderChallenges(dummyChallenges, 'tab-content-my', true); 
         }
     });
 </script>
