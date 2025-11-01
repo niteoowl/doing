@@ -24,8 +24,8 @@
             --pc-max-width: 1200px; 
             /* 헤더 높이 변수 추가 (모바일 기준 약 4.5rem) */
             --header-height-mobile: 4.5rem; 
-            /* [수정] 탭바 높이 (약 2.5rem) + 탭바 마진(1.5rem) = 4.0rem. 이를 View 패딩 계산에 사용 */
-            --tab-area-total-height: 4.0rem; 
+            /* [수정] 탭바 순수 높이로 조정 (약 3.0rem). 마진은 제거하여 카드를 상단에 붙임 */
+            --tab-area-total-height: 3.0rem; 
         }
 
         * { box-sizing: border-box; }
@@ -89,7 +89,7 @@
             
             /* [수정] 헤더/탭바를 sticky로 고정했으므로, 컨텐츠가 가려지지 않도록 상단 패딩을 조정 */
             .view {
-                /* Header Height (4.5rem) + Tab Area Total Height (4.0rem) */
+                /* Header Height (4.5rem) + Tab Area Total Height (3.0rem) */
                 padding-top: calc(var(--header-height-mobile) + var(--tab-area-total-height)); 
                 padding-left: 1.5rem;
                 padding-right: 1.5rem;
@@ -128,7 +128,7 @@
             z-index: 10; 
             background-color: var(--color-app-bg);
             border-bottom: 1px solid var(--color-border);
-            margin-bottom: 1.5rem; 
+            /* [수정] 새싹 카드 상단 여백 제거를 위해 margin-bottom: 1.5rem; 삭제 */
             padding: 0 1.5rem; 
         }
         
