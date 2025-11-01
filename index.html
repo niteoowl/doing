@@ -68,8 +68,9 @@
                 padding-bottom: calc(1.5rem + var(--bottom-nav-height-pc)); 
             }
             .bottom-nav { height: var(--bottom-nav-height-pc); }
+            /* PC: 아이콘과 텍스트 가로 정렬, 아이콘 크기/간격 조정 */
             .nav-item i.material-icons { font-size: 20px; margin-bottom: 0; }
-            .nav-item { flex-direction: row; gap: 8px; font-size: 0.9rem; }
+            .nav-item { flex-direction: row; gap: 8px; font-size: 0.9rem; } 
             .main-header { padding: 1rem 3rem; }
             .tab-bar { padding: 0 3rem; }
         }
@@ -324,11 +325,22 @@
             color: #999; 
             text-decoration: none;
             display: flex;
+            /* [수정] 모바일(기본)은 세로 정렬 */
+            flex-direction: column; 
             align-items: center; 
             justify-content: center; 
             padding: 0.5rem;
             border-radius: 12px;
             transition: color 0.2s ease, background-color 0.2s ease;
+            /* [추가] 모바일 폰트 크기 및 간격 */
+            font-size: 0.75rem; /* 모바일에서 텍스트 크기 작게 */
+            gap: 2px;
+        }
+        
+        /* [추가] 모바일 아이콘 크기 조정 */
+        .nav-item i.material-icons {
+            font-size: 24px; 
+            margin-bottom: 0;
         }
 
         .nav-item.active {
