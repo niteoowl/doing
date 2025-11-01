@@ -8,6 +8,8 @@
     <!-- Pretendard 폰트 CDN 적용 --><link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
     <!-- Google Material Icons (Google Fonts Icons) 추가 --><link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
+    <!-- 기존 Tailwind CSS CDN 삭제됨 -->
+
     <!-- 공통 및 메인 페이지 스타일 (리디자인 적용) --><style>
         /* 기본 스타일 및 iOS 안전 영역 지원 */
         :root {
@@ -22,8 +24,8 @@
             --pc-max-width: 1200px; 
             /* 헤더 높이 변수 추가 (모바일 기준 약 4.5rem) */
             --header-height-mobile: 4.5rem; 
-            /* [수정] 탭바 높이 (약 2.5rem) + 탭바 마진(0.75rem) = 3.25rem. 이를 View 패딩 계산에 사용 */
-            --tab-area-total-height: 3.25rem; 
+            /* [수정] 탭바 높이 (약 2.5rem) + 탭바 마진(1.5rem) = 4.0rem. 이를 View 패딩 계산에 사용 */
+            --tab-area-total-height: 4.0rem; 
         }
 
         * { box-sizing: border-box; }
@@ -76,8 +78,8 @@
             .nav-item i.material-icons { font-size: 20px; margin-bottom: 0; }
             .nav-item { flex-direction: row; gap: 8px; font-size: 0.9rem; padding: 0.5rem 1rem; } 
             
-            .main-header { padding: 1rem 3rem; position: static; } /* PC 고정 해제 */
-            .tab-bar { padding: 0 3rem; position: static; margin-top: 0; } /* PC 고정 해제 */
+            .main-header { padding: 1rem 3rem; position: static; } /* PC 고정 해제 (기존 유지) */
+            .tab-bar { padding: 0 3rem; position: static; margin-top: 0; } /* PC 고정 해제 (기존 유지) */
         }
         
         /* ------------------ Mobile Layout (639px 이하) ------------------ */
@@ -85,11 +87,10 @@
             #app-container { max-width: 100%; box-shadow: none; }
             .bottom-nav { max-width: 100%; height: var(--bottom-nav-height-mobile); } 
             
-            /* 모바일: 헤더와 탭 바의 높이를 고려하여 뷰의 상단 패딩 설정 */
+            /* [수정] 헤더/탭바를 sticky로 고정했으므로, 컨텐츠가 가려지지 않도록 상단 패딩을 조정 */
             .view {
-                /* 헤더 + 탭바 높이만큼 상단 패딩 확보 */
-                /* 4.5rem + 3.25rem = 7.75rem 상단 패딩 확보 */
-                padding-top: calc(var(--header-height-mobile) + var(--tab-area-total-height));
+                /* Header Height (4.5rem) + Tab Area Total Height (4.0rem) */
+                padding-top: calc(var(--header-height-mobile) + var(--tab-area-total-height)); 
                 padding-left: 1.5rem;
                 padding-right: 1.5rem;
                 padding-bottom: calc(1.5rem + var(--bottom-nav-height-mobile));
@@ -98,11 +99,6 @@
             /* 모바일: 아이콘과 텍스트 세로 정렬 (기본값) */
             .nav-item { flex-direction: column; gap: 2px; font-size: 0.75rem; } 
             .nav-item i.material-icons { font-size: 24px; }
-
-            /* [수정] 탭 바와 다음 콘텐츠(새싹 카드) 사이의 간격 조정 */
-            .tab-bar {
-                margin-bottom: 0.75rem; /* 기존 1.5rem -> 0.75rem으로 줄임 */
-            }
         }
         
         /* ------------------ 리디자인 스타일 ------------------ */
@@ -112,27 +108,28 @@
             font-size: 2rem; 
             font-weight: 800; 
             color: var(--color-black); 
-            /* [수정] 높이 및 수직 중앙 정렬을 위해 flex 및 min-height 적용 */
+            /* [수정] position: sticky 속성 다시 추가 */
+            position: sticky; 
+            top: 0; 
+            z-index: 10;
             display: flex;
             align-items: center; 
-            min-height: var(--header-height-mobile); /* 4.5rem 높이 고정 */
-            padding: 0 1.5rem; /* 좌우 패딩만 유지 */
-            position: sticky; /* Sticky 재적용 */
-            top: 0;
-            z-index: 10;
+            min-height: var(--header-height-mobile); 
+            padding: 0 1.5rem; 
             background-color: var(--color-app-bg);
         }
 
         /* 탭 바 */
         .tab-bar {
             display: flex;
-            position: sticky; /* Sticky 재적용 */
-            top: var(--header-height-mobile); /* 헤더 바로 아래에 붙도록 top 위치 수정 (4.5rem) */
-            z-index: 10;
+            /* [수정] position: sticky 속성 다시 추가 */
+            position: sticky; 
+            top: var(--header-height-mobile); /* 헤더 바로 아래에 고정 */
+            z-index: 10; 
             background-color: var(--color-app-bg);
             border-bottom: 1px solid var(--color-border);
-            margin-bottom: 1.5rem; /* PC 및 기본값 (모바일에서 0.75rem으로 오버라이드 됨) */
-            padding: 0 1.5rem; /* 모바일 기준 패딩 */
+            margin-bottom: 1.5rem; 
+            padding: 0 1.5rem; 
         }
         
         /* 탭 아이템 컨테이너 */
