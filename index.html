@@ -4,18 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Doing! - 홈</title>
-    <!-- Favicon 경로 설정 -->
-    <link rel="icon" type="image/x-icon" href="/image/favicon.ico">
-    <!-- Pretendard 폰트 CDN 적용 -->
-    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
-    <!-- Google Material Icons (Google Fonts Icons) 추가 -->
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Favicon 경로 설정 --><link rel="icon" type="image/x-icon" href="/image/favicon.ico">
+    <!-- Pretendard 폰트 CDN 적용 --><link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
+    <!-- Google Material Icons (Google Fonts Icons) 추가 --><link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
-    <!-- Tailwind CSS (Ripple 효과를 위해 직접 스타일링을 함께 사용) -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind CSS (Ripple 효과를 위해 직접 스타일링을 함께 사용) --><script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- 공통 및 메인 페이지 스타일 (리디자인 적용) -->
-    <style>
+    <!-- 공통 및 메인 페이지 스타일 (리디자인 적용) --><style>
         /* 기본 스타일 및 iOS 안전 영역 지원 */
         :root {
             --color-white: #ffffff;
@@ -115,22 +110,32 @@
             border-bottom: 1px solid var(--color-border);
             margin-bottom: 1.5rem;
         }
+        
+        /* 탭 아이템 컨테이너 (새로운 디자인 적용) */
+        .tab-item-container {
+            flex: 1; /* 챌린지와 인사이트 탭이 공간을 균등하게 차지하도록 함 */
+            display: flex;
+            justify-content: center;
+        }
 
         .tab-item {
             padding: 0.5rem 0;
-            margin-right: 1.5rem;
+            /* margin-right: 1.5rem; 제거 */
             font-size: 1.1rem;
             font-weight: 600;
-            color: #888;
+            color: #ccc; /* 비활성화된 탭 색상 밝게 조정 */
             cursor: pointer;
             position: relative;
             transition: color 0.2s ease;
+            width: 100%;
+            text-align: center;
         }
 
         .tab-item.active {
             color: var(--color-black);
         }
 
+        /* 탭 활성화 밑줄 디자인 수정 */
         .tab-item.active::after {
             content: '';
             position: absolute;
@@ -142,7 +147,7 @@
             border-radius: 9999px;
         }
         
-        /* 새싹 레벨 카드 */
+        /* 새싹 레벨 카드 - 그림자 제거 요청 반영 */
         .sprout-card {
             background-color: #f7f7f7; /* 연한 회색 배경 */
             border-radius: 16px; 
@@ -151,7 +156,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+            /* box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03); */ /* 그림자 제거 */
         }
         
         .sprout-card img {
@@ -167,10 +172,11 @@
             line-height: 1.3;
         }
         
+        /* 배지 색상 수정 반영 */
         .sprout-badge {
             display: inline-block;
-            background-color: #e5f4ff;
-            color: var(--color-accent);
+            background-color: #966A45; /* 요청된 황갈색 */
+            color: #ffffff; /* 흰색 텍스트 */
             padding: 0.2rem 0.5rem;
             border-radius: 9999px;
             font-size: 0.75rem;
@@ -205,30 +211,32 @@
             margin-top: 4px;
         }
         
+        /* 불꽃 아이콘 영역 디자인 수정 */
         .fire-icon-wrap {
+            position: relative;
+            width: 56px; /* 원형 배경 크기 */
+            height: 56px; /* 원형 배경 크기 */
+            border-radius: 50%; /* 원형 */
+            background-color: #f5f5f5; /* 회색 배경 */
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            position: relative;
-            width: 40px;
-            height: 40px;
             flex-shrink: 0;
         }
         
         .fire-icon-wrap img {
-            width: 100%;
-            height: 100%;
+            width: 30px; /* 불꽃 이미지 크기 조정 */
+            height: 30px; /* 불꽃 이미지 크기 조정 */
+            margin-bottom: 4px; /* 숫자와 불꽃 사이 간격 */
         }
         
         .fire-count {
-            position: absolute;
-            font-size: 0.75rem;
+            position: static; /* 절대 위치 제거 */
+            font-size: 0.875rem; /* 글자 크기 조정 */
             font-weight: 700;
             color: var(--color-black);
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -10%); /* 불꽃 이미지에 맞게 조정 */
+            transform: none; /* 변형 제거 */
         }
         
         /* 팀 챌린지 섹션 */
@@ -341,8 +349,7 @@
 <body>
 
 <div id="app-container">
-    <!-- 하단 내비게이션 바 (디자인 유지) -->
-    <div class="bottom-nav">
+    <!-- 하단 내비게이션 바 (디자인 유지) --><div class="bottom-nav">
         <a class="nav-item interactive active" href="/">
             <i class="material-icons">home</i>
             <span>홈</span>
@@ -357,54 +364,45 @@
         </a>
     </div>
 
-    <!-- 메인 헤더 (새 디자인) -->
-    <!-- 기존 'Doing! + 로그아웃'에서 '홈' 타이틀로 변경 -->
-    <header class="main-header" id="main-header">
+    <!-- 메인 헤더 (새 디자인) --><header class="main-header" id="main-header">
         홈
     </header>
     
-    <!-- 탭 바 (새 디자인) -->
-    <div class="tab-bar">
-        <div id="tab-challenge-btn" class="tab-item interactive active" onclick="switchTab('challenge')">챌린지</div>
-        <div id="tab-insight-btn" class="tab-item interactive" onclick="switchTab('insight')">인사이트</div>
+    <!-- 탭 바 (새 디자인 적용) --><div class="tab-bar">
+        <!-- 탭 디자인을 위해 tab-item-container로 감쌉니다. --><div class="tab-item-container">
+            <div id="tab-challenge-btn" class="tab-item interactive active" onclick="switchTab('challenge')">챌린지</div>
+        </div>
+        <div class="tab-item-container">
+            <div id="tab-insight-btn" class="tab-item interactive" onclick="switchTab('insight')">인사이트</div>
+        </div>
     </div>
 
 
-    <!-- ------------------ 뷰 컨테이너 ------------------ -->
-    <div id="home-view" class="view active">
+    <!-- ------------------ 뷰 컨테이너 ------------------ --><div id="home-view" class="view active">
         
-        <!-- 탭 내용 컨테이너 -->
-        <div id="tab-content-challenge">
-            <!-- 새싹 레벨 카드 -->
-            <div class="sprout-card interactive">
+        <!-- 탭 내용 컨테이너 --><div id="tab-content-challenge">
+            <!-- 새싹 레벨 카드 (그림자 제거 요청 반영) --><div class="sprout-card interactive">
                 <div class="flex items-center">
-                    <!-- 새싹 이미지 -->
-                    <img src="/image/sprout.webp" alt="새싹 아이콘" 
+                    <!-- 새싹 이미지 --><img src="/image/sprout.webp" alt="새싹 아이콘" 
                          onerror="this.onerror=null; this.src='https://placehold.co/45x45/ffffff/000?text=🌱'; this.alt='새싹 이모지';" />
                     <div>
-                        <!-- 사용자 닉네임 (기존 로직에서 가져옴) -->
-                        <p class="sprout-text-primary"><span id="user-nickname">도전러</span>님은 새싹 레벨이에요</p>
-                        <!-- 배지 -->
-                        <span class="sprout-badge">도전 1개 더 완료시 레벨업!</span>
+                        <!-- 사용자 닉네임 (기존 로직에서 가져옴) --><p class="sprout-text-primary"><span id="user-nickname">도전러</span>님은 새싹 레벨이에요</p>
+                        <!-- 배지 --><span class="sprout-badge">도전 1개 더 완료시 레벨업!</span>
                     </div>
                 </div>
-                <!-- 오른쪽 화살표 -->
-                <i class="material-icons text-xl text-gray-400">chevron_right</i>
+                <!-- 오른쪽 화살표 --><i class="material-icons text-xl text-gray-400">chevron_right</i>
             </div>
     
-            <!-- 나의 진행 중인 챌린지 리스트 (제목 변경) -->
-            <div class="challenge-section">
+            <!-- 나의 진행 중인 챌린지 리스트 (제목 변경) --><div class="challenge-section">
                 <h2 class="text-xl font-bold mb-4 text-gray-800">
                     내 챌린지
                 </h2>
                 <div id="challenge-list" class="challenge-list">
-                    <!-- Firestore data will be injected here -->
-                    <p id="loading-message" style="text-align: center; color: #777; padding: 2rem 0;">챌린지 목록을 불러오는 중...</p>
+                    <!-- Firestore data will be injected here --><p id="loading-message" style="text-align: center; color: #777; padding: 2rem 0;">챌린지 목록을 불러오는 중...</p>
                 </div>
             </div>
             
-            <!-- 팀 챌린지 섹션 (새로운 섹션 추가) -->
-            <div class="team-challenge-section">
+            <!-- 팀 챌린지 섹션 (새로운 섹션 추가) --><div class="team-challenge-section">
                 <h2 class="text-xl font-bold mb-4 text-gray-800">
                     팀챌린지
                 </h2>
@@ -419,8 +417,7 @@
             </div>
         </div>
         
-        <!-- 인사이트 탭 내용 (임시) -->
-        <div id="tab-content-insight" style="display: none;" class="py-8 text-center text-gray-500">
+        <!-- 인사이트 탭 내용 (임시) --><div id="tab-content-insight" style="display: none;" class="py-8 text-center text-gray-500">
             <h3 class="text-lg font-semibold mb-3">인사이트 준비 중</h3>
             <p>나의 도전 기록을 분석하여 통찰력을 제공해 드릴 예정입니다.</p>
         </div>
@@ -428,8 +425,7 @@
     
 </div>
 
-<!-- 모달 팝업 구조 (메시지 박스 용도) -->
-<div id="modal">
+<!-- 모달 팝업 구조 (메시지 박스 용도) --><div id="modal">
     <div class="modal-content">
         <h3 class="modal-title" id="modal-title"></h3>
         <p class="modal-text" id="modal-text"></p>
@@ -606,8 +602,7 @@
                     <p>${daysText}</p>
                 </div>
                 <div class="fire-icon-wrap">
-                    <!-- 불 이미지 -->
-                    <img src="/image/fire.webp" alt="성공 불꽃 아이콘"
+                    <!-- 불 이미지 --><img src="/image/fire.webp" alt="성공 불꽃 아이콘"
                          onerror="this.onerror=null; this.src='https://placehold.co/40x40/ffffff/ff0000?text=🔥'; this.alt='불꽃 이모지';" />
                     <span class="fire-count">${successCount}</span>
                 </div>
