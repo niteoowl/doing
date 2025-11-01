@@ -356,7 +356,6 @@
 <script type="module">
     // Global Variables for Firebase/Canvas environment
     const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-    const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
     const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
     // Firebase Import
@@ -428,7 +427,7 @@
 
     // --- Firebase/Data 함수 ---
     
-    // Firestore 연결 오류 시 UI 구조 유지를 위한 최소한의 더미 데이터
+    // Firestore 연결 오류 또는 데이터가 없을 시 UI 구조 유지를 위한 최소한의 더미 데이터
     const dummyChallenges = [
          { id: 'dummy-1', name: 'UI 테스트 챌린지 (오늘 참여)', totalDays: 18, dailyCheckCount: 16, lastCheckInDate: new Date().toDateString() },
          { id: 'dummy-2', name: 'UI 테스트 챌린지 (미참여)', totalDays: 100, dailyCheckCount: 41, lastCheckInDate: 'Thu Oct 31 2024' },
@@ -442,6 +441,8 @@
         const fireCount = challenge.dailyCheckCount || 0;
         const totalDays = challenge.totalDays || 1;
         const remainingDays = Math.max(0, totalDays - fireCount);
+        // lastCheckInDate가 문자열이 아닌 Firestore Timestamp일 경우를 대비해 toDateString() 대신 문자열 비교
+        const lastCheckInDate = challenge.lastCheckInDate ? challenge.lastCheckInDate.toString().substring(0, 10) : ''; 
         const statusText = `${remainingDays}일 남음 · ${fireCount}/${totalDays}일`;
         
         return `
@@ -463,12 +464,12 @@
     /**
      * 챌린지 데이터를 분류하여 렌더링
      */
-    function renderChallenges(challenges, targetElementId) {
+    function renderChallenges(challenges, targetElementId, isErrorFallback = false) {
         const container = document.getElementById(targetElementId);
         if (!container) return;
 
-        // 데이터가 없을 때 빈 상태 메시지 표시
-        if (challenges.length === 0) {
+        // 에러 상황이 아니고, 데이터가 없을 때 빈 상태 메시지 표시
+        if (challenges.length === 0 && !isErrorFallback) {
              const message = targetElementId === 'tab-content-my' 
                 ? '아직 참여 중인 챌린지가 없습니다.' 
                 : '참여할 수 있는 팀 챌린지를 찾아보세요';
@@ -489,7 +490,7 @@
                     </div>
                 </div>
              `;
-             return; // 데이터가 없으므로 여기서 종료
+             return; 
         }
         
         // 데이터가 있을 경우: 오늘 참여/미참여 섹션 생성
@@ -585,19 +586,24 @@
             loadingSpinner.style.display = 'none';
             const challenges = [];
             snapshot.forEach(doc => {
-                challenges.push({ id: doc.id, ...doc.data() });
+                // lastCheckInDate 필드가 존재하고 Timestamp 객체인 경우 문자열로 변환 (Firebase Timestamp 호환성을 위해)
+                const data = doc.data();
+                if (data.lastCheckInDate && typeof data.lastCheckInDate.toDate === 'function') {
+                    data.lastCheckInDate = data.lastCheckInDate.toDate().toDateString();
+                }
+                challenges.push({ id: doc.id, ...data });
             });
             
-            // 실제 Firestore 데이터를 렌더링. 데이터가 없으면 renderChallenges 함수 내에서 Empty State UI가 표시됨.
+            // 실제 Firestore 데이터를 렌더링. 
             renderChallenges(challenges, targetElementId);
             
         }, (error) => {
-            // Firestore 접속 오류 또는 권한 문제 발생 시 (네트워크 오류 등)
+            // Firestore 접속 오류 또는 권한 문제 발생 시
             console.error("Error listening to challenges:", error);
             loadingSpinner.style.display = 'none';
             showModal('데이터 오류', `챌린지 데이터를 불러오는 데 문제가 발생했습니다. (경로: ${collectionPath}) UI 구조 유지를 위해 임시 데이터를 표시합니다.`);
             // 오류 발생 시에만 더미 데이터 표시
-            renderChallenges(dummyChallenges, targetElementId); 
+            renderChallenges(dummyChallenges, targetElementId, true); 
         });
 
         if (tab === 'my') {
@@ -643,12 +649,13 @@
 
     // --- 초기화 로직 ---
     window.addEventListener('load', async () => {
-        // App Container 크기 조정
+        // App Container 크기 조정 및 리사이즈 핸들러
         const appContainer = document.getElementById('app-container');
-        appContainer.style.minHeight = `${window.innerHeight}px`;
-        window.addEventListener('resize', () => {
+        const adjustMinHeight = () => {
             appContainer.style.minHeight = `${window.innerHeight}px`;
-        });
+        };
+        adjustMinHeight();
+        window.addEventListener('resize', adjustMinHeight);
         
         // 모달 배경 클릭 시 닫기
         modal.addEventListener('click', (event) => {
@@ -668,13 +675,25 @@
              appContainer.classList.add('font-loaded');
         });
         
-        // 1. Firebase 초기화 및 Auth
+        // 1. Firebase 설정 및 초기화
+        let firebaseConfig;
         try {
+            firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+            
+            // 필수 설정 항목 검증
+            if (!firebaseConfig || !firebaseConfig.projectId) {
+                console.error("CRITICAL: Firebase configuration (projectId) is missing. Cannot initialize Firebase services.");
+                document.getElementById('loading-spinner').style.display = 'none';
+                showModal('Firebase 설정 오류', 'Firebase 설정이 올바르지 않습니다. 환경 설정을 확인해주세요.');
+                return; // 설정 문제로 Firebase 초기화 중단
+            }
+
             const app = initializeApp(firebaseConfig);
             db = getFirestore(app);
             auth = getAuth(app);
-            setLogLevel('debug');
+            setLogLevel('debug'); // Firestore 로그 레벨 설정
 
+            // 2. 인증 처리
             if (initialAuthToken) {
                 await signInWithCustomToken(auth, initialAuthToken);
             } else {
@@ -684,13 +703,13 @@
             onAuthStateChanged(auth, (user) => {
                 if (user) {
                     currentUserId = user.uid;
-                    // 2. 인증 완료 후 현재 탭 (기본: 내 챌린지) 데이터 로드
+                    // 3. 인증 완료 후 현재 탭 (기본: 내 챌린지) 데이터 로드
                     setupChallengeListener(currentTab);
                 } else {
-                    console.log("No user signed in.");
-                    currentUserId = 'anonymous'; 
+                    console.log("No user signed in. Using anonymous fallback.");
+                    currentUserId = 'anonymous-user-id'; // 임시 ID 설정
                     document.getElementById('loading-spinner').style.display = 'none';
-                    // 인증 실패 시 빈 상태로 시작
+                    // 인증 실패 시 빈 상태로 시작 (데이터 로드가 불가능함을 알림)
                     renderChallenges([], 'tab-content-my'); 
                 }
             });
@@ -698,8 +717,9 @@
         } catch (error) {
             console.error("Firebase Initialization or Auth Error:", error);
             document.getElementById('loading-spinner').style.display = 'none';
-            showModal('오류 발생', 'Firebase 초기화에 실패했습니다. 콘솔을 확인해주세요.');
-            // 초기화 실패 시 빈 상태로 시작
+            // Firebase SDK 오류 또는 JSON 파싱 오류 시
+            showModal('오류 발생', `Firebase 초기화 또는 인증에 실패했습니다: ${error.message}. 콘솔을 확인해주세요.`);
+            // 오류 발생 시 빈 상태로 시작
             renderChallenges([], 'tab-content-my'); 
         }
     });
