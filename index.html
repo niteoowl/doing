@@ -52,7 +52,7 @@
         
         #app-container.font-loaded { opacity: 1; }
 
-        /* ------------------ PC/Desktop Layout ------------------ */
+        /* ------------------ PC/Desktop Layout (640px 이상) ------------------ */
         @media (min-width: 640px) {
             body { 
                 align-items: flex-start; 
@@ -68,14 +68,16 @@
                 padding-bottom: calc(1.5rem + var(--bottom-nav-height-pc)); 
             }
             .bottom-nav { height: var(--bottom-nav-height-pc); }
-            /* PC: 아이콘과 텍스트 가로 정렬, 아이콘 크기/간격 조정 */
+            
+            /* [수정 반영] PC: 아이콘과 텍스트 가로 정렬, 아이콘 크기/간격 조정 */
             .nav-item i.material-icons { font-size: 20px; margin-bottom: 0; }
-            .nav-item { flex-direction: row; gap: 8px; font-size: 0.9rem; } 
+            .nav-item { flex-direction: row; gap: 8px; font-size: 0.9rem; padding: 0.5rem 1rem; } 
+            
             .main-header { padding: 1rem 3rem; }
             .tab-bar { padding: 0 3rem; }
         }
         
-        /* ------------------ Mobile Layout ------------------ */
+        /* ------------------ Mobile Layout (639px 이하) ------------------ */
         @media (max-width: 639px) {
             #app-container { max-width: 100%; box-shadow: none; }
             .bottom-nav { max-width: 100%; height: var(--bottom-nav-height-mobile); } 
@@ -85,17 +87,21 @@
                 padding: 1rem 1.5rem; /* 모바일 뷰 패딩 조정 */
                 padding-bottom: calc(1.5rem + var(--bottom-nav-height-mobile));
             }
+            
+            /* 모바일: 아이콘과 텍스트 세로 정렬 (기본값) */
+            .nav-item { flex-direction: column; gap: 2px; font-size: 0.75rem; } 
+            .nav-item i.material-icons { font-size: 24px; }
         }
         
         /* ------------------ 리디자인 스타일 ------------------ */
         
-        /* 메인 헤더 (홈 타이틀) */
+        /* 메인 헤더 */
         .main-header {
             font-size: 2rem; 
             font-weight: 800; 
             color: var(--color-black); 
             padding-bottom: 0.5rem;
-            position: sticky; /* 스티키 헤더 유지 */
+            position: sticky; 
             top: 0;
             z-index: 10;
             background-color: var(--color-app-bg);
@@ -105,26 +111,25 @@
         .tab-bar {
             display: flex;
             position: sticky;
-            top: 4.5rem; /* 헤더 아래에 위치 */
+            top: 4.5rem; 
             z-index: 10;
             background-color: var(--color-app-bg);
             border-bottom: 1px solid var(--color-border);
             margin-bottom: 1.5rem;
         }
         
-        /* 탭 아이템 컨테이너 (새로운 디자인 적용) */
+        /* 탭 아이템 컨테이너 */
         .tab-item-container {
-            flex: 1; /* 챌린지와 인사이트 탭이 공간을 균등하게 차지하도록 함 */
+            flex: 1; 
             display: flex;
             justify-content: center;
         }
 
         .tab-item {
             padding: 0.5rem 0;
-            /* margin-right: 1.5rem; 제거 */
             font-size: 1.1rem;
             font-weight: 600;
-            color: #ccc; /* 비활성화된 탭 색상 밝게 조정 */
+            color: #ccc; 
             cursor: pointer;
             position: relative;
             transition: color 0.2s ease;
@@ -136,11 +141,11 @@
             color: var(--color-black);
         }
 
-        /* 탭 활성화 밑줄 디자인 수정 */
+        /* 탭 활성화 밑줄 디자인 */
         .tab-item.active::after {
             content: '';
             position: absolute;
-            bottom: -1px; /* border-bottom 위에 위치 */
+            bottom: -1px; 
             left: 0;
             width: 100%;
             height: 3px;
@@ -148,16 +153,15 @@
             border-radius: 9999px;
         }
         
-        /* 새싹 레벨 카드 - 그림자 제거 요청 반영 */
+        /* 새싹 레벨 카드 */
         .sprout-card {
-            background-color: #f7f7f7; /* 연한 회색 배경 */
+            background-color: #f7f7f7; 
             border-radius: 16px; 
             padding: 1.25rem;
             margin-bottom: 2rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            /* box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03); */ /* 그림자 제거 */
         }
         
         .sprout-card img {
@@ -173,11 +177,11 @@
             line-height: 1.3;
         }
         
-        /* 배지 색상 수정 반영 */
+        /* 배지 색상 */
         .sprout-badge {
             display: inline-block;
-            background-color: #966A45; /* 요청된 황갈색 */
-            color: #ffffff; /* 흰색 텍스트 */
+            background-color: #966A45; 
+            color: #ffffff; 
             padding: 0.2rem 0.5rem;
             border-radius: 9999px;
             font-size: 0.75rem;
@@ -212,13 +216,13 @@
             margin-top: 4px;
         }
         
-        /* 불꽃 아이콘 영역 디자인 수정 */
+        /* 불꽃 아이콘 영역 */
         .fire-icon-wrap {
             position: relative;
-            width: 56px; /* 원형 배경 크기 */
-            height: 56px; /* 원형 배경 크기 */
-            border-radius: 50%; /* 원형 */
-            background-color: #f5f5f5; /* 회색 배경 */
+            width: 56px; 
+            height: 56px; 
+            border-radius: 50%; 
+            background-color: #f5f5f5; 
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -227,20 +231,20 @@
         }
         
         .fire-icon-wrap img {
-            width: 30px; /* 불꽃 이미지 크기 조정 */
-            height: 30px; /* 불꽃 이미지 크기 조정 */
-            margin-bottom: 4px; /* 숫자와 불꽃 사이 간격 */
+            width: 30px; 
+            height: 30px; 
+            margin-bottom: 4px; 
         }
         
         .fire-count {
-            position: static; /* 절대 위치 제거 */
-            font-size: 0.875rem; /* 글자 크기 조정 */
+            position: static; 
+            font-size: 0.875rem; 
             font-weight: 700;
             color: var(--color-black);
-            transform: none; /* 변형 제거 */
+            transform: none; 
         }
         
-        /* 팀 챌린지 섹션 */
+        /* 팀 챌린지 섹션 (요청된 디자인 반영) */
         .team-challenge-section {
             margin-top: 3rem;
             text-align: center;
@@ -254,33 +258,52 @@
             margin-bottom: 1.5rem;
         }
         
+        .team-challenge-section-content {
+            padding: 40px 20px; /* 상하 패딩 늘림 */
+            background-color: var(--color-app-bg); /* 배경 흰색 */
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
         .team-challenge-section img {
-            width: 120px;
+            width: 140px; /* 이미지 크기 키움 */
             height: auto;
-            margin: 1.5rem 0;
+            margin-bottom: 30px; /* 아래쪽 여백 추가 */
         }
         
         .team-challenge-section p {
-            font-size: 1rem;
-            color: #666;
-            margin-bottom: 1.5rem;
+            font-size: 1.3rem; /* 폰트 크기 키움 */
+            font-weight: 700; /* 폰트 굵게 */
+            color: var(--color-black); /* 텍스트 색상 검은색 */
+            margin-bottom: 30px;
         }
         
         .team-challenge-section .explore-button {
-            padding: 0.75rem 2rem;
+            width: 100%; /* 버튼 너비 최대로 */
+            max-width: 300px; /* 최대 너비 제한 (선택적) */
+            padding: 1rem 2rem;
             background-color: var(--color-black);
             color: var(--color-white);
-            border-radius: 12px;
-            font-weight: 600;
+            border-radius: 10px; /* 둥근 모서리 */
+            font-size: 1.15rem; /* 폰트 크기 키움 */
+            font-weight: 700; /* 폰트 굵게 */
             cursor: pointer;
-            transition: background-color 0.2s;
+            transition: opacity 0.2s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .team-challenge-section .explore-button:hover {
+            opacity: 0.9;
         }
 
         /* ------------------ Ripple Effect (물결 효과) ------------------ */
         .interactive {
             position: relative;
             overflow: hidden;
-            transform: translate3d(0, 0, 0); /* GPU 가속 활성화 */
+            transform: translate3d(0, 0, 0); 
         }
         
         .ripple {
@@ -300,9 +323,8 @@
             }
         }
         
-        /* 하단 내비게이션 바 (유지) */
+        /* 하단 내비게이션 바 */
         .bottom-nav {
-            /* 기존 스타일 유지 */
             width: 100%;
             background-color: var(--color-content-bg);
             display: flex;
@@ -321,34 +343,22 @@
         }
         
         .nav-item {
-            /* 기존 스타일 유지 */
             color: #999; 
             text-decoration: none;
             display: flex;
-            /* [수정] 모바일(기본)은 세로 정렬 */
-            flex-direction: column; 
             align-items: center; 
             justify-content: center; 
             padding: 0.5rem;
             border-radius: 12px;
             transition: color 0.2s ease, background-color 0.2s ease;
-            /* [추가] 모바일 폰트 크기 및 간격 */
-            font-size: 0.75rem; /* 모바일에서 텍스트 크기 작게 */
-            gap: 2px;
         }
         
-        /* [추가] 모바일 아이콘 크기 조정 */
-        .nav-item i.material-icons {
-            font-size: 24px; 
-            margin-bottom: 0;
-        }
-
         .nav-item.active {
             color: var(--color-accent); 
             font-weight: 600;
         }
         
-        /* 모달 스타일 (유지) */
+        /* 모달 스타일 */
         #modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0, 0, 0, 0.4); justify-content: center; align-items: center; }
         .modal-content { background-color: var(--color-content-bg); padding: 30px; padding-bottom: 20px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2); width: 90%; max-width: 400px; text-align: center; transform: scale(0.9); opacity: 0; transition: all 0.2s ease-out; }
         .modal-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 10px; color: var(--color-black); }
@@ -376,12 +386,12 @@
         </a>
     </div>
 
-    <!-- 메인 헤더 (새 디자인) --><header class="main-header" id="main-header">
+    <!-- 메인 헤더 --><header class="main-header" id="main-header">
         홈
     </header>
     
-    <!-- 탭 바 (새 디자인 적용) --><div class="tab-bar">
-        <!-- 탭 디자인을 위해 tab-item-container로 감쌉니다. --><div class="tab-item-container">
+    <!-- 탭 바 --><div class="tab-bar">
+        <div class="tab-item-container">
             <div id="tab-challenge-btn" class="tab-item interactive active" onclick="switchTab('challenge')">챌린지</div>
         </div>
         <div class="tab-item-container">
@@ -393,19 +403,19 @@
     <!-- ------------------ 뷰 컨테이너 ------------------ --><div id="home-view" class="view active">
         
         <!-- 탭 내용 컨테이너 --><div id="tab-content-challenge">
-            <!-- 새싹 레벨 카드 (그림자 제거 요청 반영) --><div class="sprout-card interactive">
+            <!-- 새싹 레벨 카드 --><div class="sprout-card interactive">
                 <div class="flex items-center">
                     <!-- 새싹 이미지 --><img src="/image/sprout.webp" alt="새싹 아이콘" 
                          onerror="this.onerror=null; this.src='https://placehold.co/45x45/ffffff/000?text=🌱'; this.alt='새싹 이모지';" />
                     <div>
-                        <!-- 사용자 닉네임 (기존 로직에서 가져옴) --><p class="sprout-text-primary"><span id="user-nickname">도전러</span>님은 새싹 레벨이에요</p>
+                        <!-- 사용자 닉네임 --><p class="sprout-text-primary"><span id="user-nickname">도전러</span>님은 새싹 레벨이에요</p>
                         <!-- 배지 --><span class="sprout-badge">도전 1개 더 완료시 레벨업!</span>
                     </div>
                 </div>
                 <!-- 오른쪽 화살표 --><i class="material-icons text-xl text-gray-400">chevron_right</i>
             </div>
     
-            <!-- 나의 진행 중인 챌린지 리스트 (제목 변경) --><div class="challenge-section">
+            <!-- 나의 진행 중인 챌린지 리스트 --><div class="challenge-section">
                 <h2 class="text-xl font-bold mb-4 text-gray-800">
                     내 챌린지
                 </h2>
@@ -414,13 +424,13 @@
                 </div>
             </div>
             
-            <!-- 팀 챌린지 섹션 (새로운 섹션 추가) --><div class="team-challenge-section">
+            <!-- 팀 챌린지 섹션 (요청 디자인 반영) --><div class="team-challenge-section">
                 <h2 class="text-xl font-bold mb-4 text-gray-800">
                     팀챌린지
                 </h2>
-                <div class="p-8 bg-white border border-gray-100 rounded-xl shadow-sm">
-                    <img src="/image/box.webp" alt="박스 이미지"
-                         onerror="this.onerror=null; this.src='https://placehold.co/120x120/ffffff/000?text=📦'; this.alt='박스 이모지';"/>
+                <div class="team-challenge-section-content">
+                    <!-- 요청하신 3D 박스 느낌의 이미지 URL로 대체 --><img src="https://assets-global.website-files.com/60907137b67b36021f7b88e7/6182c823057e9b04f9810ef1_3d-box.png" alt="열린 박스 이미지"
+                         onerror="this.onerror=null; this.src='https://placehold.co/140x140/f7e0c4/966A45?text=BOX'; this.alt='박스 이모지';"/>
                     <p>아직 가입한 팀챌린지가 없어요</p>
                     <button class="explore-button interactive">
                         탐색하기
@@ -572,7 +582,6 @@
 
     /**
      * 챌린지 카드를 렌더링합니다.
-     * (리디자인에 맞춰 지표 업데이트 로직은 제거)
      */
     function renderChallenges(challenges) {
         const listContainer = document.getElementById('challenge-list');
@@ -581,7 +590,7 @@
         const today = new Date().getTime();
         
         // 지표는 더 이상 UI에 표시되지 않지만, 진행 상태는 계산합니다.
-        let inProgressChallenges = 0;
+        // let inProgressChallenges = 0; // 현재 사용되지 않으므로 제거
 
         challenges.forEach(challenge => {
             const startedAt = challenge.startedAt?.toDate ? challenge.startedAt.toDate().getTime() : today;
@@ -593,11 +602,13 @@
             const remainingDays = Math.max(0, durationDays - currentProgress); 
 
             // 진행중 도전 (만료되지 않은 도전)
+            /*
             if (currentProgress < durationDays) {
                 inProgressChallenges++;
             }
+            */
             
-            // 표시할 성공일 카운트 (이미지에서는 '16'과 '4'처럼 표시됨. 여기서는 currentProgress 사용)
+            // 표시할 성공일 카운트 
             const successCount = currentProgress; 
             
             // 잔여일 문구 생성
@@ -627,8 +638,6 @@
             listContainer.innerHTML = '<p class="text-center text-gray-500 p-8">아직 진행 중인 챌린지가 없습니다. 새로운 도전을 시작해보세요!</p>';
         }
         document.getElementById('loading-message')?.remove(); 
-        
-        // [삭제] 프로필 지표 UI 업데이트 로직은 리디자인으로 인해 제거됨.
     }
 
     /**
