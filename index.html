@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Doing! - 챌린지 대시보드</title>
+    <title>Doing! - 홈</title>
     <!-- Favicon 경로 설정 -->
     <link rel="icon" type="image/x-icon" href="/image/favicon.ico">
     <!-- Pretendard 폰트 CDN 적용 -->
@@ -11,7 +11,10 @@
     <!-- Google Material Icons (Google Fonts Icons) 추가 -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
-    <!-- 공통 및 메인 페이지 스타일 (iOS 스타일 및 컴팩트화 개선) -->
+    <!-- Tailwind CSS (Ripple 효과를 위해 직접 스타일링을 함께 사용) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- 공통 및 메인 페이지 스타일 (리디자인 적용) -->
     <style>
         /* 기본 스타일 및 iOS 안전 영역 지원 */
         :root {
@@ -22,7 +25,7 @@
             --color-content-bg: #ffffff; /* 컨텐츠 카드 및 헤더 배경 */
             --color-border: #e0e0e0;
             --bottom-nav-height-mobile: 80px;
-            --bottom-nav-height-pc: 60px; /* PC 환경 내비게이션 바 높이 축소 */
+            --bottom-nav-height-pc: 60px; 
             --pc-max-width: 1200px; 
         }
 
@@ -32,7 +35,7 @@
             font-family: 'Pretendard Variable', Pretendard, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: var(--color-white); /* 기본 배경 흰색 */
+            background-color: var(--color-white); 
             display: flex;
             justify-content: center;
             min-height: 100vh;
@@ -54,177 +57,243 @@
         
         #app-container.font-loaded { opacity: 1; }
 
-        /* ------------------ PC/Desktop Layout (그림자 제거 및 배경 흰색으로 확정) ------------------ */
+        /* ------------------ PC/Desktop Layout ------------------ */
         @media (min-width: 640px) {
             body { 
                 align-items: flex-start; 
                 justify-content: center; 
-                background-color: var(--color-white); /* 좌우 여백을 흰색으로 강제 */
+                background-color: var(--color-white); 
             }
             #app-container { 
                 max-width: var(--pc-max-width); 
-                box-shadow: none; /* 컨테이너 그림자 제거 (요청 사항) */
+                box-shadow: none; 
             }
-            
-            /* PC 뷰 패딩 조정 */
             .view {
-                padding: 1.5rem 3rem; 
+                padding: 1rem 3rem; /* PC 뷰 패딩 조정 */
                 padding-bottom: calc(1.5rem + var(--bottom-nav-height-pc)); 
             }
-            /* PC 내비게이션 높이 적용 */
             .bottom-nav { height: var(--bottom-nav-height-pc); }
             .nav-item i.material-icons { font-size: 20px; margin-bottom: 0; }
             .nav-item { flex-direction: row; gap: 8px; font-size: 0.9rem; }
-            
-            /* PC 헤더 패딩 조정 (더 컴팩트하게) */
-            .header { padding: 0.5rem 3rem; }
+            .main-header { padding: 1rem 3rem; }
+            .tab-bar { padding: 0 3rem; }
         }
         
         /* ------------------ Mobile Layout ------------------ */
         @media (max-width: 639px) {
             #app-container { max-width: 100%; box-shadow: none; }
-            .bottom-nav { height: var(--bottom-nav-height-mobile); } /* 모바일 높이 유지 */
-            /* 모바일 헤더 패딩 조정 (더 컴팩트하게) */
-            .header { padding: 0.5rem 1.5rem; } 
+            .bottom-nav { max-width: 100%; height: var(--bottom-nav-height-mobile); } 
+            .main-header { padding: 1rem 1.5rem; } /* 모바일 헤더 패딩 조정 */
+            .tab-bar { padding: 0 1.5rem; }
             .view {
-                padding: 1.5rem 1.5rem;
+                padding: 1rem 1.5rem; /* 모바일 뷰 패딩 조정 */
                 padding-bottom: calc(1.5rem + var(--bottom-nav-height-mobile));
             }
-            .nav-item i.material-icons { font-size: 28px; margin-bottom: 2px; }
-            .nav-item { flex-direction: column; font-size: 0.75rem; line-height: 1.2; }
         }
-
-
-        /* 공통 헤더 스타일 (컴팩트 버전) */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: var(--color-content-bg);
-            border-bottom: 1px solid var(--color-border); /* 구분선 유지 */
-            position: sticky;
+        
+        /* ------------------ 리디자인 스타일 ------------------ */
+        
+        /* 메인 헤더 (홈 타이틀) */
+        .main-header {
+            font-size: 2rem; 
+            font-weight: 800; 
+            color: var(--color-black); 
+            padding-bottom: 0.5rem;
+            position: sticky; /* 스티키 헤더 유지 */
             top: 0;
             z-index: 10;
+            background-color: var(--color-app-bg);
         }
 
-        .header-title {
-            font-size: 1.4rem; 
-            font-weight: 700; 
-            color: var(--color-accent); 
-            letter-spacing: -0.5px;
+        /* 탭 바 */
+        .tab-bar {
+            display: flex;
+            position: sticky;
+            top: 4.5rem; /* 헤더 아래에 위치 */
+            z-index: 10;
+            background-color: var(--color-app-bg);
+            border-bottom: 1px solid var(--color-border);
+            margin-bottom: 1.5rem;
         }
-        
-        /* 로그아웃 버튼 스타일 (굵기 1px, 폰트 굵기 500으로 수정) */
-        .logout-button {
-            padding: 0.5rem 1.2rem; 
-            background-color: transparent;
-            color: var(--color-accent); 
-            border: 1px solid var(--color-accent); /* 1px 외곽선으로 수정 */
-            border-radius: 9999px; 
-            font-size: 0.9rem;
-            font-weight: 500; /* 폰트 굵기 500으로 수정 */
+
+        .tab-item {
+            padding: 0.5rem 0;
+            margin-right: 1.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #888;
             cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        .logout-button:hover {
-            background-color: rgba(30, 144, 255, 0.05); /* 마우스 오버 시 연하게 */
+            position: relative;
+            transition: color 0.2s ease;
         }
 
-        /* 메인 뷰 컨테이너 */
-        .view {
-            flex-grow: 1;
-            overflow-y: auto;
-            display: block; 
-            background-color: var(--color-app-bg); 
-        }
-        
-        /* 프로필 카드 스타일 (지표 영역 분리/컴팩트화) */
-        .profile-card {
-            /* 상단은 파란색 그라데이션 유지 */
-            background: linear-gradient(135deg, #4F9FFF 0%, #1E90FF 100%);
-            color: var(--color-white);
-            padding: 1rem 1.5rem 0; /* 상단 패딩 축소 */
-            border-radius: 20px; 
-            
-            /* 지표 섹션과 다음 챌린지 섹션 간격 */
-            margin-bottom: 3.5rem; 
-            
-            box-shadow: none; 
-            display: flex;
-            flex-direction: column;
-            overflow: hidden; 
-        }
-        /* 상단 텍스트 컴팩트화 */
-        .profile-greeting { 
-            font-size: 1.2rem; 
-            font-weight: 700; 
-            margin-bottom: 0.8rem; /* UID 라인 제거로 인해 마진 조정 */
-        } 
-        
-        /* 핵심 지표 섹션 */
-        .profile-metrics {
-            background-color: #fcfcfc; 
-            
-            /* 카드 하단까지 꽉 채우기 위한 음수 마진 */
-            margin-top: 0.8rem; 
-            margin-left: -1.5rem; 
-            margin-right: -1.5rem; 
-            margin-bottom: -1rem; 
-            
-            padding: 1rem 1.5rem 1.5rem; 
-            
-            border-radius: 0 0 20px 20px; /* 카드 하단 라운딩과 일치 */
-            
-            display: flex;
-            justify-content: space-around;
-        }
-        .metric-item {
-            text-align: center;
-            width: 33%; /* 공간 균등 분배 */
-        }
-        
-        /* 값 스타일 */
-        .metric-value {
-            font-size: 1.4rem;
-            font-weight: 800;
-            line-height: 1.3; 
-            margin-bottom: 2px; /* 간격 축소 */
-            margin-top: 0; 
-            color: var(--color-black); 
-        }
-        .metric-label {
-            font-size: 0.75rem; 
-            opacity: 0.9;
-            font-weight: 500;
-            color: #666; 
+        .tab-item.active {
+            color: var(--color-black);
         }
 
-        /* 챌린지 목록 (스타일 유지) */
-        .challenge-section h2 {
-            font-weight: 800;
+        .tab-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px; /* border-bottom 위에 위치 */
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: var(--color-black);
+            border-radius: 9999px;
         }
-        .challenge-list {
-            display: grid;
-            gap: 1rem;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
-        }
-
-        .challenge-card {
-            background-color: var(--color-content-bg);
-            padding: 1.25rem;
+        
+        /* 새싹 레벨 카드 */
+        .sprout-card {
+            background-color: #f7f7f7; /* 연한 회색 배경 */
             border-radius: 16px; 
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); 
-            border: none; 
+            padding: 1.25rem;
+            margin-bottom: 2rem;
             display: flex;
-            flex-direction: column;
-            transition: all 0.2s ease;
-        }
-        .challenge-card:hover {
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
         }
         
-        /* 하단 내비게이션 바 수정 */
+        .sprout-card img {
+            width: 45px;
+            height: 45px;
+            margin-right: 1rem;
+        }
+        
+        .sprout-text-primary {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--color-black);
+            line-height: 1.3;
+        }
+        
+        .sprout-badge {
+            display: inline-block;
+            background-color: #e5f4ff;
+            color: var(--color-accent);
+            padding: 0.2rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+        
+        /* 챌린지 리스트 아이템 */
+        .challenge-list-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 0;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background-color 0.15s ease;
+        }
+        
+        .challenge-list-item:last-child {
+            border-bottom: none;
+        }
+        
+        .challenge-info h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--color-black);
+            margin: 0;
+        }
+        
+        .challenge-info p {
+            font-size: 0.85rem;
+            color: #888;
+            margin-top: 4px;
+        }
+        
+        .fire-icon-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+        }
+        
+        .fire-icon-wrap img {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .fire-count {
+            position: absolute;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--color-black);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -10%); /* 불꽃 이미지에 맞게 조정 */
+        }
+        
+        /* 팀 챌린지 섹션 */
+        .team-challenge-section {
+            margin-top: 3rem;
+            text-align: center;
+        }
+        
+        .team-challenge-section h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--color-black);
+            text-align: left;
+            margin-bottom: 1.5rem;
+        }
+        
+        .team-challenge-section img {
+            width: 120px;
+            height: auto;
+            margin: 1.5rem 0;
+        }
+        
+        .team-challenge-section p {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 1.5rem;
+        }
+        
+        .team-challenge-section .explore-button {
+            padding: 0.75rem 2rem;
+            background-color: var(--color-black);
+            color: var(--color-white);
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        /* ------------------ Ripple Effect (물결 효과) ------------------ */
+        .interactive {
+            position: relative;
+            overflow: hidden;
+            transform: translate3d(0, 0, 0); /* GPU 가속 활성화 */
+        }
+        
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            transform: scale(0);
+            animation: ripple-animation 0.5s linear;
+            background-color: rgba(0, 0, 0, 0.1); 
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        @keyframes ripple-animation {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+        
+        /* 하단 내비게이션 바 (유지) */
         .bottom-nav {
+            /* 기존 스타일 유지 */
             width: 100%;
             background-color: var(--color-content-bg);
             display: flex;
@@ -235,15 +304,16 @@
             bottom: 0;
             top: auto;
             padding-bottom: env(safe-area-inset-bottom); 
-            border-top: 1px solid var(--color-border); /* 깔끔한 상단 선 추가 */
-            box-shadow: 0 -1px 8px rgba(0, 0, 0, 0.03); /* 그림자 약화 */
+            border-top: 1px solid var(--color-border); 
+            box-shadow: 0 -1px 8px rgba(0, 0, 0, 0.03); 
             left: 50%;
             transform: translateX(-50%);
             max-width: var(--pc-max-width);
         }
         
         .nav-item {
-            color: #999; /* 비활성 상태는 회색 */
+            /* 기존 스타일 유지 */
+            color: #999; 
             text-decoration: none;
             display: flex;
             align-items: center; 
@@ -253,154 +323,116 @@
             transition: color 0.2s ease, background-color 0.2s ease;
         }
 
-        /* Nav Item - 활성 상태 (배열/파란줄 문제 해결) */
         .nav-item.active {
-            color: var(--color-accent); /* 활성 상태는 파란색 아이콘/텍스트만 사용 */
+            color: var(--color-accent); 
             font-weight: 600;
         }
         
-        @media (max-width: 639px) {
-            .bottom-nav { max-width: 100%; }
-            .nav-item { padding: 0.5rem 0.25rem; } /* 모바일에서 좁게 만듦 */
-        }
-        
-        /* 모달 스타일 */
-        #modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.4); 
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-content {
-            background-color: var(--color-content-bg);
-            padding: 30px;
-            padding-bottom: 20px; 
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-            width: 90%;
-            max-width: 400px;
-            text-align: center;
-            transform: scale(0.9);
-            opacity: 0;
-            transition: all 0.2s ease-out;
-        }
-
-        .modal-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-            color: var(--color-black); /* 검정색 유지 */
-        }
-
-        .modal-text {
-            font-size: 1rem;
-            margin-bottom: 20px; 
-            line-height: 1.4;
-            color: #333;
-        }
-        
-        /* 모달 확인 버튼 스타일 */
-        #modal-close-button {
-            width: 100%;
-            padding: 0.75rem;
-            margin-top: 10px;
-            background-color: var(--color-accent);
-            color: var(--color-white);
-            border: none;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        #modal-close-button:hover {
-            background-color: #0d79e6; 
-        }
+        /* 모달 스타일 (유지) */
+        #modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0, 0, 0, 0.4); justify-content: center; align-items: center; }
+        .modal-content { background-color: var(--color-content-bg); padding: 30px; padding-bottom: 20px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2); width: 90%; max-width: 400px; text-align: center; transform: scale(0.9); opacity: 0; transition: all 0.2s ease-out; }
+        .modal-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 10px; color: var(--color-black); }
+        .modal-text { font-size: 1rem; margin-bottom: 20px; line-height: 1.4; color: #333; }
+        #modal-close-button { width: 100%; padding: 0.75rem; margin-top: 10px; background-color: var(--color-accent); color: var(--color-white); border: none; border-radius: 12px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s; }
+        #modal-close-button:hover { background-color: #0d79e6; }
 
     </style>
 </head>
 <body>
 
 <div id="app-container">
-    <!-- 하단 내비게이션 바 -->
+    <!-- 하단 내비게이션 바 (디자인 유지) -->
     <div class="bottom-nav">
         <a class="nav-item interactive active" href="/">
             <i class="material-icons">home</i>
             <span>홈</span>
         </a>
         <a class='nav-item interactive' href='/challenge'>
-            <i class="material-icons">local_fire_department</i> <!-- 도전 아이콘: 불꽃 유지 -->
+            <i class="material-icons">local_fire_department</i> 
             <span>도전</span>
         </a>
-        <a class="nav-item interactive" href="/my"> <!-- .html 확장자 제거 -->
+        <a class="nav-item interactive" href="/my">
             <i class="material-icons">person</i>
             <span>마이</span>
         </a>
     </div>
 
-    <!-- 컴팩트 헤더 -->
-    <header class="header">
-        <h1 class="header-title">Doing!</h1>
-        <button class="logout-button interactive" onclick="handleLogout()">
-            로그아웃
-        </button>
+    <!-- 메인 헤더 (새 디자인) -->
+    <!-- 기존 'Doing! + 로그아웃'에서 '홈' 타이틀로 변경 -->
+    <header class="main-header" id="main-header">
+        홈
     </header>
+    
+    <!-- 탭 바 (새 디자인) -->
+    <div class="tab-bar">
+        <div id="tab-challenge-btn" class="tab-item interactive active" onclick="switchTab('challenge')">챌린지</div>
+        <div id="tab-insight-btn" class="tab-item interactive" onclick="switchTab('insight')">인사이트</div>
+    </div>
+
 
     <!-- ------------------ 뷰 컨테이너 ------------------ -->
     <div id="home-view" class="view active">
-        <!-- 프로필 섹션 -->
-        <div class="profile-card-section">
-            <div class="profile-card">
-                <!-- 상단 인사말 섹션: UID 정보 삭제 -->
-                <!-- DOM 기본값은 '도전러'로 유지 -->
-                <p class="profile-greeting">안녕하세요, <span id="user-nickname">도전러</span>님!</p>
-
-                <!-- 핵심 지표 섹션 (연한 회색 배경으로 대비) - 아이콘 삭제 유지 -->
-                <div class="profile-metrics">
-                    <div class="metric-item">
-                        <div class="metric-value" id="metric-total">0</div>
-                        <div class="metric-label">전체 도전</div>
+        
+        <!-- 탭 내용 컨테이너 -->
+        <div id="tab-content-challenge">
+            <!-- 새싹 레벨 카드 -->
+            <div class="sprout-card interactive">
+                <div class="flex items-center">
+                    <!-- 새싹 이미지 -->
+                    <img src="/image/sprout.webp" alt="새싹 아이콘" 
+                         onerror="this.onerror=null; this.src='https://placehold.co/45x45/ffffff/000?text=🌱'; this.alt='새싹 이모지';" />
+                    <div>
+                        <!-- 사용자 닉네임 (기존 로직에서 가져옴) -->
+                        <p class="sprout-text-primary"><span id="user-nickname">도전러</span>님은 새싹 레벨이에요</p>
+                        <!-- 배지 -->
+                        <span class="sprout-badge">도전 1개 더 완료시 레벨업!</span>
                     </div>
-                    <div class="metric-item">
-                        <div class="metric-value" id="metric-progress">0</div>
-                        <div class="metric-label">진행중 도전</div>
-                    </div>
-                    <div class="metric-item">
-                        <div class="metric-value" id="metric-max-success">0</div>
-                        <div class="metric-label">최대 성공일</div>
-                    </div>
+                </div>
+                <!-- 오른쪽 화살표 -->
+                <i class="material-icons text-xl text-gray-400">chevron_right</i>
+            </div>
+    
+            <!-- 나의 진행 중인 챌린지 리스트 (제목 변경) -->
+            <div class="challenge-section">
+                <h2 class="text-xl font-bold mb-4 text-gray-800">
+                    내 챌린지
+                </h2>
+                <div id="challenge-list" class="challenge-list">
+                    <!-- Firestore data will be injected here -->
+                    <p id="loading-message" style="text-align: center; color: #777; padding: 2rem 0;">챌린지 목록을 불러오는 중...</p>
+                </div>
+            </div>
+            
+            <!-- 팀 챌린지 섹션 (새로운 섹션 추가) -->
+            <div class="team-challenge-section">
+                <h2 class="text-xl font-bold mb-4 text-gray-800">
+                    팀챌린지
+                </h2>
+                <div class="p-8 bg-white border border-gray-100 rounded-xl shadow-sm">
+                    <img src="/image/box.webp" alt="박스 이미지"
+                         onerror="this.onerror=null; this.src='https://placehold.co/120x120/ffffff/000?text=📦'; this.alt='박스 이모지';"/>
+                    <p>아직 가입한 팀챌린지가 없어요</p>
+                    <button class="explore-button interactive">
+                        탐색하기
+                    </button>
                 </div>
             </div>
         </div>
-
-        <!-- 챌린지 목록 섹션 -->
-        <div class="challenge-section">
-            <h2 class="text-2xl font-bold mb-4 text-gray-800">
-                나의 진행 중인 챌린지
-            </h2>
-            <div id="challenge-list" class="challenge-list">
-                <!-- Firestore data will be injected here -->
-                <p id="loading-message" style="text-align: center; color: #777; grid-column: 1 / -1;">챌린지 목록을 불러오는 중...</p>
-            </div>
+        
+        <!-- 인사이트 탭 내용 (임시) -->
+        <div id="tab-content-insight" style="display: none;" class="py-8 text-center text-gray-500">
+            <h3 class="text-lg font-semibold mb-3">인사이트 준비 중</h3>
+            <p>나의 도전 기록을 분석하여 통찰력을 제공해 드릴 예정입니다.</p>
         </div>
     </div>
     
 </div>
 
-<!-- 모달 팝업 구조 (메시지 박스 용도) - 확인 버튼 복원 -->
+<!-- 모달 팝업 구조 (메시지 박스 용도) -->
 <div id="modal">
     <div class="modal-content">
         <h3 class="modal-title" id="modal-title"></h3>
         <p class="modal-text" id="modal-text"></p>
-        <!-- 명시적인 확인 버튼 복원 -->
         <button id="modal-close-button" class="interactive" onclick="hideModal()">확인</button>
     </div>
 </div>
@@ -419,7 +451,7 @@
         collection, 
         query, 
         onSnapshot, 
-        serverTimestamp
+        // serverTimestamp // 사용하지 않으므로 제거
     } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     // --- Firebase 설정 및 초기화 ---
@@ -476,81 +508,120 @@
             modal.style.display = 'none';
         }, 200); 
     }
+    
+    /**
+     * 탭 전환 함수
+     */
+    window.switchTab = function(tabName) {
+        const challengeContent = document.getElementById('tab-content-challenge');
+        const insightContent = document.getElementById('tab-content-insight');
+        const challengeBtn = document.getElementById('tab-challenge-btn');
+        const insightBtn = document.getElementById('tab-insight-btn');
+        
+        if (tabName === 'challenge') {
+            challengeContent.style.display = 'block';
+            insightContent.style.display = 'none';
+            challengeBtn.classList.add('active');
+            insightBtn.classList.remove('active');
+        } else if (tabName === 'insight') {
+            challengeContent.style.display = 'none';
+            insightContent.style.display = 'block';
+            insightBtn.classList.add('active');
+            challengeBtn.classList.remove('active');
+            // 인사이트 탭은 임시로 메시지 표시
+        }
+    }
+    
+    /**
+     * Ripple Effect 추가 함수
+     */
+    function addRippleEffect(event) {
+        const button = event.currentTarget;
+        const ripple = document.createElement('span');
+        const rect = button.getBoundingClientRect();
+        
+        // 클릭 위치를 버튼 내부에서의 상대적인 위치로 계산
+        const size = Math.max(rect.width, rect.height);
+        const x = event.clientX - rect.left - size / 2;
+        const y = event.clientY - rect.top - size / 2;
 
+        ripple.style.width = ripple.style.height = `${size}px`;
+        ripple.style.left = `${x}px`;
+        ripple.style.top = `${y}px`;
+        ripple.classList.add('ripple');
+
+        // 기존 리플 효과 제거 후 추가 (다중 클릭 방지)
+        button.querySelectorAll('.ripple').forEach(r => r.remove());
+        button.appendChild(ripple);
+
+        // 애니메이션 종료 후 리플 제거
+        ripple.addEventListener('animationend', () => {
+            ripple.remove();
+        });
+    }
 
     // --- 데이터 및 비즈니스 로직 ---
 
     /**
-     * 챌린지 카드를 렌더링하고, 프로필 지표를 업데이트합니다.
+     * 챌린지 카드를 렌더링합니다.
+     * (리디자인에 맞춰 지표 업데이트 로직은 제거)
      */
     function renderChallenges(challenges) {
         const listContainer = document.getElementById('challenge-list');
         listContainer.innerHTML = ''; 
         
-        // --- 프로필 지표 계산 ---
         const today = new Date().getTime();
-        let totalChallenges = challenges.length;
+        
+        // 지표는 더 이상 UI에 표시되지 않지만, 진행 상태는 계산합니다.
         let inProgressChallenges = 0;
-        let maxSuccessDays = 0; 
 
         challenges.forEach(challenge => {
             const startedAt = challenge.startedAt?.toDate ? challenge.startedAt.toDate().getTime() : today;
             const durationDays = challenge.durationDays || 30;
-            // 경과일 계산
-            const elapsedDays = Math.max(0, Math.ceil((today - startedAt) / (1000 * 60 * 60 * 24))); 
+            // 경과일 (현재 진행 일수, 즉 성공 횟수로 간주)
+            const currentProgress = Math.max(0, Math.ceil((today - startedAt) / (1000 * 60 * 60 * 24))); 
+            
+            // 잔여일
+            const remainingDays = Math.max(0, durationDays - currentProgress); 
 
             // 진행중 도전 (만료되지 않은 도전)
-            if (elapsedDays <= durationDays) {
+            if (currentProgress < durationDays) {
                 inProgressChallenges++;
             }
             
-            // 임시 진행률 (Daily 인증 횟수가 없으므로, 경과일 기준)
-            const currentProgress = Math.min(elapsedDays, durationDays);
-            const progressPercent = Math.min(100, (currentProgress / durationDays) * 100).toFixed(0);
-
-            // 최대 성공일 (임시: 경과일 중 최대값 사용)
-            maxSuccessDays = Math.max(maxSuccessDays, currentProgress); 
+            // 표시할 성공일 카운트 (이미지에서는 '16'과 '4'처럼 표시됨. 여기서는 currentProgress 사용)
+            const successCount = currentProgress; 
+            
+            // 잔여일 문구 생성
+            const daysText = `${remainingDays}일 남음 · ${currentProgress}/${durationDays}일`;
 
             const card = document.createElement('div');
-            card.className = 'challenge-card interactive';
+            card.className = 'challenge-list-item interactive';
             
-            card.setAttribute('onclick', `showModal('${challenge.title}', '총 ${durationDays}일 중 ${currentProgress}일차 진행 중입니다. (ID: ${challenge.id})')`);
-
-            const iconMap = {
-                '30': { icon: 'brightness_5', color: '#1E90FF' }, 
-                '60': { icon: 'fitness_center', color: '#2ecc71' }, 
-                '90': { icon: 'book', color: '#e74c3c' },
-                default: { icon: 'auto_stories', color: '#9b59b6' }
-            };
-            const theme = iconMap[durationDays.toString()] || iconMap.default;
-            
-            card.style.borderLeft = `5px solid ${theme.color}`;
+            card.setAttribute('onclick', `showModal('${challenge.title}', '총 ${durationDays}일 중 ${currentProgress}일차 진행 중입니다. 남은 일수: ${remainingDays}일')`);
 
             card.innerHTML = `
-                <div class="card-header flex items-center justify-between mb-3">
-                    <div class="flex items-center">
-                        <i class="material-icons card-icon mr-2" style="color: ${theme.color}; font-size: 28px;">${theme.icon}</i>
-                        <h3 class="card-title font-semibold text-lg text-gray-800">${challenge.title}</h3>
-                    </div>
-                    <span class="card-days text-sm font-medium text-gray-500">${currentProgress}/${durationDays}일</span>
+                <div class="challenge-info">
+                    <h3>${challenge.title}</h3>
+                    <p>${daysText}</p>
                 </div>
-                <div class="progress-bar-wrap h-2 bg-gray-200 rounded-full overflow-hidden">
-                    <div class="progress-bar h-full transition-all duration-500" style="width: ${progressPercent}%; background-color: ${theme.color};"></div>
+                <div class="fire-icon-wrap">
+                    <!-- 불 이미지 -->
+                    <img src="/image/fire.webp" alt="성공 불꽃 아이콘"
+                         onerror="this.onerror=null; this.src='https://placehold.co/40x40/ffffff/ff0000?text=🔥'; this.alt='불꽃 이모지';" />
+                    <span class="fire-count">${successCount}</span>
                 </div>
-                <p class="progress-text text-right text-sm font-semibold mt-2" style="color: ${theme.color};">${progressPercent}% 완료</p>
             `;
             listContainer.appendChild(card);
         });
         
-        // --- 지표 UI 업데이트 ---
-        document.getElementById('metric-total').textContent = totalChallenges;
-        document.getElementById('metric-progress').textContent = inProgressChallenges;
-        document.getElementById('metric-max-success').textContent = maxSuccessDays;
-        
+        // 챌린지가 없을 경우 메시지 표시
         if (challenges.length === 0) {
-            listContainer.innerHTML = '<p class="text-center text-gray-500 p-8" style="grid-column: 1 / -1;">아직 진행 중인 챌린지가 없습니다. 새로운 도전을 시작해보세요!</p>';
+            listContainer.innerHTML = '<p class="text-center text-gray-500 p-8">아직 진행 중인 챌린지가 없습니다. 새로운 도전을 시작해보세요!</p>';
         }
         document.getElementById('loading-message')?.remove(); 
+        
+        // [삭제] 프로필 지표 UI 업데이트 로직은 리디자인으로 인해 제거됨.
     }
 
     /**
@@ -628,8 +699,8 @@
                  return;
             }
 
-            // [수정] user.displayName이 없을 경우 UID 대신 '도전자'로 대체합니다.
-            const displayName = user.displayName || '도전자';
+            // user.displayName이 없을 경우 '도전러'로 대체합니다.
+            const displayName = user.displayName || '도전러';
             
             // UI 업데이트
             document.getElementById('user-nickname').textContent = displayName;
@@ -659,10 +730,24 @@
             appContainer.style.minHeight = `${window.innerHeight}px`;
         });
         
-        // 모달 배경 클릭 시 닫기 기능 추가 (확인 버튼과 함께 작동)
+        // 모달 배경 클릭 시 닫기 기능 추가
         modal.addEventListener('click', (event) => {
             if (event.target === modal) {
                 hideModal();
+            }
+        });
+        
+        // Ripple Effect 초기화
+        document.querySelectorAll('.interactive').forEach(button => {
+            // tab-item과 같이 자체적인 active 상태 전환이 있는 요소는 ripple 효과를 click이 아닌 mousedown/up으로 분리
+            if (button.classList.contains('tab-item') || button.classList.contains('nav-item')) {
+                button.addEventListener('mousedown', (event) => {
+                    // 탭 전환 이벤트가 먼저 발생하도록 지연
+                    setTimeout(() => addRippleEffect(event), 0);
+                });
+            } else {
+                // 기타 interactive 요소는 일반 click 이벤트에 ripple 적용
+                button.addEventListener('click', addRippleEffect);
             }
         });
     });
