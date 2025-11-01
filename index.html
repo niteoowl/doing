@@ -8,8 +8,10 @@
     <!-- Pretendard 폰트 CDN 적용 --><link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
     <!-- Google Material Icons (Google Fonts Icons) 추가 --><link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
+    <!-- 기존 Tailwind CSS CDN 삭제됨 -->
+
     <!-- 공통 및 메인 페이지 스타일 (리디자인 적용) --><style>
-        /* CSS 변수 설정 */
+        /* 기본 스타일 및 iOS 안전 영역 지원 */
         :root {
             --color-white: #ffffff;
             --color-black: #000000;
@@ -20,7 +22,9 @@
             --bottom-nav-height-mobile: 80px;
             --bottom-nav-height-pc: 60px; 
             --pc-max-width: 1200px; 
+            /* 헤더 높이 변수 추가 (모바일 기준 약 4.5rem) */
             --header-height-mobile: 4.5rem; 
+            /* [수정] 탭바 높이 (약 2.5rem) + 탭바 마진(1.5rem) = 4.0rem. 이를 View 패딩 계산에 사용 */
             --tab-area-total-height: 4.0rem; 
         }
 
@@ -52,37 +56,91 @@
         
         #app-container.font-loaded { opacity: 1; }
 
-        /* ------------------ 핵심 UI 스타일 ------------------ */
+        /* ------------------ PC/Desktop Layout (640px 이상) ------------------ */
+        @media (min-width: 640px) {
+            body { 
+                align-items: flex-start; 
+                justify-content: center; 
+                background-color: var(--color-white); 
+            }
+            #app-container { 
+                max-width: var(--pc-max-width); 
+                box-shadow: none; 
+            }
+            /* PC에서는 헤더와 탭바가 고정되지 않고 흐름을 따르도록 패딩 조정 */
+            .view {
+                padding: 1rem 3rem; 
+                padding-bottom: calc(1.5rem + var(--bottom-nav-height-pc)); 
+            }
+            .bottom-nav { height: var(--bottom-nav-height-pc); }
+            
+            /* PC: 아이콘과 텍스트 가로 정렬, 아이콘 크기/간격 조정 */
+            .nav-item i.material-icons { font-size: 20px; margin-bottom: 0; }
+            .nav-item { flex-direction: row; gap: 8px; font-size: 0.9rem; padding: 0.5rem 1rem; } 
+            
+            .main-header { padding: 1rem 3rem; position: static; } /* PC 고정 해제 */
+            .tab-bar { padding: 0 3rem; position: static; margin-top: 0; } /* PC 고정 해제 */
+        }
         
+        /* ------------------ Mobile Layout (639px 이하) ------------------ */
+        @media (max-width: 639px) {
+            #app-container { max-width: 100%; box-shadow: none; }
+            .bottom-nav { max-width: 100%; height: var(--bottom-nav-height-mobile); } 
+            
+            /* 모바일: 헤더와 탭 바의 높이를 고려하여 뷰의 상단 패딩 설정 */
+            .view {
+                /* 헤더 + 탭바 높이만큼 상단 패딩 확보 */
+                /* 4.5rem + 4.0rem = 8.5rem 상단 패딩 확보 */
+                padding-top: calc(var(--header-height-mobile) + var(--tab-area-total-height));
+                padding-left: 1.5rem;
+                padding-right: 1.5rem;
+                padding-bottom: calc(1.5rem + var(--bottom-nav-height-mobile));
+            }
+            
+            /* 모바일: 아이콘과 텍스트 세로 정렬 (기본값) */
+            .nav-item { flex-direction: column; gap: 2px; font-size: 0.75rem; } 
+            .nav-item i.material-icons { font-size: 24px; }
+        }
+        
+        /* ------------------ 리디자인 스타일 ------------------ */
+        
+        /* 메인 헤더 */
         .main-header {
             font-size: 2rem; 
             font-weight: 800; 
             color: var(--color-black); 
+            /* [수정] 높이 및 수직 중앙 정렬을 위해 flex 및 min-height 적용 */
             display: flex;
             align-items: center; 
             min-height: var(--header-height-mobile); /* 4.5rem 높이 고정 */
             padding: 0 1.5rem; /* 좌우 패딩만 유지 */
-            position: sticky; 
+            position: sticky; /* Sticky 재적용 */
             top: 0;
             z-index: 10;
             background-color: var(--color-app-bg);
         }
 
+        /* 탭 바 */
         .tab-bar {
             display: flex;
-            position: sticky; 
-            top: var(--header-height-mobile); /* 헤더 바로 아래에 붙도록 4.5rem 위치 설정 */
+            position: sticky; /* Sticky 재적용 */
+            top: var(--header-height-mobile); /* 헤더 바로 아래에 붙도록 top 위치 수정 (4.5rem) */
             z-index: 10;
             background-color: var(--color-app-bg);
             border-bottom: 1px solid var(--color-border);
-            margin-bottom: 1rem; /* 모바일: 컨텐츠와의 간격 축소 (1.5rem -> 1rem) */
-            padding: 0 1.5rem; 
+            margin-bottom: 1.5rem; /* 뷰 컨텐츠와의 간격 */
+            padding: 0 1.5rem; /* 모바일 기준 패딩 */
         }
         
-        .tab-item-container { flex: 1; display: flex; justify-content: center; }
+        /* 탭 아이템 컨테이너 */
+        .tab-item-container {
+            flex: 1; 
+            display: flex;
+            justify-content: center;
+        }
 
         .tab-item {
-            padding: 0.7rem 0; /* 0.35rem에서 0.2rem으로 줄여서 텍스트를 위로 대폭 이동 */
+            padding: 0.8rem 0;
             font-size: 1.1rem;
             font-weight: 600;
             color: #ccc; 
@@ -93,8 +151,11 @@
             text-align: center;
         }
 
-        .tab-item.active { color: var(--color-black); }
+        .tab-item.active {
+            color: var(--color-black);
+        }
 
+        /* 탭 활성화 밑줄 디자인 */
         .tab-item.active::after {
             content: '';
             position: absolute;
@@ -106,41 +167,7 @@
             border-radius: 9999px;
         }
         
-        /* ------------------ PC/Desktop Layout ------------------ */
-        @media (min-width: 640px) {
-            body { align-items: flex-start; justify-content: center; background-color: var(--color-white); }
-            #app-container { max-width: var(--pc-max-width); box-shadow: none; }
-            .view { padding: 1rem 3rem; padding-bottom: calc(1.5rem + var(--bottom-nav-height-pc)); }
-            .bottom-nav { height: var(--bottom-nav-height-pc); }
-            .nav-item i.material-icons { font-size: 20px; margin-bottom: 0; }
-            .nav-item { flex-direction: row; gap: 8px; font-size: 0.9rem; padding: 0.5rem 1rem; } 
-            .main-header { padding: 1rem 3rem; position: static; } 
-            .tab-bar { 
-                padding: 0 3rem; 
-                position: static; 
-                margin-top: 0; 
-                margin-bottom: 1.5rem; /* PC: 넓은 간격 유지 */
-            } 
-        }
-        
-        /* ------------------ Mobile Layout ------------------ */
-        @media (max-width: 639px) {
-            #app-container { max-width: 100%; box-shadow: none; }
-            .bottom-nav { max-width: 100%; height: var(--bottom-nav-height-mobile); } 
-            
-            /* 모바일: Sticky 헤더/탭바 높이를 고려한 상단 패딩 */
-            .view {
-                padding-top: calc(var(--header-height-mobile) + var(--tab-area-total-height));
-                padding-left: 1.5rem;
-                padding-right: 1.5rem;
-                padding-bottom: calc(1.5rem + var(--bottom-nav-height-mobile));
-            }
-            .nav-item { flex-direction: column; gap: 2px; font-size: 0.75rem; } 
-            .nav-item i.material-icons { font-size: 24px; }
-        }
-        
-        /* ------------------ 기타 UI 스타일 (이하 동일) ------------------ */
-        
+        /* 새싹 레벨 카드 */
         .sprout-card {
             background-color: #f7f7f7; 
             border-radius: 16px; 
@@ -151,18 +178,27 @@
             justify-content: space-between;
         }
         
-        .sprout-card-content { display: flex; align-items: center; }
+        /* Tailwind: flex items-center 대체 */
+        .sprout-card-content {
+            display: flex;
+            align-items: center;
+        }
 
-        .sprout-card img { width: 45px; height: 45px; margin-right: 1rem; }
+        .sprout-card img {
+            width: 45px;
+            height: 45px;
+            margin-right: 1rem;
+        }
         
         .sprout-text-primary {
             font-size: 1.1rem;
             font-weight: 700;
             color: var(--color-black);
             line-height: 1.3;
-            margin: 0; 
+            margin: 0; /* P 태그의 기본 마진 제거하여 배지와의 간격 좁힘 */
         }
         
+        /* 배지 색상 */
         .sprout-badge {
             display: inline-block;
             background-color: #966A45; 
@@ -174,9 +210,13 @@
             margin-top: 4px;
         }
         
-        .sprout-card .material-icons.arrow-icon { font-size: 1.25rem; color: #9ca3af; }
+        /* Tailwind: text-xl text-gray-400 대체 */
+        .sprout-card .material-icons.arrow-icon {
+            font-size: 1.25rem; /* text-xl */
+            color: #9ca3af; /* text-gray-400 */
+        }
 
-        /* 챌린지 리스트 */
+        /* 챌린지 리스트 아이템 */
         .challenge-list-item {
             display: flex;
             align-items: center;
@@ -185,10 +225,25 @@
             border-bottom: 1px solid #f0f0f0;
             transition: background-color 0.15s ease;
         }
-        .challenge-list-item:last-child { border-bottom: none; }
-        .challenge-info h3 { font-size: 1.25rem; font-weight: 700; color: var(--color-black); margin: 0; }
-        .challenge-info p { font-size: 0.85rem; color: #888; margin-top: 4px; }
         
+        .challenge-list-item:last-child {
+            border-bottom: none;
+        }
+        
+        .challenge-info h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--color-black);
+            margin: 0;
+        }
+        
+        .challenge-info p {
+            font-size: 0.85rem;
+            color: #888;
+            margin-top: 4px;
+        }
+        
+        /* 불꽃 아이콘 영역 */
         .fire-icon-wrap {
             position: relative;
             width: 56px; 
@@ -201,55 +256,116 @@
             justify-content: center;
             flex-shrink: 0;
         }
-        .fire-icon-wrap img { width: 30px; height: 30px; margin-bottom: 4px; }
-        .fire-count { position: static; font-size: 0.875rem; font-weight: 700; color: var(--color-black); transform: none; }
         
+        .fire-icon-wrap img {
+            width: 30px; 
+            height: 30px; 
+            margin-bottom: 4px; 
+        }
+        
+        .fire-count {
+            position: static; 
+            font-size: 0.875rem; 
+            font-weight: 700;
+            color: var(--color-black);
+            transform: none; 
+        }
+        
+        /* Challenge Section H2 (Tailwind: text-xl font-bold mb-4 text-gray-800 대체) */
         .challenge-section h2 {
-            font-size: 1.25rem; 
-            font-weight: 700; 
-            margin-bottom: 1rem; 
-            color: #1f2937; 
+            font-size: 1.25rem; /* text-xl */
+            font-weight: 700; /* font-bold */
+            margin-bottom: 1rem; /* mb-4 (1rem) */
+            color: #1f2937; /* text-gray-800 근사치 */
             text-align: left;
         }
 
-        #loading-message { text-align: center; color: #777; padding: 2rem 0; }
+        /* 챌린지 로딩 메시지 */
+        #loading-message {
+            text-align: center; 
+            color: #777; 
+            padding: 2rem 0;
+        }
 
-        /* 팀 챌린지 섹션 */
-        .team-challenge-section { margin-top: 3rem; text-align: center; }
-        .team-challenge-section h2 { font-size: 1.25rem; font-weight: 700; color: var(--color-black); text-align: left; margin-bottom: 1.5rem; }
+        /* 팀 챌린지 섹션 (요청된 디자인 반영) */
+        .team-challenge-section {
+            margin-top: 3rem;
+            text-align: center;
+        }
+        
+        .team-challenge-section h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--color-black);
+            text-align: left;
+            margin-bottom: 1.5rem;
+        }
+        
         .team-challenge-section-content {
-            padding: 40px 20px; 
-            background-color: var(--color-app-bg); 
+            padding: 40px 20px; /* 상하 패딩 늘림 */
+            background-color: var(--color-app-bg); /* 배경 흰색 */
             border-radius: 12px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
         }
-        .team-challenge-section img { width: 140px; height: auto; margin-bottom: 30px; }
-        .team-challenge-section p { font-size: 1.3rem; font-weight: 700; color: var(--color-black); margin-bottom: 30px; }
+        
+        .team-challenge-section img {
+            width: 140px; /* 이미지 크기 키움 */
+            height: auto;
+            margin-bottom: 30px; /* 아래쪽 여백 추가 */
+        }
+        
+        .team-challenge-section p {
+            font-size: 1.3rem; /* 폰트 크기 키움 */
+            font-weight: 700; /* 폰트 굵게 */
+            color: var(--color-black); /* 텍스트 색상 검은색 */
+            margin-bottom: 30px;
+        }
+        
         .team-challenge-section .explore-button {
-            width: 100%; 
-            max-width: 300px; 
-            padding: 0.75rem 1.5rem; 
+            width: 100%; /* 버튼 너비 최대로 */
+            max-width: 300px; /* 최대 너비 제한 (선택적) */
+            padding: 0.75rem 1.5rem; /* 더 작게 조정 */
             background-color: var(--color-black);
             color: var(--color-white);
             border: none;
-            border-radius: 9999px; 
-            font-size: 1rem; 
-            font-weight: 700; 
+            border-radius: 9999px; /* 완전히 둥글게 수정 */
+            font-size: 1rem; /* 폰트 크기 작게 조정 */
+            font-weight: 700; /* 폰트 굵게 */
             cursor: pointer;
             transition: opacity 0.2s;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
-        .team-challenge-section .explore-button:hover { opacity: 0.9; }
         
-        /* 인사이트 탭 내용 */
-        #tab-content-insight { padding-top: 2rem; padding-bottom: 2rem; text-align: center; color: #6b7280; }
-        #tab-content-insight h3 { font-size: 1.125rem; font-weight: 600; margin-bottom: 0.75rem; }
+        .team-challenge-section .explore-button:hover {
+            opacity: 0.9;
+        }
+        
+        /* 인사이트 탭 내용 (Tailwind: py-8 text-center text-gray-500 대체) */
+        #tab-content-insight {
+            padding-top: 2rem;
+            padding-bottom: 2rem; 
+            text-align: center;
+            color: #6b7280; /* text-gray-500 */
+            /* style="display: none;"은 HTML에 유지 */
+        }
 
-        /* Ripple Effect */
-        .interactive { position: relative; overflow: hidden; transform: translate3d(0, 0, 0); }
+        /* 인사이트 탭 H3 (Tailwind: text-lg font-semibold mb-3 대체) */
+        #tab-content-insight h3 {
+            font-size: 1.125rem; /* text-lg */
+            font-weight: 600; /* font-semibold */
+            margin-bottom: 0.75rem; /* mb-3 */
+        }
+
+        /* ------------------ Ripple Effect (물결 효과) ------------------ */
+        .interactive {
+            position: relative;
+            overflow: hidden;
+            transform: translate3d(0, 0, 0); 
+        }
+        
         .ripple {
             position: absolute;
             border-radius: 50%;
@@ -259,8 +375,12 @@
             pointer-events: none;
             z-index: 100;
         }
+
         @keyframes ripple-animation {
-            to { transform: scale(4); opacity: 0; }
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
         }
         
         /* 하단 내비게이션 바 */
@@ -273,6 +393,7 @@
             z-index: 20;
             position: fixed;
             bottom: 0;
+            top: auto;
             padding-bottom: env(safe-area-inset-bottom); 
             border-top: 1px solid var(--color-border); 
             box-shadow: 0 -1px 8px rgba(0, 0, 0, 0.03); 
@@ -292,7 +413,10 @@
             transition: color 0.2s ease, background-color 0.2s ease;
         }
         
-        .nav-item.active { color: var(--color-accent); font-weight: 600; }
+        .nav-item.active {
+            color: var(--color-accent); 
+            font-weight: 600;
+        }
         
         /* 모달 스타일 */
         #modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0, 0, 0, 0.4); justify-content: center; align-items: center; }
@@ -307,7 +431,7 @@
 <body>
 
 <div id="app-container">
-    <!-- 하단 내비게이션 바 --><div class="bottom-nav">
+    <!-- 하단 내비게이션 바 (디자인 유지) --><div class="bottom-nav">
         <a class="nav-item interactive active" href="/">
             <i class="material-icons">home</i>
             <span>홈</span>
@@ -328,10 +452,10 @@
     
     <!-- 탭 바 --><div class="tab-bar">
         <div class="tab-item-container">
-            <div id="tab-challenge-btn" class="tab-item interactive active" data-tab="challenge">챌린지</div>
+            <div id="tab-challenge-btn" class="tab-item interactive active" onclick="switchTab('challenge')">챌린지</div>
         </div>
         <div class="tab-item-container">
-            <div id="tab-insight-btn" class="tab-item interactive" data-tab="insight">인사이트</div>
+            <div id="tab-insight-btn" class="tab-item interactive" onclick="switchTab('insight')">인사이트</div>
         </div>
     </div>
 
@@ -340,7 +464,7 @@
         
         <!-- 탭 내용 컨테이너 --><div id="tab-content-challenge">
             <!-- 새싹 레벨 카드 --><div class="sprout-card interactive">
-                <div class="sprout-card-content"> 
+                <div class="sprout-card-content"> <!-- flex items-center -> sprout-card-content로 변경 -->
                     <!-- 새싹 이미지 --><img src="/image/sprout.webp" alt="새싹 아이콘" 
                          onerror="this.onerror=null; this.src='https://placehold.co/45x45/ffffff/000?text=🌱'; this.alt='새싹 이모지';" />
                     <div>
@@ -348,20 +472,24 @@
                         <!-- 배지 --><span class="sprout-badge">도전 1개 더 완료시 레벨업!</span>
                     </div>
                 </div>
-                <!-- 오른쪽 화살표 --><i class="material-icons arrow-icon">chevron_right</i> 
+                <!-- 오른쪽 화살표 --><i class="material-icons arrow-icon">chevron_right</i> <!-- text-xl text-gray-400 -> arrow-icon으로 변경 -->
             </div>
     
             <!-- 나의 진행 중인 챌린지 리스트 --><div class="challenge-section">
-                <h2>내 챌린지</h2>
+                <h2 class="text-gray-800"> <!-- text-xl font-bold mb-4 삭제됨 (CSS로 이동) -->
+                    내 챌린지
+                </h2>
                 <div id="challenge-list" class="challenge-list">
                     <!-- Firestore data will be injected here --><p id="loading-message">챌린지 목록을 불러오는 중...</p>
                 </div>
             </div>
             
-            <!-- 팀 챌린지 섹션 --><div class="team-challenge-section">
-                <h2>팀챌린지</h2>
+            <!-- 팀 챌린지 섹션 (요청 디자인 반영) --><div class="team-challenge-section">
+                <h2> <!-- text-xl font-bold mb-4 삭제됨 (CSS로 이동) -->
+                    팀챌린지
+                </h2>
                 <div class="team-challenge-section-content">
-                    <img src="/image/box.webp" alt="열린 박스 이미지"
+                    <!-- 요청하신 /image/box.webp 경로로 수정 --><img src="/image/box.webp" alt="열린 박스 이미지"
                          onerror="this.onerror=null; this.src='https://placehold.co/140x140/f7e0c4/966A45?text=BOX'; this.alt='박스 이모지';"/>
                     <p>아직 가입한 팀챌린지가 없어요</p>
                     <button class="explore-button interactive">
@@ -371,8 +499,8 @@
             </div>
         </div>
         
-        <!-- 인사이트 탭 내용 (임시) --><div id="tab-content-insight" style="display: none;">
-            <h3>인사이트 준비 중</h3>
+        <!-- 인사이트 탭 내용 (임시) --><div id="tab-content-insight" style="display: none;"> <!-- py-8 text-center text-gray-500 삭제됨 (CSS로 이동) -->
+            <h3>인사이트 준비 중</h3> <!-- text-lg font-semibold mb-3 삭제됨 (CSS로 이동) -->
             <p>나의 도전 기록을 분석하여 통찰력을 제공해 드릴 예정입니다.</p>
         </div>
     </div>
@@ -388,14 +516,23 @@
 </div>
 
 <script type="module">
-    // =========================================================================
-    // 1. 초기 설정 (Firebase SDK 및 인스턴스)
-    // =========================================================================
+    // Firebase SDK Import
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, collection, query, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { 
+        getAuth, 
+        signOut,
+        onAuthStateChanged,
+        signInWithCustomToken 
+    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { 
+        getFirestore, 
+        collection, 
+        query, 
+        onSnapshot, 
+        // serverTimestamp // 사용하지 않으므로 제거
+    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    // 기본 Firebase Config (환경 변수가 없을 경우 대비)
+    // --- Firebase 설정 및 초기화 ---
     const userFirebaseConfig = { 
         apiKey: "AIzaSyBMowSIHMdz69dYY-mAW8l6VjKxBW54SfU",
         authDomain: "doing-a.firebaseapp.com",
@@ -406,7 +543,7 @@
         measurementId: "G-VJ5YQRGNE3"
     };
     
-    // 환경 변수 (__firebase_config, __app_id) 사용
+    // 환경 변수 우선 사용 (필수 조건)
     const firebaseConfig = typeof __firebase_config !== 'undefined' && JSON.parse(__firebase_config).apiKey 
         ? JSON.parse(__firebase_config) 
         : userFirebaseConfig;
@@ -417,22 +554,18 @@
     const db = getFirestore(app);
     const auth = getAuth(app);
     
-    // 글로벌 상태
+    // 글로벌 변수
     let currentUserId = null;
     let isAuthAttempted = false; 
 
-    // DOM 요소 캐싱
+    // --- UI/UX 함수 ---
     const modal = document.getElementById('modal');
     const modalTitle = document.getElementById('modal-title');
     const modalText = document.getElementById('modal-text');
-    const challengeListContainer = document.getElementById('challenge-list');
-    const appContainer = document.getElementById('app-container');
-
-    // =========================================================================
-    // 2. UI 유틸리티 (모달, 탭 전환, 리플 효과)
-    // =========================================================================
     
-    /** 모달 표시 함수 */
+    /**
+     * 모달 표시 함수 
+     */
     window.showModal = function(title, text) {
         modalTitle.textContent = title;
         modalText.textContent = text;
@@ -443,7 +576,9 @@
         }, 10); 
     }
 
-    /** 모달 숨김 함수 */
+    /**
+     * 모달 숨김 함수
+     */
     window.hideModal = function() {
         modal.querySelector('.modal-content').style.transform = 'scale(0.9)';
         modal.querySelector('.modal-content').style.opacity = '0';
@@ -452,8 +587,10 @@
         }, 200); 
     }
     
-    /** 탭 전환 함수 (UI 업데이트만 담당) */
-    function switchTab(tabName) {
+    /**
+     * 탭 전환 함수
+     */
+    window.switchTab = function(tabName) {
         const challengeContent = document.getElementById('tab-content-challenge');
         const insightContent = document.getElementById('tab-content-insight');
         const challengeBtn = document.getElementById('tab-challenge-btn');
@@ -469,16 +606,19 @@
             insightContent.style.display = 'block';
             insightBtn.classList.add('active');
             challengeBtn.classList.remove('active');
-            // 참고: 인사이트 탭에 대한 추가적인 데이터 로딩 로직은 현재 없습니다.
+            // 인사이트 탭은 임시로 메시지 표시
         }
     }
     
-    /** Ripple Effect 추가 함수 */
+    /**
+     * Ripple Effect 추가 함수
+     */
     function addRippleEffect(event) {
         const button = event.currentTarget;
         const ripple = document.createElement('span');
         const rect = button.getBoundingClientRect();
         
+        // 클릭 위치를 버튼 내부에서의 상대적인 위치로 계산
         const size = Math.max(rect.width, rect.height);
         const x = event.clientX - rect.left - size / 2;
         const y = event.clientY - rect.top - size / 2;
@@ -488,43 +628,45 @@
         ripple.style.top = `${y}px`;
         ripple.classList.add('ripple');
 
+        // 기존 리플 효과 제거 후 추가 (다중 클릭 방지)
         button.querySelectorAll('.ripple').forEach(r => r.remove());
         button.appendChild(ripple);
 
+        // 애니메이션 종료 후 리플 제거
         ripple.addEventListener('animationend', () => {
             ripple.remove();
         });
     }
 
-    // =========================================================================
-    // 3. 데이터 및 렌더링 로직 (Firestore)
-    // =========================================================================
+    // --- 데이터 및 비즈니스 로직 ---
 
     /**
      * 챌린지 카드를 렌더링합니다.
      */
     function renderChallenges(challenges) {
-        challengeListContainer.innerHTML = ''; 
+        const listContainer = document.getElementById('challenge-list');
+        listContainer.innerHTML = ''; 
         
         const today = new Date().getTime();
         
         challenges.forEach(challenge => {
             const startedAt = challenge.startedAt?.toDate ? challenge.startedAt.toDate().getTime() : today;
             const durationDays = challenge.durationDays || 30;
-            
-            // 경과일 (현재 진행 일수) 계산
+            // 경과일 (현재 진행 일수, 즉 성공 횟수로 간주)
             const currentProgress = Math.max(0, Math.ceil((today - startedAt) / (1000 * 60 * 60 * 24))); 
             
-            // 잔여일 및 표시할 성공일 카운트
+            // 잔여일
             const remainingDays = Math.max(0, durationDays - currentProgress); 
+
+            // 표시할 성공일 카운트 
             const successCount = currentProgress; 
             
+            // 잔여일 문구 생성
             const daysText = `${remainingDays}일 남음 · ${currentProgress}/${durationDays}일`;
 
             const card = document.createElement('div');
             card.className = 'challenge-list-item interactive';
             
-            // 모달 표시 함수를 간결하게 호출
             card.setAttribute('onclick', `showModal('${challenge.title}', '총 ${durationDays}일 중 ${currentProgress}일차 진행 중입니다. 남은 일수: ${remainingDays}일')`);
 
             card.innerHTML = `
@@ -533,18 +675,19 @@
                     <p>${daysText}</p>
                 </div>
                 <div class="fire-icon-wrap">
-                    <img src="/image/fire.webp" alt="성공 불꽃 아이콘"
+                    <!-- 불 이미지 --><img src="/image/fire.webp" alt="성공 불꽃 아이콘"
                          onerror="this.onerror=null; this.src='https://placehold.co/40x40/ffffff/ff0000?text=🔥'; this.alt='불꽃 이모지';" />
                     <span class="fire-count">${successCount}</span>
                 </div>
             `;
-            challengeListContainer.appendChild(card);
+            listContainer.appendChild(card);
         });
         
         // 챌린지가 없을 경우 메시지 표시
         if (challenges.length === 0) {
-            challengeListContainer.innerHTML = '<p class="text-center text-gray-500 p-8">아직 진행 중인 챌린지가 없습니다. 새로운 도전을 시작해보세요!</p>';
+            listContainer.innerHTML = '<p class="text-center text-gray-500 p-8">아직 진행 중인 챌린지가 없습니다. 새로운 도전을 시작해보세요!</p>';
         }
+        document.getElementById('loading-message')?.remove(); 
     }
 
     /**
@@ -553,100 +696,107 @@
     function fetchUserChallenges() {
         if (!currentUserId) return;
 
-        // 로딩 메시지 표시
-        challengeListContainer.innerHTML = '<p id="loading-message">챌린지 목록을 불러오는 중...</p>';
-        
         const path = `/artifacts/${appId}/users/${currentUserId}/challenges`;
         const challengesRef = collection(db, path);
+        
         const q = query(challengesRef); 
 
-        // onSnapshot으로 실시간 데이터 구독
         const unsubscribe = onSnapshot(q, (snapshot) => {
             const challenges = [];
             snapshot.forEach((doc) => {
                 challenges.push({ id: doc.id, ...doc.data() });
             });
             renderChallenges(challenges);
+            console.log("Firestore Challenges Updated:", challenges.length);
+
         }, (error) => {
             console.error("Firestore Error:", error);
             showModal('데이터 오류', '챌린지 목록을 불러오는 중 오류가 발생했습니다.');
         });
         
-        // 구독 해제 함수 반환 (필요시 사용)
         return unsubscribe;
     }
 
-    // =========================================================================
-    // 4. 인증 및 초기화
-    // =========================================================================
+
+    // --- 인증 및 초기화 ---
 
     /**
-     * 초기 인증 시도 (Custom Token 또는 익명 로그인)
+     * 로그아웃 처리
      */
-    async function attemptAuth() {
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-        isAuthAttempted = true; 
-
-        if (initialAuthToken) {
-            try {
-                await signInWithCustomToken(auth, initialAuthToken);
-            } catch (error) {
-                console.error("Custom token login failed. Redirecting to /auth", error);
-                window.location.href = "/auth";
-            }
-        } else {
-             // 익명 로그인 대신, 토큰이 없으면 무조건 리다이렉션 (보안 규칙 준수)
-             console.warn("No auth token provided. Redirecting to /auth");
-             window.location.href = "/auth";
+    window.handleLogout = async function() {
+        try {
+            await signOut(auth);
+            window.location.href = "/auth";
+        } catch (error) {
+            console.error("Logout Error:", error);
+            showModal('로그아웃 오류', '로그아웃 중 오류가 발생했습니다.');
         }
     }
-
+    
     /**
-     * 사용자 인증 상태 변경 리스너
+     * 사용자 인증 상태 확인 및 UI 업데이트
      */
     onAuthStateChanged(auth, async (user) => {
-        // 첫 로드 시 인증 시도
         if (!isAuthAttempted) {
-             await attemptAuth();
-             return; 
+            const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+            isAuthAttempted = true; 
+
+            if (!user && initialAuthToken) {
+                try {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                    return; 
+                } catch (error) {
+                    console.error("Custom token login failed. Forcing redirect to /auth", error);
+                    window.location.href = "/auth";
+                    return;
+                }
+            } else if (!user) {
+                console.warn("User not authenticated. Forcing redirect to /auth");
+                window.location.href = "/auth";
+                return; 
+            }
         }
 
-        if (user && !user.isAnonymous) {
-            // 인증 완료 및 로그인 성공 (비익명 사용자)
+        if (user) {
             currentUserId = user.uid;
-            
-            // UI 업데이트: 닉네임 설정
+            if (user.isAnonymous) {
+                 console.warn("Anonymous user detected. Forcing redirect to /auth");
+                 window.location.href = "/auth";
+                 return;
+            }
+
+            // user.displayName이 없을 경우 '도전러'로 대체합니다.
             const displayName = user.displayName || '도전러';
+            
+            // UI 업데이트
             document.getElementById('user-nickname').textContent = displayName;
             
-            // 데이터 로드 시작
+            // 챌린지 데이터 로드 시작
             fetchUserChallenges();
 
-        } else {
-            // 사용자 로그아웃 또는 익명 사용자 강제 리다이렉션
-             console.warn("Authentication required. Redirecting to /auth");
+        } else if (isAuthAttempted) {
+             console.warn("Authentication failed or logged out. Redirecting to /auth");
              window.location.href = "/auth";
+             return;
         }
         
-        // 폰트 로드 확인 후 앱 컨테이너 표시 (인증 완료 후)
+        // 폰트 로드 확인 후 앱 컨테이너 표시
         document.fonts.ready.then(() => {
-             appContainer.classList.add('font-loaded');
+             document.getElementById('app-container').classList.add('font-loaded');
         });
     });
-    
-    // =========================================================================
-    // 5. 이벤트 설정
-    // =========================================================================
 
-    /**
-     * 모든 UI 이벤트를 설정합니다.
-     */
-    function setupEventListeners() {
-        // 탭 전환 이벤트 리스너
-        document.getElementById('tab-challenge-btn').addEventListener('click', () => switchTab('challenge'));
-        document.getElementById('tab-insight-btn').addEventListener('click', () => switchTab('insight'));
 
-        // 모달 배경 클릭 시 닫기
+    // --- 초기화 로직 ---
+    window.addEventListener('load', () => {
+        const appContainer = document.getElementById('app-container');
+        appContainer.style.minHeight = `${window.innerHeight}px`;
+        
+        window.addEventListener('resize', () => {
+            appContainer.style.minHeight = `${window.innerHeight}px`;
+        });
+        
+        // 모달 배경 클릭 시 닫기 기능 추가
         modal.addEventListener('click', (event) => {
             if (event.target === modal) {
                 hideModal();
@@ -655,39 +805,17 @@
         
         // Ripple Effect 초기화
         document.querySelectorAll('.interactive').forEach(button => {
-            // 탭/내비게이션 아이템은 mousedown에 리플 적용 (클릭 충돌 방지)
+            // tab-item과 같이 자체적인 active 상태 전환이 있는 요소는 ripple 효과를 click이 아닌 mousedown/up으로 분리
             if (button.classList.contains('tab-item') || button.classList.contains('nav-item')) {
-                button.addEventListener('mousedown', addRippleEffect);
+                button.addEventListener('mousedown', (event) => {
+                    // 탭 전환 이벤트가 먼저 발생하도록 지연
+                    setTimeout(() => addRippleEffect(event), 0);
+                });
             } else {
                 // 기타 interactive 요소는 일반 click 이벤트에 ripple 적용
                 button.addEventListener('click', addRippleEffect);
             }
         });
-
-        // 탐색 버튼 클릭 이벤트 (임시 모달)
-        document.querySelector('.explore-button').addEventListener('click', () => {
-            showModal('준비 중', '팀 챌린지 탐색 기능은 곧 추가될 예정입니다. 기대해주세요!');
-        });
-
-        // 새싹 카드 클릭 이벤트 (임시 모달)
-        document.querySelector('.sprout-card').addEventListener('click', () => {
-            showModal('레벨 시스템', '현재 새싹 레벨입니다. 챌린지를 더 완료하여 다음 레벨로 승급해보세요!');
-        });
-    }
-
-    /**
-     * 초기 로드 시 앱 높이 설정 및 이벤트 리스너 등록
-     */
-    window.addEventListener('load', () => {
-        // 앱 컨테이너 높이를 뷰포트 높이에 맞춤 (모바일 브라우저 주소창 이슈 대응)
-        appContainer.style.minHeight = `${window.innerHeight}px`;
-        
-        window.addEventListener('resize', () => {
-            appContainer.style.minHeight = `${window.innerHeight}px`;
-        });
-        
-        // 이벤트 리스너 설정 시작
-        setupEventListeners();
     });
 </script>
 </body>
