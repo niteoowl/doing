@@ -97,6 +97,11 @@
                 padding-bottom: calc(1.5rem + var(--bottom-nav-height-mobile));
             }
             
+            /* [수정] 모바일에서 탭 바와 컨텐츠 간격 추가 조정 */
+            .tab-bar {
+                margin-bottom: 0.75rem; /* 1rem에서 0.75rem (12px)로 줄여 모바일 간격 좁힘 */
+            }
+            
             /* 모바일: 아이콘과 텍스트 세로 정렬 (기본값) */
             .nav-item { flex-direction: column; gap: 2px; font-size: 0.75rem; } 
             .nav-item i.material-icons { font-size: 24px; }
@@ -128,7 +133,7 @@
             z-index: 10;
             background-color: var(--color-app-bg);
             border-bottom: 1px solid var(--color-border);
-            margin-bottom: 1rem; /* 뷰 컨텐츠와의 간격: 모바일 간격 조정을 위해 1.5rem에서 1rem로 수정 */
+            margin-bottom: 1rem; /* PC 환경 및 기본값 간격 (모바일은 위 @media에서 별도 조정) */
             padding: 0 1.5rem; /* 모바일 기준 패딩 */
         }
         
