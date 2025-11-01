@@ -8,7 +8,7 @@
     <!-- Pretendard 폰트 CDN 적용 --><link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
     <!-- Google Material Icons (Google Fonts Icons) 추가 --><link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
-    <!-- Tailwind CSS (Ripple 효과를 위해 직접 스타일링을 함께 사용) --><script src="https://cdn.tailwindcss.com"></script>
+    <!-- 기존 Tailwind CSS CDN 삭제됨 -->
 
     <!-- 공통 및 메인 페이지 스타일 (리디자인 적용) --><style>
         /* 기본 스타일 및 iOS 안전 영역 지원 */
@@ -69,7 +69,7 @@
             }
             .bottom-nav { height: var(--bottom-nav-height-pc); }
             
-            /* [수정 반영] PC: 아이콘과 텍스트 가로 정렬, 아이콘 크기/간격 조정 */
+            /* PC: 아이콘과 텍스트 가로 정렬, 아이콘 크기/간격 조정 */
             .nav-item i.material-icons { font-size: 20px; margin-bottom: 0; }
             .nav-item { flex-direction: row; gap: 8px; font-size: 0.9rem; padding: 0.5rem 1rem; } 
             
@@ -164,6 +164,12 @@
             justify-content: space-between;
         }
         
+        /* Tailwind: flex items-center 대체 */
+        .sprout-card-content {
+            display: flex;
+            align-items: center;
+        }
+
         .sprout-card img {
             width: 45px;
             height: 45px;
@@ -189,6 +195,12 @@
             margin-top: 4px;
         }
         
+        /* Tailwind: text-xl text-gray-400 대체 */
+        .sprout-card .material-icons.arrow-icon {
+            font-size: 1.25rem; /* text-xl */
+            color: #9ca3af; /* text-gray-400 */
+        }
+
         /* 챌린지 리스트 아이템 */
         .challenge-list-item {
             display: flex;
@@ -244,6 +256,22 @@
             transform: none; 
         }
         
+        /* Challenge Section H2 (Tailwind: text-xl font-bold mb-4 text-gray-800 대체) */
+        .challenge-section h2 {
+            font-size: 1.25rem; /* text-xl */
+            font-weight: 700; /* font-bold */
+            margin-bottom: 1rem; /* mb-4 (1rem) */
+            color: #1f2937; /* text-gray-800 근사치 */
+            text-align: left;
+        }
+
+        /* 챌린지 로딩 메시지 */
+        #loading-message {
+            text-align: center; 
+            color: #777; 
+            padding: 2rem 0;
+        }
+
         /* 팀 챌린지 섹션 (요청된 디자인 반영) */
         .team-challenge-section {
             margin-top: 3rem;
@@ -297,6 +325,22 @@
         
         .team-challenge-section .explore-button:hover {
             opacity: 0.9;
+        }
+        
+        /* 인사이트 탭 내용 (Tailwind: py-8 text-center text-gray-500 대체) */
+        #tab-content-insight {
+            padding-top: 2rem;
+            padding-bottom: 2rem; 
+            text-align: center;
+            color: #6b7280; /* text-gray-500 */
+            /* style="display: none;"은 HTML에 유지 */
+        }
+
+        /* 인사이트 탭 H3 (Tailwind: text-lg font-semibold mb-3 대체) */
+        #tab-content-insight h3 {
+            font-size: 1.125rem; /* text-lg */
+            font-weight: 600; /* font-semibold */
+            margin-bottom: 0.75rem; /* mb-3 */
         }
 
         /* ------------------ Ripple Effect (물결 효과) ------------------ */
@@ -404,7 +448,7 @@
         
         <!-- 탭 내용 컨테이너 --><div id="tab-content-challenge">
             <!-- 새싹 레벨 카드 --><div class="sprout-card interactive">
-                <div class="flex items-center">
+                <div class="sprout-card-content"> <!-- flex items-center -> sprout-card-content로 변경 -->
                     <!-- 새싹 이미지 --><img src="/image/sprout.webp" alt="새싹 아이콘" 
                          onerror="this.onerror=null; this.src='https://placehold.co/45x45/ffffff/000?text=🌱'; this.alt='새싹 이모지';" />
                     <div>
@@ -412,20 +456,20 @@
                         <!-- 배지 --><span class="sprout-badge">도전 1개 더 완료시 레벨업!</span>
                     </div>
                 </div>
-                <!-- 오른쪽 화살표 --><i class="material-icons text-xl text-gray-400">chevron_right</i>
+                <!-- 오른쪽 화살표 --><i class="material-icons arrow-icon">chevron_right</i> <!-- text-xl text-gray-400 -> arrow-icon으로 변경 -->
             </div>
     
             <!-- 나의 진행 중인 챌린지 리스트 --><div class="challenge-section">
-                <h2 class="text-xl font-bold mb-4 text-gray-800">
+                <h2 class="text-gray-800"> <!-- text-xl font-bold mb-4 삭제됨 (CSS로 이동) -->
                     내 챌린지
                 </h2>
                 <div id="challenge-list" class="challenge-list">
-                    <!-- Firestore data will be injected here --><p id="loading-message" style="text-align: center; color: #777; padding: 2rem 0;">챌린지 목록을 불러오는 중...</p>
+                    <!-- Firestore data will be injected here --><p id="loading-message">챌린지 목록을 불러오는 중...</p>
                 </div>
             </div>
             
             <!-- 팀 챌린지 섹션 (요청 디자인 반영) --><div class="team-challenge-section">
-                <h2 class="text-xl font-bold mb-4 text-gray-800">
+                <h2> <!-- text-xl font-bold mb-4 삭제됨 (CSS로 이동) -->
                     팀챌린지
                 </h2>
                 <div class="team-challenge-section-content">
@@ -439,8 +483,8 @@
             </div>
         </div>
         
-        <!-- 인사이트 탭 내용 (임시) --><div id="tab-content-insight" style="display: none;" class="py-8 text-center text-gray-500">
-            <h3 class="text-lg font-semibold mb-3">인사이트 준비 중</h3>
+        <!-- 인사이트 탭 내용 (임시) --><div id="tab-content-insight" style="display: none;"> <!-- py-8 text-center text-gray-500 삭제됨 (CSS로 이동) -->
+            <h3>인사이트 준비 중</h3> <!-- text-lg font-semibold mb-3 삭제됨 (CSS로 이동) -->
             <p>나의 도전 기록을 분석하여 통찰력을 제공해 드릴 예정입니다.</p>
         </div>
     </div>
@@ -589,9 +633,6 @@
         
         const today = new Date().getTime();
         
-        // 지표는 더 이상 UI에 표시되지 않지만, 진행 상태는 계산합니다.
-        // let inProgressChallenges = 0; // 현재 사용되지 않으므로 제거
-
         challenges.forEach(challenge => {
             const startedAt = challenge.startedAt?.toDate ? challenge.startedAt.toDate().getTime() : today;
             const durationDays = challenge.durationDays || 30;
@@ -601,13 +642,6 @@
             // 잔여일
             const remainingDays = Math.max(0, durationDays - currentProgress); 
 
-            // 진행중 도전 (만료되지 않은 도전)
-            /*
-            if (currentProgress < durationDays) {
-                inProgressChallenges++;
-            }
-            */
-            
             // 표시할 성공일 카운트 
             const successCount = currentProgress; 
             
@@ -701,7 +735,7 @@
                     return;
                 }
             } else if (!user) {
-                console.warn("User not authenticated. Redirecting to /auth");
+                console.warn("User not authenticated. Forcing redirect to /auth");
                 window.location.href = "/auth";
                 return; 
             }
