@@ -12,7 +12,7 @@
     <!-- Google Material Icons (Google Fonts Icons) 추가 -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
-    <!-- 공통 및 반응형 스타일 적용 (index.html과 동일) -->
+    <!-- 공통 및 반응형 스타일 적용 -->
     <style>
         /* 기본 스타일 및 반응형 변수 */
         :root {
@@ -22,10 +22,11 @@
             --color-app-bg: #ffffff; 
             --color-content-bg: #ffffff; 
             --color-border: #e0e0e0;
-            --bottom-nav-height: 65px; /* 네이티브 앱처럼 보이도록 높이 증가 */ 
-            --pc-max-width: 1200px; /* PC 최대 너비 */ 
-            --header-height: 4.5rem; /* 헤더 높이 */ 
-            --mobile-padding-x: 1.5rem; /* 모바일 기본 좌우 패딩 */
+            --bottom-nav-height: 65px; 
+            --pc-max-width: 1200px; 
+            --header-height: 4.5rem; 
+            --mobile-padding-x: 1.5rem; 
+            --filter-chip-bg: #f0f8ff; /* 필터칩 배경 */
         }
 
         * { box-sizing: border-box; }
@@ -61,14 +62,12 @@
 
         /* ------------------ 모바일 기본 스타일 (Default) ------------------ */
         
-        /* 뷰 컨텐츠 패딩: 모바일 패딩 적용. 하단은 하단바 높이 + Safe Area 확보 */
         .view {
             padding: 1.5rem var(--mobile-padding-x); 
             padding-bottom: calc(1.5rem + var(--bottom-nav-height) + max(0px, env(safe-area-inset-bottom))); 
             padding-top: 0; 
         }
 
-        /* 메인 헤더: 모바일 패딩 및 폰트 크기 조정 */
         .main-header {
             font-size: 1.75rem; 
             font-weight: 800; 
@@ -83,7 +82,6 @@
             background-color: var(--color-app-bg);
         }
 
-        /* 하단 내비게이션 바 (모바일) - 앱 스타일로 수정 */
         .bottom-nav {
             width: 100%;
             height: var(--bottom-nav-height); 
@@ -95,22 +93,15 @@
             position: fixed;
             bottom: 0;
             top: auto;
-            /* Safe Area까지 배경색을 확장 */
             padding-bottom: max(0px, env(safe-area-inset-bottom)); 
-            /* 그림자 제거 및 1px 테두리로 변경 */
             border-top: 1px solid var(--color-border); 
             box-shadow: none; 
-            transition: box-shadow 0.3s ease;
             left: 0;
             transform: none;
             max-width: none;
         }
         
-        /* 내비게이션 아이템 (모바일 기본: 세로 정렬) */
-        .nav-item i.material-icons { 
-            font-size: 24px; 
-            margin-bottom: 2px; 
-        }
+        .nav-item i.material-icons { font-size: 24px; margin-bottom: 2px; }
         .nav-item {
             color: #999; 
             text-decoration: none;
@@ -120,7 +111,6 @@
             justify-content: center; 
             gap: 0; 
             font-size: 0.75rem; 
-            /* 터치 영역 확대를 위해 패딩 증가 */
             padding: 0.75rem 0.5rem; 
             border-radius: 12px;
             transition: color 0.2s ease, background-color 0.2s ease;
@@ -134,84 +124,48 @@
         /* ------------------ PC 환경 (Min-width: 640px) 오버라이드 ------------------ */
         @media (min-width: 640px) {
             
-            /* PC Body 중앙 정렬 */
-            body {
-                justify-content: center;
-                align-items: flex-start; 
-            }
-        
-            #app-container {
-                /* PC: 최대 너비 적용 */
-                max-width: var(--pc-max-width); 
-                box-shadow: none; 
-            }
-        
-            /* 뷰 컨텐츠 PC 패딩 */
-            .view {
-                padding: 1.5rem 3rem; 
-                padding-bottom: calc(1.5rem + var(--bottom-nav-height)); 
-            }
-            
-            /* 메인 헤더 PC 스타일 */
-            .main-header {
-                padding: 0 3rem; 
-                font-size: 2rem; 
-            }
-        
-            /* 하단 내비게이션 PC 스타일 */
+            body { justify-content: center; align-items: flex-start; }
+            #app-container { max-width: var(--pc-max-width); box-shadow: none; }
+            .view { padding: 1.5rem 3rem; padding-bottom: calc(1.5rem + var(--bottom-nav-height)); }
+            .main-header { padding: 0 3rem; font-size: 2rem; }
             .bottom-nav {
-                /* 최대 너비 및 중앙 정렬 */
                 left: 50%;
                 transform: translateX(-50%);
                 max-width: var(--pc-max-width);
                 padding-bottom: 0; 
-                /* PC에서는 그림자가 필요 없으므로 제거 */
                 box-shadow: none; 
             }
-        
-            /* 내비게이션 아이템 PC 스타일 (가로 정렬) */
-            .nav-item i.material-icons { 
-                font-size: 20px; 
-                margin-bottom: 0; 
-            }
-            .nav-item { 
-                flex-direction: row; 
-                gap: 8px; 
-                font-size: 0.9rem; 
-                padding: 0.5rem 1rem; 
-            } 
+            .nav-item i.material-icons { font-size: 20px; margin-bottom: 0; }
+            .nav-item { flex-direction: row; gap: 8px; font-size: 0.9rem; padding: 0.5rem 1rem; } 
         }
 
         /* ------------------ 챌린지 페이지 전용 스타일 ------------------ */
-        
-        /* 상단 탭 (내 챌린지/탐색) 스타일 */
         .main-header.top-tabs {
             justify-content: flex-start;
-            gap: 0.75rem; /* 탭 간격: 1.5rem -> 0.75rem으로 줄임 */
-            padding-right: 0.5rem; /* 버튼 공간 확보 */
+            gap: 0.75rem; 
+            padding-right: 0.5rem; 
         }
         
         .main-header.top-tabs .tab-item-container {
-            flex: none; /* 유연성 제거 */
+            flex: none; 
             display: block; 
         }
         
         .main-tab-item { 
-            /* .main-header로부터 1.75rem 또는 2rem 크기를 상속받습니다. */
             font-weight: 800;  
-            color: #ccc; /* 비활성 색상 */
+            color: #ccc; 
             cursor: pointer; 
             position: relative; 
             transition: color 0.2s ease; 
-            padding-bottom: 5px; /* 헤더 공간 내에서 약간의 패딩 */
+            padding-bottom: 5px; 
         }
         .main-tab-item.active { 
             color: var(--color-black); 
         }
         
-        /* 생성 버튼 스타일 */
+        /* 챌린지 생성 버튼 스타일 */
         .create-button-container {
-            margin-left: auto; /* 오른쪽 끝으로 이동 */
+            margin-left: auto; 
             display: flex;
             align-items: center;
         }
@@ -227,44 +181,119 @@
             align-items: center;
             justify-content: center;
         }
-        .create-challenge-icon i {
-            font-size: 28px;
+        
+        /* ------------------ 검색 바 스타일 ------------------ */
+        .search-container {
+            padding: 0 var(--mobile-padding-x) 1.5rem;
+            background-color: var(--color-app-bg);
+            position: sticky;
+            top: var(--header-height); /* 헤더 아래 고정 */
+            z-index: 5; 
+            border-bottom: 1px solid #f0f0f0;
+        }
+        @media (min-width: 640px) {
+            .search-container { padding: 0 3rem 1.5rem; }
+        }
+
+        .search-wrapper {
+            display: flex;
+            align-items: center;
+            background-color: #f5f5f5;
+            padding: 10px 15px;
+            border-radius: 12px;
+        }
+        .search-wrapper i {
+            color: #999;
+            margin-right: 10px;
+            font-size: 24px;
+        }
+        .search-wrapper input {
+            flex-grow: 1;
+            border: none;
+            background: none;
+            outline: none;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--color-black);
+            padding: 0;
+        }
+        .search-wrapper .clear-search-icon {
+            margin-right: 0;
+            cursor: pointer;
         }
         
-        /* PC 환경 오버라이드 (간격 조정) */
+        /* 필터 및 상태 표시 영역 */
+        .filter-status-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem var(--mobile-padding-x); /* 검색 바와 분리되도록 상단 패딩 추가 */
+        }
         @media (min-width: 640px) {
-            .main-header.top-tabs {
-                gap: 1rem; /* 탭 간격: 2rem -> 1rem으로 줄임 */
+            .filter-status-container {
+                padding: 1.5rem 3rem;
             }
         }
         
-        /* ------------------ 공통 리스트 스타일 ------------------ */
+        /* 현재 필터 칩 */
+        #current-filter-chip {
+            background-color: var(--filter-chip-bg);
+            color: var(--color-accent);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: background-color 0.2s;
+        }
+        #current-filter-chip i {
+            font-size: 16px;
+            cursor: pointer;
+            color: #666;
+            margin-left: 2px;
+        }
         
-        /* **New Group Header Style** */
+        /* 필터 버튼 */
+        #open-filter-btn {
+            background-color: var(--color-black);
+            color: var(--color-white);
+            padding: 10px 18px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.2s, transform 0.1s;
+        }
+        #open-filter-btn:hover { background-color: #333; }
+        #open-filter-btn i { font-size: 20px; }
+
+
+        /* ------------------ 공통 리스트 스타일 ------------------ */
         .challenge-group-header {
             font-size: 1.1rem;
             font-weight: 700;
             color: var(--color-black);
-            padding: 1rem 0 0.5rem 0; /* 상단 패딩 추가 */
-            border-bottom: 1px solid var(--color-border); /* 구분선 추가 */
-            margin-top: 2.5rem; /* 그룹 간 간격 */
+            padding: 1rem 0 0.5rem 0; 
+            border-bottom: 1px solid var(--color-border); 
+            margin-top: 1.5rem; 
         }
-        .challenge-group-header:first-of-type {
-            margin-top: 0; /* 첫 번째 헤더는 상단 마진 제거 */
-        }
-        .challenge-group-header.hidden {
-            display: none !important;
-        }
-        
-        /* **Team Badge Style** */
+        .challenge-group-header:first-of-type { margin-top: 0; }
+        .challenge-group-header.hidden { display: none !important; }
         .team-badge {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 24px; /* 원형 크기 */
+            width: 24px; 
             height: 24px;
             border-radius: 50%;
-            background-color: var(--color-accent); /* 포인트 색상 */
+            background-color: var(--color-accent); 
             color: var(--color-white);
             font-size: 0.75rem;
             font-weight: 700;
@@ -281,57 +310,46 @@
             padding: 1rem 0; 
             border-bottom: 1px solid #f0f0f0; 
             transition: background-color 0.15s ease;
-            cursor: pointer; /* 클릭 가능하도록 */
-        }
-        .challenge-list-item > div { /* 챌린지 정보 + 아이콘 */
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            cursor: pointer; 
         }
         .challenge-list-item:last-child { border-bottom: none; }
         
-        .challenge-info {
-             flex-grow: 1; 
-             margin-right: 1rem;
-        }
+        .challenge-info { flex-grow: 1; margin-right: 1rem; }
         
         .challenge-info h3 { 
             font-size: 1.25rem; 
             font-weight: 700; 
             color: var(--color-black); 
             margin: 0; 
-            display: flex; /* 뱃지 인라인 정렬 */
+            display: flex; 
             align-items: center;
         }
-        .challenge-detail-text { /* index.html의 p 태그 스타일 대체 */
+        .challenge-detail-text { 
             font-size: 0.85rem; 
             color: #888; 
             margin-top: 4px;
         }
-
         /* 탐색 뷰 전용 아이콘 스타일 (참여자 수 표시) */
         .fire-icon-wrap { 
             position: relative; 
             width: 56px; 
             height: 56px; 
             border-radius: 50%; 
-            background-color: #e6f0ff; /* 옅은 파랑 배경 */
+            background-color: #e6f0ff; 
             display: flex; 
             flex-direction: column; 
             align-items: center; 
             justify-content: center; 
             flex-shrink: 0; 
-            color: var(--color-accent); /* 포인트 색상 아이콘 */
+            color: var(--color-accent); 
         }
         .fire-icon-wrap i.material-icons { font-size: 28px; margin-bottom: 4px; }
         .fire-count { position: static; font-size: 0.875rem; font-weight: 700; color: var(--color-black); transform: none; }
         
-        /* ------------------ 빈 상태 (Empty State) 스타일 수정 ------------------ */
+        /* ------------------ Empty State 스타일 ------------------ */
         .empty-state-section { 
             margin-top: 3rem; 
             margin-bottom: 2rem; 
-            /* FIX: 전체 섹션이 뷰 내에서 중앙 정렬되도록 함 (JS에서 display: flex로 설정) */
             display: flex; 
             flex-direction: column;
             align-items: center; 
@@ -343,7 +361,7 @@
             border-radius: 0; 
             display: flex; 
             flex-direction: column; 
-            align-items: center; /* 자식 요소 중앙 정렬 */
+            align-items: center; 
             justify-content: center; 
             text-align: center;
         }
@@ -358,6 +376,12 @@
             color: #4b5563; 
             margin-bottom: 20px; 
         }
+        #filter-results-empty p {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #333;
+            margin-top: 2rem;
+        }
         .explore-button { 
             width: 100%; 
             max-width: 250px; 
@@ -371,7 +395,6 @@
             cursor: pointer; 
             transition: opacity 0.2s; 
             box-shadow: none; 
-            /* FIX: display: block과 margin: auto를 사용해 버튼 자체를 중앙 정렬 */
             display: block;
             margin: 0 auto; 
         }
@@ -391,43 +414,20 @@
             0% { background-position: -468px 0 }
             100% { background-position: 468px 0 }
         }
-
-        .skeleton-item {
-            display: flex;
-            align-items: center;
-            padding: 1rem 0;
-            border-bottom: 1px solid #f0f0f0;
-        }
+        /* (나머지 스켈레톤 스타일은 이전 코드와 동일) */
+        .skeleton-item { display: flex; align-items: center; padding: 1rem 0; border-bottom: 1px solid #f0f0f0; }
         .skeleton-item:last-child { border-bottom: none; }
-
-        .skeleton-info {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        .skeleton-title {
-            height: 20px;
-            width: 60%;
-        }
-        .skeleton-detail {
-            height: 14px;
-            width: 40%;
-        }
-        .skeleton-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            margin-left: 1rem;
-        }
-        /* ------------------ 스켈레톤 로더 스타일 끝 ------------------ */
-
-        /* Ripple Effect */
+        .skeleton-info { flex-grow: 1; display: flex; flex-direction: column; gap: 8px; }
+        .skeleton-title { height: 20px; width: 60%; }
+        .skeleton-detail { height: 14px; width: 40%; }
+        .skeleton-icon { width: 40px; height: 40px; border-radius: 50%; margin-left: 1rem; }
+        
+        /* Ripple Effect (이전 코드와 동일) */
         .interactive { position: relative; overflow: hidden; transform: translate3d(0, 0, 0); }
         .ripple { position: absolute; border-radius: 50%; transform: scale(0); animation: ripple-animation 0.5s linear; background-color: rgba(0, 0, 0, 0.1); pointer-events: none; z-index: 100; }
         @keyframes ripple-animation { to { transform: scale(4); opacity: 0; } }
         
-        /* 모달 스타일 */
+        /* ------------------ 기본 모달 스타일 (메시지 박스 용도) ------------------ */
         #modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0, 0, 0, 0.4); justify-content: center; align-items: center; }
         .modal-content { background-color: var(--color-content-bg); padding: 30px; padding-bottom: 20px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2); width: 90%; max-width: 400px; text-align: center; transform: scale(0.9); opacity: 0; transition: all 0.2s ease-out; }
         .modal-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 10px; color: var(--color-black); }
@@ -435,6 +435,178 @@
         #modal-close-button { width: 100%; padding: 0.75rem; margin-top: 10px; background-color: var(--color-accent); color: var(--color-white); border: none; border-radius: 12px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s; }
         #modal-close-button:hover { background-color: #0d79e6; }
 
+
+        /* ------------------ 필터 모달 스타일 ------------------ */
+        #filter-modal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden; /* 배경 콘텐츠 스크롤 방지 */
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center; 
+            align-items: flex-end; /* 모바일에서 하단에 위치 */
+            transition: background-color 0.3s ease;
+        }
+
+        .filter-modal-content {
+            background-color: var(--color-content-bg);
+            width: 100%;
+            max-width: var(--pc-max-width);
+            height: 90vh; /* 명시적으로 높이 설정 */
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.1);
+            
+            /* Flexbox 추가: 콘텐츠를 수직으로 정렬하고 스크롤 가능 영역을 분리 */
+            display: flex;
+            flex-direction: column;
+            
+            transform: translateY(100%); /* 아래에서 위로 슬라이드 준비 */
+            transition: transform 0.3s ease-out;
+            padding-bottom: max(0px, env(safe-area-inset-bottom)); /* 하단 safe area 패딩 */
+            
+            /* PC에서도 하단 고정 중앙 정렬 */
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+        }
+
+        #filter-modal.active .filter-modal-content {
+            /* PC/모바일 모두 화면 중앙 정렬 및 위로 슬라이드 */
+            transform: translate(-50%, 0);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem var(--mobile-padding-x);
+            border-bottom: 1px solid #f0f0f0;
+            flex-shrink: 0; /* 헤더는 크기 유지 */
+        }
+        @media (min-width: 640px) {
+            .modal-header { padding: 1rem 3rem; }
+        }
+
+        .modal-header h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            color: #666;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+        }
+
+        .filter-content {
+            display: flex;
+            flex-grow: 1; /* 남은 공간 모두 차지 */
+            overflow: hidden; /* 내부 스크롤을 위해 컨테이너 오버플로우 숨김 */
+            height: auto; 
+        }
+
+        .main-category-list {
+            flex: 0 0 35%; /* 메인 카테고리 35% */
+            background-color: #f7f7f7;
+            overflow-y: auto; /* 이 영역만 스크롤 */
+            border-right: 1px solid #eee;
+        }
+
+        .sub-category-list {
+            flex: 0 0 65%; /* 서브 카테고리 65% */
+            overflow-y: auto; /* 이 영역만 스크롤 */
+            padding: 1rem 1.5rem;
+        }
+        @media (min-width: 640px) {
+            .main-category-list { flex: 0 0 30%; }
+            .sub-category-list { flex: 0 0 70%; padding: 1rem 3rem; }
+        }
+
+        .main-category-item {
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+            transition: background-color 0.15s, border-left-color 0.15s;
+            color: #444;
+        }
+        .main-category-item.active {
+            background-color: var(--color-white);
+            border-left-color: var(--color-accent);
+            font-weight: 700;
+            color: var(--color-black);
+        }
+        .main-category-item:not(.active):hover {
+            background-color: #f0f0f0;
+        }
+        
+        .sub-category-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--color-black);
+        }
+
+        .sub-category-item {
+            display: inline-block;
+            background-color: #f0f0f0;
+            color: #555;
+            padding: 8px 15px;
+            border-radius: 25px;
+            margin: 0 8px 8px 0;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s;
+        }
+        .sub-category-item.active {
+            background-color: var(--color-accent);
+            color: var(--color-white);
+            font-weight: 600;
+        }
+        
+        .filter-actions {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid #f0f0f0;
+            display: flex;
+            gap: 10px;
+            flex-shrink: 0; /* 액션 버튼은 크기 유지 */
+            background-color: var(--color-white);
+        }
+        @media (min-width: 640px) {
+            .filter-actions { padding: 1rem 3rem; }
+        }
+
+        .filter-actions button {
+            flex: 1;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        
+        #reset-filter-btn {
+            background-color: #eee;
+            color: #555;
+        }
+        
+        #apply-filter-btn {
+            background-color: var(--color-accent);
+            color: var(--color-white);
+        }
+        
     </style>
 </head>
 <body>
@@ -459,7 +631,6 @@
     <!-- 상단 탭 전환 및 생성 버튼 (메인 헤더 대체) -->
     <header class="main-header top-tabs" id="main-header">
         <div class="tab-item-container">
-            <!-- '참여 중' 탭은 index.html로 이동 -->
             <div id="tab-my-btn" 
                  class="main-tab-item interactive"
                  onclick="window.location.href = '/challenge'">
@@ -481,6 +652,28 @@
         </div>
     </header>
     
+    <!-- 검색 바 -->
+    <div class="search-container">
+        <div class="search-wrapper">
+            <i class="material-icons">search</i>
+            <input type="text" id="search-input" placeholder="챌린지 제목, 태그, 내용 검색" oninput="handleSearchInput(this.value)">
+            <i class="material-icons clear-search-icon" id="clear-search-btn" style="display: none;" onclick="clearSearch()">close</i>
+        </div>
+    </div>
+    
+    <!-- 필터 상태 및 필터 버튼 영역 -->
+    <div class="filter-status-container">
+        <!-- 현재 필터 상태 표시 -->
+        <div id="current-filter-chip">
+            전체 챌린지
+        </div>
+        <!-- 필터 모달 열기 버튼 -->
+        <button id="open-filter-btn" class="interactive" onclick="showFilterModal()">
+            <i class="material-icons">filter_alt</i>
+            필터
+        </button>
+    </div>
+    
     <!-- ------------------ 뷰 컨테이너 (챌린지 탐색) ------------------ -->
     <div id="challenge-explore-view" class="view active">
         
@@ -491,8 +684,13 @@
             </div>
             
             <div id="explore-challenge-content" style="display: none;">
-                <!-- 새로운/추천 챌린지 섹션 -->
-                <h2 id="recommended-header" class="challenge-group-header" style="margin-top: 0;">
+                <!-- 필터 결과 없을 때 메시지 -->
+                <div id="filter-results-empty" class="empty-state-section" style="display: none;">
+                    <p id="filter-term-display">선택한 필터와 일치하는 챌린지가 없어요.</p>
+                </div>
+                
+                <!-- 챌린지 목록 헤더 -->
+                <h2 id="recommended-header" class="challenge-group-header">
                     추천 팀 챌린지
                 </h2>
                 <div id="recommended-list" class="challenge-list">
@@ -500,6 +698,7 @@
                 </div>
             </div>
 
+            <!-- 전체 챌린지가 없을 때의 Empty State -->
             <div id="explore-challenge-empty-state" class="empty-state-section" style="display: none;">
                 <div class="empty-state-content">
                     <img src="/image/box.webp" alt="빈 상자 이미지"
@@ -516,12 +715,38 @@
     
 </div>
 
-<!-- 모달 팝업 구조 (메시지 박스 용도) -->
+<!-- ------------------ 기본 모달 팝업 구조 (메시지 박스 용도) ------------------ -->
 <div id="modal">
     <div class="modal-content">
         <h3 class="modal-title" id="modal-title"></h3>
         <p class="modal-text" id="modal-text"></p>
         <button id="modal-close-button" class="interactive" onclick="hideModal()">확인</button>
+    </div>
+</div>
+
+<!-- ------------------ 필터 모달 팝업 구조 ------------------ -->
+<div id="filter-modal">
+    <div class="filter-modal-content">
+        <div class="modal-header">
+            <h3>챌린지 필터</h3>
+            <button class="close-btn interactive" onclick="hideFilterModal()">
+                <i class="material-icons">close</i>
+            </button>
+        </div>
+        <div class="filter-content">
+            <!-- 메인 카테고리 리스트 -->
+            <div id="main-category-list" class="main-category-list">
+                <!-- Main categories will be rendered here -->
+            </div>
+            <!-- 서브 카테고리/태그 리스트 -->
+            <div id="sub-category-list" class="sub-category-list">
+                <!-- Sub-categories will be rendered here -->
+            </div>
+        </div>
+        <div class="filter-actions">
+            <button id="reset-filter-btn" class="interactive" onclick="resetFilter()">필터 초기화</button>
+            <button id="apply-filter-btn" class="interactive" onclick="applySelectedFilter()">적용하기</button>
+        </div>
     </div>
 </div>
 
@@ -568,21 +793,42 @@
     let currentUserId = null;
     let isAuthAttempted = false; 
     
-    let exploreChallengesCache = []; // 탐색 챌린지 데이터 캐시
+    let exploreChallengesCache = []; // 탐색 챌린지 데이터 캐시 (원본)
     let unsubscribeExplore = null;
     
+    // --- 필터 및 검색 관련 상태 변수 ---
+    const CATEGORIES = [
+        { name: "외국어 학습 (Language)", main: "Language", sub: ["영어 회화 집중", "TOEIC/TOEFL 고득점", "일본어 능력 시험 (JLPT)", "중국어 능력 시험 (HSK)", "제3외국어 마스터", "영어 원서 독해", "외국어 쉐도잉 훈련"] },
+        { name: "업무/기술 (Professional Skill)", main: "Professional Skill", sub: ["프론트엔드 코딩", "백엔드/서버 개발", "IT 자격증 취득", "데이터 분석 및 활용", "AI/머신러닝 프로젝트", "실무 툴 마스터 (Excel/PPT)", "기획서/보고서 작성", "발표/스피치 역량 강화"] },
+        { name: "시험/스터디 (Exam/Study Group)", main: "Exam/Study Group", sub: ["자격증 시험 준비", "공무원 시험 올인", "온라인 강의 완강 (인강)", "학습 스터디 참여", "논문/학술 자료 분석", "모의고사/문제 풀이", "개념 정리/암기 루틴"] },
+        { name: "운동/신체 단련 (Fitness)", main: "Fitness", sub: ["헬스/웨이트 트레이닝", "러닝/달리기 (유산소)", "요가/필라테스 루틴", "맨몸 근력 운동 (홈트)", "바디프로필 준비", "자세 및 체형 교정", "수영/구기 종목 연습", "걷기 목표 달성"] },
+        { name: "건강/식단 (Health/Diet)", main: "Health/Diet", sub: ["클린 식단 유지", "다이어트 식단 기록", "물 2L 마시기", "저염식/건강식 요리", "규칙적인 식사 시간", "금주/금연 목표 달성", "영양제 꾸준히 섭취"] },
+        { name: "재테크/금융 (Finance)", main: "Finance", sub: ["가계부 매일 기록", "주식/투자 기초 학습", "부동산 지식 공부", "경제 뉴스 스크랩", "지출 예산 통제", "재무 목표 설정 및 점검"] },
+        { name: "독서/지식 (Reading/Knowledge)", main: "Reading/Knowledge", sub: ["매일 30분 독서", "비문학/전문 서적 정독", "인문학/고전 독파", "서평/독후감 작성", "자기계발서 읽기"] },
+        { name: "생활 습관/정신 (Habit/Mind)", main: "Habit/Mind", sub: ["미라클 모닝 (새벽 기상)", "일찍 잠들기 (수면 루틴)", "매일 10분 명상", "디지털 디톡스", "집안 정리/청소"] },
+        { name: "취미/창작 (Hobby/Creative)", main: "Hobby/Creative", sub: ["글쓰기/소설 창작", "드로잉/그림 그리기", "악기 연주 연습", "영상 편집 기술 숙달", "사진 보정/촬영"] },
+        { name: "기타/자유 (Other)", main: "Other", sub: ["자유 주제 챌린지", "나만의 새로운 목표"] },
+    ];
+
+    let currentFilter = {
+        mainCategory: null, // 예: "Language"
+        tag: null,          // 예: "영어 회화 집중"
+    };
+
+    let tempFilter = { ...currentFilter }; // 모달에서 임시로 선택되는 필터
+    let currentSearchTerm = ''; // 현재 검색어 상태
+
     // --- 유틸리티 및 UI/UX 함수 ---
     
     const modal = document.getElementById('modal');
-    const modalTitle = document.getElementById('modal-title');
-    const modalText = document.getElementById('modal-text');
-    
+    const filterModal = document.getElementById('filter-modal');
+
     /**
-     * 모달 표시 함수 
+     * 일반 메시지 모달 표시 함수 
      */
     window.showModal = function(title, text) {
-        modalTitle.textContent = title;
-        modalText.textContent = text;
+        document.getElementById('modal-title').textContent = title;
+        document.getElementById('modal-text').textContent = text;
         modal.style.display = 'flex';
         setTimeout(() => {
             modal.querySelector('.modal-content').style.transform = 'scale(1)';
@@ -591,7 +837,7 @@
     }
 
     /**
-     * 모달 숨김 함수
+     * 일반 메시지 모달 숨김 함수
      */
     window.hideModal = function() {
         modal.querySelector('.modal-content').style.transform = 'scale(0.9)';
@@ -602,80 +848,301 @@
     }
     
     /**
-     * Ripple Effect 추가 함수
+     * 필터 모달 표시 함수
      */
-    function addRippleEffect(event) {
-        const button = event.currentTarget;
-        const ripple = document.createElement('span');
-        const rect = button.getBoundingClientRect();
-        
-        const size = Math.max(rect.width, rect.height);
-        const x = event.clientX - rect.left - size / 2;
-        const y = event.clientY - rect.top - size / 2;
-
-        ripple.style.width = ripple.style.height = `${size}px`;
-        ripple.style.left = `${x}px`;
-        ripple.style.top = `${y}px`;
-        ripple.classList.add('ripple');
-
-        button.querySelectorAll('.ripple').forEach(r => r.remove());
-        button.appendChild(ripple);
-
-        ripple.addEventListener('animationend', () => {
-            ripple.remove();
-        });
+    window.showFilterModal = function() {
+        tempFilter = { ...currentFilter }; // 현재 적용된 필터로 임시 필터 초기화
+        renderMainCategories();
+        renderSubCategories();
+        filterModal.style.display = 'flex';
+        setTimeout(() => {
+            filterModal.classList.add('active');
+            // 모달이 열릴 때 body 스크롤 방지
+            document.body.style.overflow = 'hidden'; 
+        }, 10);
     }
     
     /**
-     * 스켈레톤 UI를 생성하고 표시합니다.
-     * @param {string} skeletonId - 스켈레톤 컨테이너 ID
+     * 필터 모달 숨김 함수
      */
-    function generateSkeleton(skeletonId) {
-        const container = document.getElementById(skeletonId);
-        if (!container) return;
-
-        container.innerHTML = ''; 
-        container.style.display = 'block';
-
-        for (let i = 0; i < 4; i++) {
-            const item = document.createElement('div');
-            item.className = 'skeleton-item';
-            item.innerHTML = `
-                <div class="skeleton-info">
-                    <div class="skeleton-title skeleton-loader"></div>
-                    <div class="skeleton-detail skeleton-loader"></div>
-                </div>
-                <div class="skeleton-icon skeleton-loader"></div>
-            `;
-            container.appendChild(item);
-        }
+    window.hideFilterModal = function() {
+        filterModal.classList.remove('active');
+        // 모달이 닫힐 때 body 스크롤 복원
+        document.body.style.overflow = 'scroll'; 
+        setTimeout(() => {
+            filterModal.style.display = 'none';
+        }, 300);
     }
 
+    /**
+     * 필터 초기화 함수 (임시 필터 초기화)
+     */
+    window.resetFilter = function() {
+        tempFilter = { mainCategory: null, tag: null };
+        renderMainCategories();
+        renderSubCategories();
+    }
+    
+    /**
+     * 선택된 필터를 적용하고 모달을 닫는 함수
+     */
+    window.applySelectedFilter = function() {
+        currentFilter = { ...tempFilter }; // 임시 필터를 현재 필터에 적용
+        renderExploreChallenges(); // 챌린지 리스트 업데이트
+        updateFilterChip(); // 필터 칩 업데이트
+        hideFilterModal();
+    }
+    
+    /**
+     * 필터 칩 UI 업데이트
+     */
+    function updateFilterChip() {
+        const chip = document.getElementById('current-filter-chip');
+        
+        let chipText = '';
+        if (!currentFilter.mainCategory) {
+            chipText = '전체 챌린지';
+            chip.style.backgroundColor = '#f0f0f0';
+            chip.style.color = '#555';
+            chip.innerHTML = '전체 챌린지';
+        } else if (currentFilter.tag) {
+            chipText = `${currentFilter.tag}`;
+            // Fix: Added quotes around CSS variable usage
+            chip.style.backgroundColor = 'var(--filter-chip-bg)';
+            chip.style.color = 'var(--color-accent)';
+            // 칩에 태그와 초기화 아이콘 포함
+            chip.innerHTML = `
+                ${chipText}
+                <i class="material-icons" onclick="event.stopPropagation(); resetAndApplyFilter()">close</i>
+            `;
+        } else {
+            // 메인 카테고리만 선택된 경우
+            const mainName = CATEGORIES.find(c => c.main === currentFilter.mainCategory)?.name.split(' (')[0] || '전체 챌린지';
+            chipText = mainName;
+            // Fix: Added quotes around CSS variable usage
+            chip.style.backgroundColor = 'var(--filter-chip-bg)';
+            chip.style.color = 'var(--color-accent)';
+            // 칩에 메인 카테고리 이름과 초기화 아이콘 포함
+            chip.innerHTML = `
+                ${chipText}
+                <i class="material-icons" onclick="event.stopPropagation(); resetAndApplyFilter()">close</i>
+            `;
+        }
+    }
+    
+    /**
+     * 필터 초기화 후 바로 적용 (칩에서 X 버튼 눌렀을 때)
+     */
+    window.resetAndApplyFilter = function() {
+        currentFilter = { mainCategory: null, tag: null };
+        renderExploreChallenges();
+        updateFilterChip();
+    }
+    
+    /**
+     * 메인 카테고리 목록 렌더링
+     */
+    function renderMainCategories() {
+        const list = document.getElementById('main-category-list');
+        list.innerHTML = '';
+        
+        // 전체 보기 추가
+        const allItem = document.createElement('div');
+        allItem.className = `main-category-item interactive ${!tempFilter.mainCategory ? 'active' : ''}`;
+        allItem.textContent = '전체 챌린지';
+        allItem.setAttribute('onclick', `selectMainCategory(null)`);
+        list.appendChild(allItem);
 
+        CATEGORIES.forEach(category => {
+            const item = document.createElement('div');
+            item.className = `main-category-item interactive ${tempFilter.mainCategory === category.main ? 'active' : ''}`;
+            item.textContent = category.name;
+            item.setAttribute('onclick', `selectMainCategory('${category.main}')`);
+            list.appendChild(item);
+        });
+        
+        // Ripple Effect 재적용
+        list.querySelectorAll('.interactive').forEach(item => {
+            item.removeEventListener('click', addRippleEffect);
+            item.addEventListener('click', addRippleEffect);
+        });
+    }
+
+    /**
+     * 메인 카테고리 선택 시 임시 필터 업데이트 및 서브 카테고리 렌더링
+     */
+    window.selectMainCategory = function(main) {
+        if (tempFilter.mainCategory === main) {
+            // 같은 카테고리를 다시 클릭하면 선택 해제 (전체 보기와 동일)
+            tempFilter = { mainCategory: null, tag: null };
+        } else {
+            tempFilter.mainCategory = main;
+            tempFilter.tag = null; // 메인 카테고리 변경 시 태그 초기화
+        }
+        renderMainCategories();
+        renderSubCategories();
+    }
+    
+    /**
+     * 서브 카테고리 목록 렌더링
+     */
+    function renderSubCategories() {
+        const list = document.getElementById('sub-category-list');
+        list.innerHTML = '';
+        
+        if (!tempFilter.mainCategory) {
+            list.innerHTML = '<p class="sub-category-title" style="color:#999;font-weight:400;">왼쪽에서 메인 카테고리를 선택해주세요.</p>';
+            return;
+        }
+
+        const category = CATEGORIES.find(c => c.main === tempFilter.mainCategory);
+        if (!category) return;
+        
+        list.innerHTML = `<p class="sub-category-title">${category.name.split(' (')[0]} 세부 목표/태그</p>`;
+        
+        // 전체 태그 선택 칩
+        const allTag = document.createElement('span');
+        allTag.className = `sub-category-item interactive ${!tempFilter.tag ? 'active' : ''}`;
+        allTag.textContent = `${category.name.split(' (')[0]} 전체 보기`;
+        allTag.setAttribute('onclick', `selectTag(null)`);
+        list.appendChild(allTag);
+
+
+        category.sub.forEach(tag => {
+            const chip = document.createElement('span');
+            chip.className = `sub-category-item interactive ${tempFilter.tag === tag ? 'active' : ''}`;
+            chip.textContent = tag;
+            chip.setAttribute('onclick', `selectTag('${tag}')`);
+            list.appendChild(chip);
+        });
+        
+        // Ripple Effect 재적용
+        list.querySelectorAll('.interactive').forEach(item => {
+            item.removeEventListener('click', addRippleEffect);
+            item.addEventListener('click', addRippleEffect);
+        });
+    }
+
+    /**
+     * 서브 카테고리 (태그) 선택 시 임시 필터 업데이트
+     */
+    window.selectTag = function(tag) {
+        if (tempFilter.tag === tag) {
+            tempFilter.tag = null;
+        } else {
+            tempFilter.tag = tag;
+        }
+        renderSubCategories(); // 활성 상태 업데이트를 위해 다시 렌더링
+    }
+
+    /**
+     * 검색 입력 핸들러
+     */
+    window.handleSearchInput = function(value) {
+        currentSearchTerm = value.trim();
+        const clearBtn = document.getElementById('clear-search-btn');
+        clearBtn.style.display = currentSearchTerm ? 'flex' : 'none';
+        renderExploreChallenges();
+    }
+    
+    /**
+     * 검색 초기화
+     */
+    window.clearSearch = function() {
+        document.getElementById('search-input').value = '';
+        currentSearchTerm = '';
+        document.getElementById('clear-search-btn').style.display = 'none';
+        renderExploreChallenges();
+    }
+    
     // --- 데이터 및 비즈니스 로직 ---
     
     /**
-     * 탐색 챌린지 목록을 렌더링합니다.
+     * 챌린지 목록을 검색, 필터링하고 렌더링합니다.
      */
     function renderExploreChallenges() {
         const contentContainer = document.getElementById('explore-challenge-content');
         const emptyState = document.getElementById('explore-challenge-empty-state');
+        const filterResultsEmpty = document.getElementById('filter-results-empty');
+        const recommendedHeader = document.getElementById('recommended-header');
+        const filterTermDisplay = document.getElementById('filter-term-display');
         const skeletonContainer = document.getElementById('explore-challenge-skeleton');
 
         // 로딩 완료: 스켈레톤 숨김
         skeletonContainer.style.display = 'none';
-
+        
+        // 1. 전체 챌린지 데이터가 없는 경우
         if (exploreChallengesCache.length === 0) {
-            // 챌린지가 없을 경우, 빈 상태 표시
             contentContainer.style.display = 'none';
+            filterResultsEmpty.style.display = 'none';
             emptyState.style.display = 'flex';
-        } else {
-            // 챌린지가 있을 경우, 목록 표시
-            contentContainer.style.display = 'block';
-            emptyState.style.display = 'none';
+            return;
+        }
+
+        emptyState.style.display = 'none';
+        
+        // 2. 필터링 로직
+        let filteredChallenges = exploreChallengesCache;
+        
+        // 2a. 검색어 필터링 적용 (가장 먼저)
+        if (currentSearchTerm) {
+            const searchLower = currentSearchTerm.toLowerCase();
+            filteredChallenges = filteredChallenges.filter(challenge => {
+                const titleMatch = challenge.title.toLowerCase().includes(searchLower);
+                const tagsMatch = challenge.tags && challenge.tags.some(tag => tag.toLowerCase().includes(searchLower));
+                // 설명(description)도 검색 대상에 포함
+                const descriptionMatch = challenge.description && challenge.description.toLowerCase().includes(searchLower);
+
+                return titleMatch || tagsMatch || descriptionMatch;
+            });
+        }
+        
+        // 2b. 카테고리 필터링 적용
+        filteredChallenges = filteredChallenges.filter(challenge => {
+            const mainMatch = !currentFilter.mainCategory || challenge.mainCategory === currentFilter.mainCategory;
+            const tagMatch = !currentFilter.tag || (challenge.tags && challenge.tags.includes(currentFilter.tag));
             
-            // 목록 렌더링
-            renderChallengeCards('recommended-list', exploreChallengesCache);
+            return mainMatch && tagMatch;
+        });
+        
+        // 3. UI 업데이트 및 렌더링
+        let headerText = '추천 팀 챌린지';
+        if (currentSearchTerm) {
+            headerText = `검색 결과: "${currentSearchTerm}"`;
+        } else if (currentFilter.tag) {
+            headerText = `필터 결과: ${currentFilter.tag}`;
+        } else if (currentFilter.mainCategory) {
+            const mainName = CATEGORIES.find(c => c.main === currentFilter.mainCategory)?.name.split(' (')[0] || '';
+            headerText = `필터 결과: ${mainName}`;
+        }
+        document.getElementById('recommended-header').textContent = headerText;
+
+
+        if (filteredChallenges.length === 0) {
+            // 필터/검색 결과가 없는 경우
+            contentContainer.style.display = 'block'; 
+            filterResultsEmpty.style.display = 'flex';
+            
+            // 검색어와 필터에 따른 메시지
+            if (currentSearchTerm && currentFilter.mainCategory) {
+                const mainName = CATEGORIES.find(c => c.main === currentFilter.mainCategory)?.name.split(' (')[0] || '선택한 카테고리';
+                filterTermDisplay.innerHTML = `"${mainName}" 카테고리에서 "${currentSearchTerm}"과 일치하는 챌린지가 없어요.`;
+            } else if (currentSearchTerm) {
+                 filterTermDisplay.innerHTML = `검색어 "${currentSearchTerm}"와 일치하는 챌린지가 없어요.`;
+            } else if (currentFilter.tag) {
+                filterTermDisplay.innerHTML = `“${currentFilter.tag}” 필터와 일치하는 챌린지가 없어요.`;
+            } else {
+                filterTermDisplay.innerHTML = `선택한 필터와 일치하는 챌린지가 없어요.`;
+            }
+
+            document.getElementById('recommended-list').innerHTML = ''; 
+            recommendedHeader.style.display = 'none'; 
+        } else {
+            // 필터/검색 결과가 있는 경우
+            contentContainer.style.display = 'block';
+            filterResultsEmpty.style.display = 'none';
+            recommendedHeader.style.display = 'block'; 
+            renderChallengeCards('recommended-list', filteredChallenges);
         }
     }
     
@@ -683,24 +1150,19 @@
      * Firestore에서 탐색 가능한 팀 챌린지 목록을 실시간으로 가져옵니다.
      */
     function fetchExploreChallenges() {
-        // 로딩 시작: 스켈레톤 표시
         if (exploreChallengesCache.length === 0) {
             generateSkeleton('explore-challenge-skeleton');
             document.getElementById('explore-challenge-content').style.display = 'none';
             document.getElementById('explore-challenge-empty-state').style.display = 'none';
+            document.getElementById('filter-results-empty').style.display = 'none';
         }
         
-        // 이전 구독 해제 후
         if (unsubscribeExplore) unsubscribeExplore();
         
-        // 공용 챌린지 경로 (index.html에서 사용된 팀 챌린지 경로와 동일)
         const teamPath = `/artifacts/${appId}/public/data/challenges`;
         const teamRef = collection(db, teamPath);
         
-        // 쿼리: 모든 공용 챌린지를 참여자 수(participantIds 배열 길이, 직접 쿼리 불가) 대신
-        // 생성일 기준으로 내림차순 정렬하여 최근 50개만 가져옵니다.
-        // NOTE: Firestore에서 배열 길이를 기준으로 쿼리/정렬하려면 별도의 필드(예: participantCount)가 필요합니다.
-        // 여기서는 단순성을 위해 createdAt 필드(없으면 현재 시간 가정)로 대체합니다.
+        // 쿼리: 최신 50개 챌린지 (필터링을 위해 데이터를 클라이언트에서 처리)
         const qExplore = query(
             teamRef, 
             orderBy("createdAt", "desc"),
@@ -712,7 +1174,8 @@
             snapshot.forEach((doc) => {
                 exploreChallengesCache.push({ id: doc.id, type: 'team', ...doc.data() });
             });
-            renderExploreChallenges();
+            // 데이터가 업데이트될 때마다 현재 필터에 맞게 렌더링
+            renderExploreChallenges(); 
             console.log("Firestore Explore Challenges Updated:", exploreChallengesCache.length);
         }, (error) => {
             console.error("Firestore Explore Challenges Error:", error);
@@ -720,27 +1183,27 @@
         });
     }
 
-
     /**
-     * 탐색 챌린지 카드를 렌더링합니다. (참여자 수 표시)
-     * @param {string} containerId - 렌더링할 컨테이너 ID
-     * @param {Array} challenges - 챌린지 배열
+     * 탐색 챌린지 카드를 렌더링합니다.
      */
     function renderChallengeCards(containerId, challenges) {
         const listContainer = document.getElementById(containerId);
         listContainer.innerHTML = ''; 
         
         challenges.forEach(challenge => {
-            // participantIds 필드 가정
             const participantCount = challenge.participantIds ? challenge.participantIds.length : 1; 
             const creatorName = challenge.creatorName || '익명';
             
-            const detailText = `참여 ${participantCount}명 · 개설자: ${creatorName}`;
+            // 챌린지의 태그 표시 (최대 2개)
+            const tagsText = (challenge.tags && challenge.tags.length > 0) 
+                ? challenge.tags.slice(0, 2).map(tag => `#${tag}`).join(' ')
+                : challenge.mainCategory;
+
+            const detailText = `참여 ${participantCount}명 · ${tagsText}`;
 
             const card = document.createElement('div');
             card.className = 'challenge-list-item interactive';
             
-            // 챌린지 상세 페이지로 이동하도록 설정 (임시 모달 유지)
             card.setAttribute('onclick', `showModal('${challenge.title}', '챌린지 상세 페이지로 이동합니다.\\n\\n현재 ${participantCount}명이 참여 중입니다. [참여하기] 버튼을 눌러 챌린지에 합류할 수 있습니다.')`);
 
             card.innerHTML = `
@@ -757,6 +1220,12 @@
                 </div>
             `;
             listContainer.appendChild(card);
+        });
+        
+        // Ripple Effect 재적용
+        listContainer.querySelectorAll('.interactive').forEach(item => {
+            item.removeEventListener('click', addRippleEffect);
+            item.addEventListener('click', addRippleEffect);
         });
     }
 
@@ -803,7 +1272,6 @@
              return;
         }
         
-        // 폰트 로드 확인 후 앱 컨테이너 표시
         document.fonts.ready.then(() => {
              document.getElementById('app-container').classList.add('font-loaded');
         });
@@ -821,28 +1289,77 @@
         
         // 모달 배경 클릭 시 닫기 기능 추가
         modal.addEventListener('click', (event) => {
-            if (event.target === modal) {
-                hideModal();
-            }
+            if (event.target === modal) { hideModal(); }
+        });
+        filterModal.addEventListener('click', (event) => {
+            // 필터 모달의 배경을 클릭해도 닫히도록 설정
+            if (event.target === filterModal) { hideFilterModal(); }
         });
         
         // Ripple Effect 초기화
         document.querySelectorAll('.interactive').forEach(button => {
-            // 버튼 유형에 따라 mousedown/click 이벤트 분리
-            if (button.classList.contains('main-tab-item') || button.classList.contains('nav-item') || button.classList.contains('create-challenge-icon')) {
-                button.addEventListener('mousedown', (event) => {
-                    // 탭이나 아이콘은 클릭 시 바로 이동/전환이 일어나므로 mousedown에 이펙트 추가
+            button.addEventListener('click', addRippleEffect);
+            button.addEventListener('mousedown', (event) => {
+                // 특정 요소(nav, tab, icon)만 mousedown에 이펙트 추가
+                if (button.classList.contains('main-tab-item') || button.classList.contains('nav-item') || button.classList.contains('create-challenge-icon')) {
                     setTimeout(() => addRippleEffect(event), 0);
-                });
-            } else {
-                // 리스트 아이템이나 일반 버튼은 click 이벤트에 이펙트 추가
-                button.addEventListener('click', addRippleEffect);
-            }
+                }
+            });
         });
-
-        // 초기 스켈레톤 로딩
+        
+        // 초기 UI 상태 설정
+        updateFilterChip();
         generateSkeleton('explore-challenge-skeleton');
     });
+
+    /**
+     * Ripple Effect 추가 함수 (이전 코드에서 가져옴)
+     */
+    function addRippleEffect(event) {
+        const button = event.currentTarget;
+        const ripple = document.createElement('span');
+        const rect = button.getBoundingClientRect();
+        
+        const size = Math.max(rect.width, rect.height);
+        const x = event.clientX - rect.left - size / 2;
+        const y = event.clientY - rect.top - size / 2;
+
+        ripple.style.width = ripple.style.height = `${size}px`;
+        ripple.style.left = `${x}px`;
+        ripple.style.top = `${y}px`;
+        ripple.classList.add('ripple');
+
+        button.querySelectorAll('.ripple').forEach(r => r.remove());
+        button.appendChild(ripple);
+
+        ripple.addEventListener('animationend', () => {
+            ripple.remove();
+        });
+    }
+    
+    /**
+     * 스켈레톤 로더를 생성하는 함수
+     */
+    function generateSkeleton(containerId) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = '';
+        const count = 5; 
+
+        for (let i = 0; i < count; i++) {
+            const item = document.createElement('div');
+            item.className = 'skeleton-item';
+            item.innerHTML = `
+                <div class="skeleton-info">
+                    <div class="skeleton-loader skeleton-title"></div>
+                    <div class="skeleton-loader skeleton-detail"></div>
+                </div>
+                <div class="skeleton-loader skeleton-icon"></div>
+            `;
+            container.appendChild(item);
+        }
+        container.style.display = 'block';
+    }
+
 </script>
 </body>
 </html>
