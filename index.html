@@ -92,7 +92,7 @@
             padding: 0 var(--mobile-padding-x); 
         }
         
-        /* 하단 내비게이션 바 (모바일) */
+        /* 하단 내비게이션 바 (모바일) - 앱 스타일로 수정 */
         .bottom-nav {
             width: 100%;
             height: var(--bottom-nav-height); 
@@ -104,9 +104,12 @@
             position: fixed;
             bottom: 0;
             top: auto;
+            /* Safe Area까지 배경색을 확장 */
             padding-bottom: max(0px, env(safe-area-inset-bottom)); 
-            border-top: 1px solid var(--color-border); 
-            box-shadow: 0 -1px 8px rgba(0, 0, 0, 0.05); 
+            border-top: none; /* 상단 테두리 제거 */
+            /* 부드럽고 앱 같은 그림자 적용 */
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.06), 0 -1px 4px rgba(0, 0, 0, 0.03); 
+            transition: box-shadow 0.3s ease;
             left: 0;
             transform: none;
             max-width: none;
@@ -175,6 +178,8 @@
                 transform: translateX(-50%);
                 max-width: var(--pc-max-width);
                 padding-bottom: 0; 
+                /* PC에서는 그림자를 덜 강조 */
+                box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.05);
             }
         
             /* 내비게이션 아이템 PC 스타일 (가로 정렬) */
