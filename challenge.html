@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <!-- 뷰포트 메타 태그: 반응형 디자인 및 노치(safe area) 처리를 위해 수정 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"> 
-    <title>Doing! - 챌린지</title>
+    <title>Doing! - 내 챌린지</title>
     <!-- Favicon 경로 설정 -->
     <link rel="icon" type="image/x-icon" href="/image/favicon.ico">
     <!-- Pretendard 폰트 CDN 적용 -->
@@ -359,52 +359,6 @@
         }
         .create-challenge-button:hover, .explore-button:hover { opacity: 0.8; } 
         
-        /* ------------------ 탐색 페이지 전용 스타일 ------------------ */
-        .explore-controls {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 1.5rem;
-            align-items: center;
-        }
-        .explore-controls input[type="text"] {
-            flex-grow: 1;
-            padding: 0.75rem 1rem;
-            border: 1px solid var(--color-border);
-            border-radius: 12px;
-            font-size: 1rem;
-            color: var(--color-black);
-            background-color: #f9f9f9;
-        }
-        .filter-button {
-            background-color: #f0f0f0;
-            color: #444;
-            border: none;
-            padding: 0.75rem 1rem;
-            border-radius: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            flex-shrink: 0;
-            transition: background-color 0.15s ease;
-        }
-        .filter-button:active { background-color: #e0e0e0; }
-        .filter-button.active {
-            background-color: var(--color-accent);
-            color: var(--color-white);
-        }
-        .category-tag {
-            font-size: 0.75rem;
-            font-weight: 500;
-            color: #888;
-            background-color: #f5f5f5;
-            padding: 3px 8px;
-            border-radius: 4px;
-            margin-right: 5px;
-            display: inline-block;
-            white-space: nowrap;
-        }
         /* ------------------ 스켈레톤 로더 스타일 ------------------ */
         .skeleton-loader {
             animation: loading-shimmer 1.5s infinite linear;
@@ -488,11 +442,16 @@
     <!-- 상단 탭 전환 및 생성 버튼 (메인 헤더 대체) -->
     <header class="main-header top-tabs" id="main-header">
         <div class="tab-item-container">
-            <div id="tab-my-btn" class="main-tab-item interactive active" onclick="switchTopTab('my')">내 챌린지</div>
+            <!-- 현재 페이지이므로 항상 active -->
+            <div id="tab-my-btn" class="main-tab-item active">내 챌린지</div>
         </div>
         <div class="tab-item-container">
-            <!-- 탭 이름 변경: 팀 챌린지 탐색 -->
-            <div id="tab-explore-btn" class="main-tab-item interactive" onclick="switchTopTab('explore')">팀 챌린지 탐색</div>
+            <!-- 클릭 시 탐색 페이지로 이동 -->
+            <div id="tab-explore-btn" 
+                 class="main-tab-item interactive" 
+                 onclick="window.location.href = '/challenge/explore'">
+                팀 챌린지 탐색
+            </div>
         </div>
         <!-- 챌린지 생성 버튼 (+) -->
         <div class="create-button-container">
@@ -502,10 +461,10 @@
         </div>
     </header>
     
-    <!-- ------------------ 뷰 컨테이너 ------------------ -->
+    <!-- ------------------ 뷰 컨테이너 (내 챌린지만 표시) ------------------ -->
     <div id="challenge-view" class="view active">
         
-        <!-- ------------------ 1. 내 챌린지 탭 내용 (개인 + 참여 팀 챌린지) ------------------ -->
+        <!-- ------------------ 내 챌린지 목록 (개인 + 참여 팀 챌린지) ------------------ -->
         <div id="tab-content-my">
             <div class="challenge-section">
                 <div id="my-challenge-list" class="challenge-list" style="display: none;">
@@ -519,7 +478,8 @@
                         <img src="/image/box.webp" alt="빈 상자 이미지"
                              onerror="this.onerror=null; this.src='https://placehold.co/120x120/f7e0c4/966A45?text=BOX'; this.alt='박스 이모지';"/>
                         <p>참여 중인 챌린지가 없어요</p>
-                        <button class="explore-button interactive" onclick="switchTopTab('explore')">
+                        <!-- 클릭 시 탐색 페이지로 이동 -->
+                        <button class="explore-button interactive" onclick="window.location.href = '/challenge/explore'">
                             새 챌린지 탐색하기
                         </button>
                     </div>
@@ -527,39 +487,6 @@
             </div>
         </div>
         
-        <!-- ------------------ 2. 팀 챌린지 탐색 탭 내용 (모든 공개 팀 챌린지) ------------------ -->
-        <div id="tab-content-explore" style="display: none;"> 
-             <!-- 검색 및 필터 컨트롤 -->
-            <div class="explore-controls">
-                <input type="text" id="search-input" placeholder="챌린지 제목, 태그, 카테고리 검색" onkeyup="applyExploreFilters()">
-                <button class="filter-button interactive" onclick="showModal('필터', '기간, 참가 인원 등 고급 필터를 설정할 수 있습니다.')">
-                    <i class="material-icons" style="font-size: 20px;">filter_list</i>
-                    필터
-                </button>
-            </div>
-            
-            <div class="challenge-section">
-                <!-- 탐색 챌린지 목록이 로드될 곳 -->
-                <div id="explore-challenge-list" class="challenge-list" style="display: none;">
-                     <!-- Loaded explore challenges will be here -->
-                </div>
-                <!-- 스켈레톤 UI가 로드될 곳 -->
-                <div id="explore-challenge-skeleton" class="challenge-list">
-                     <!-- Skeleton will be generated here -->
-                </div>
-                <!-- 챌린지가 없을 때 표시되는 빈 상태 -->
-                <div id="explore-challenge-empty-state" class="empty-state-section" style="display: none;">
-                    <div class="empty-state-content">
-                        <img src="/image/box.webp" alt="열린 박스 이미지"
-                             onerror="this.onerror=null; this.src='https://placehold.co/120x120/f7e0c4/966A45?text=BOX'; this.alt='박스 이모지';"/>
-                        <p>조건에 맞는 팀 챌린지를 찾을 수 없어요</p>
-                        <button class="create-challenge-button interactive" onclick="window.location.href = '/challenge/create';">
-                            직접 챌린지 만들기
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
     
 </div>
@@ -614,15 +541,12 @@
     // 글로벌 변수
     let currentUserId = null;
     let isAuthAttempted = false; 
-    let currentTab = 'my';
     
     let personalChallengesCache = []; // 개인 챌린지 데이터 캐시
     let joinedTeamChallengesCache = []; // 참여 중인 팀 챌린지 데이터 캐시
-    let allTeamChallengesCache = []; // 탐색 탭의 모든 팀 챌린지 데이터 캐시
     
     let unsubscribePersonal = null;
     let unsubscribeJoinedTeam = null;
-    let unsubscribeExplore = null;
     
     // --- UI/UX 함수 ---
     const modal = document.getElementById('modal');
@@ -651,34 +575,6 @@
         setTimeout(() => {
             modal.style.display = 'none';
         }, 200); 
-    }
-    
-    /**
-     * 상단 탭 전환 함수
-     */
-    window.switchTopTab = function(tabName) {
-        if (currentTab === tabName) return; 
-
-        currentTab = tabName;
-        const myContent = document.getElementById('tab-content-my');
-        const exploreContent = document.getElementById('tab-content-explore');
-        const myBtn = document.getElementById('tab-my-btn');
-        const exploreBtn = document.getElementById('tab-explore-btn');
-        
-        // 버튼 활성화/비활성화
-        myBtn.classList.toggle('active', tabName === 'my');
-        exploreBtn.classList.toggle('active', tabName === 'explore');
-        
-        // 콘텐츠 표시/숨김
-        myContent.style.display = tabName === 'my' ? 'block' : 'none';
-        exploreContent.style.display = tabName === 'explore' ? 'block' : 'none';
-        
-        // 데이터 로드
-        if (tabName === 'my') {
-            fetchMyChallenges();
-        } else if (tabName === 'explore') {
-            fetchExploreChallenges();
-        }
     }
     
     /**
@@ -756,7 +652,7 @@
         } else {
             listContainer.style.display = 'block';
             emptyState.style.display = 'none';
-            renderChallenges('my-challenge-list', combinedChallenges, 'my');
+            renderChallenges(combinedChallenges);
         }
     }
 
@@ -768,9 +664,6 @@
         
         const listContainer = document.getElementById('my-challenge-list');
         const emptyState = document.getElementById('my-challenge-empty-state');
-        const skeletonContainer = document.getElementById('my-challenge-skeleton');
-
-        if (currentTab !== 'my') return;
 
         // 로딩 시작: 스켈레톤 표시
         if (personalChallengesCache.length === 0 && joinedTeamChallengesCache.length === 0) {
@@ -818,102 +711,17 @@
         });
     }
 
-
     /**
-     * Firestore에서 모든 공개 팀 챌린지 목록을 실시간으로 가져옵니다.
-     */
-    function fetchExploreChallenges() {
-        if (!currentUserId) return; // 인증된 사용자만 탐색 가능
-        
-        const listContainer = document.getElementById('explore-challenge-list');
-        const emptyState = document.getElementById('explore-challenge-empty-state');
-        const skeletonContainer = document.getElementById('explore-challenge-skeleton');
-        
-        if (currentTab !== 'explore') return;
-
-        // 로딩 시작: 스켈레톤 표시
-        if (allTeamChallengesCache.length === 0) {
-            generateSkeleton('explore-challenge-skeleton');
-            listContainer.style.display = 'none';
-            emptyState.style.display = 'none';
-        }
-
-        // 이전 구독 해제
-        if (unsubscribeExplore) unsubscribeExplore();
-
-        // 팀 챌린지 컬렉션 경로 (공개 데이터, isPublic=true 가정)
-        const path = `/artifacts/${appId}/public/data/challenges`;
-        const challengesRef = collection(db, path);
-        
-        // 쿼리: isPublic이 true인 모든 문서 (공개 챌린지)
-        const qExplore = query(challengesRef, where("isPublic", "==", true)); 
-
-        unsubscribeExplore = onSnapshot(qExplore, (snapshot) => {
-            allTeamChallengesCache = [];
-            snapshot.forEach((doc) => {
-                // 탐색 챌린지임을 명시하기 위해 type 추가
-                allTeamChallengesCache.push({ id: doc.id, type: 'team-explore', ...doc.data() });
-            });
-            
-            // 로딩 완료: 스켈레톤 숨김
-            skeletonContainer.style.display = 'none';
-            
-            // 필터링 적용하여 렌더링
-            applyExploreFilters();
-
-            console.log("Firestore Explore Challenges Updated (Total):", allTeamChallengesCache.length);
-
-        }, (error) => {
-            console.error("Firestore Explore Challenges Error:", error);
-            showModal('데이터 오류', '탐색 챌린지 목록을 불러오는 중 오류가 발생했습니다.');
-            skeletonContainer.style.display = 'none';
-        });
-    }
-
-    /**
-     * 탐색 챌린지 목록에 검색 및 필터링을 적용하고 렌더링합니다.
-     */
-    window.applyExploreFilters = function() {
-        const searchInput = document.getElementById('search-input').value.toLowerCase();
-        const listContainer = document.getElementById('explore-challenge-list');
-        const emptyState = document.getElementById('explore-challenge-empty-state');
-
-        // 필터링 로직
-        const filteredChallenges = allTeamChallengesCache.filter(challenge => {
-            const titleMatch = challenge.title && challenge.title.toLowerCase().includes(searchInput);
-            const tagMatch = challenge.tags && challenge.tags.some(tag => tag.toLowerCase().includes(searchInput));
-            const categoryMatch = challenge.categories && challenge.categories.some(cat => cat.toLowerCase().includes(searchInput));
-            
-            return titleMatch || tagMatch || categoryMatch;
-        });
-
-        filteredChallenges.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
-
-        if (filteredChallenges.length === 0) {
-            listContainer.style.display = 'none';
-            emptyState.style.display = 'block';
-        } else {
-            listContainer.style.display = 'block';
-            emptyState.style.display = 'none';
-            renderChallenges('explore-challenge-list', filteredChallenges, 'explore');
-        }
-    }
-
-
-    /**
-     * 챌린지 카드를 렌더링합니다. (개인/팀/탐색 공통)
-     * @param {string} listId - 렌더링할 컨테이너 ID
+     * 챌린지 카드를 렌더링합니다. (내 챌린지 전용)
      * @param {Array} challenges - 챌린지 배열
-     * @param {string} tabType - 'my' 또는 'explore'
      */
-    function renderChallenges(listId, challenges, tabType) {
-        const listContainer = document.getElementById(listId);
+    function renderChallenges(challenges) {
+        const listContainer = document.getElementById('my-challenge-list');
         listContainer.innerHTML = ''; 
         
         const today = new Date().getTime();
         
         challenges.forEach(challenge => {
-            const startedAt = challenge.startDate ? new Date(challenge.startDate).getTime() : today;
             const durationDays = challenge.durationDays || 30;
             const proofHistory = challenge.proofHistory || {};
             
@@ -921,43 +729,27 @@
             const successCount = (typeof proofHistory === 'object' && proofHistory !== null) ? Object.keys(proofHistory).length : 0; 
             
             // 시작일로부터 경과일 계산
+            const startedAt = challenge.startDate ? new Date(challenge.startDate).getTime() : today;
             const msPerDay = 1000 * 60 * 60 * 24;
             const daysPassed = Math.max(0, Math.ceil((today - startedAt) / msPerDay)); 
 
             // 잔여일 (남은 기간)
             const remainingDays = Math.max(0, durationDays - daysPassed); 
 
-            let detailText = '';
-            let statusHtml = '';
+            // 오늘 참여 여부 및 타입 표시
+            const todayKey = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+            const isTodayJoined = challenge.proofHistory && challenge.proofHistory[todayKey] ? true : false;
+            
+            let statusClass = isTodayJoined ? 'status-joined' : 'status-not-joined';
+            let statusText = isTodayJoined ? '오늘 참여' : '오늘 미참여';
 
-            if (tabType === 'my') {
-                // 내 챌린지 탭: 오늘 참여 여부 및 타입 표시
-                const todayKey = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-                const isTodayJoined = challenge.proofHistory && challenge.proofHistory[todayKey] ? true : false;
-                
-                let statusClass = isTodayJoined ? 'status-joined' : 'status-not-joined';
-                let statusText = isTodayJoined ? '오늘 참여' : '오늘 미참여';
-
-                if (challenge.type === 'team-joined') {
-                    statusClass = 'status-team';
-                    statusText = '팀 참여 중';
-                }
-
-                statusHtml = `<div class="challenge-status ${statusClass}">${statusText}</div>`;
-                detailText = `${remainingDays}일 남음 · ${successCount}/${durationDays}일`;
-
-            } else if (tabType === 'explore') {
-                // 탐색 탭: 카테고리, 참가 인원 표시
-                const categories = challenge.categories && Array.isArray(challenge.categories) 
-                    ? challenge.categories.map(cat => `<span class="category-tag">${cat}</span>`).join('') 
-                    : '';
-                const participantCount = challenge.participantIds ? challenge.participantIds.length : 0;
-                const maxParticipants = challenge.maxParticipants || 'N/A';
-                
-                statusHtml = `<div style="display: flex; gap: 8px;">${categories}</div>`;
-                detailText = `참여: ${participantCount} / ${maxParticipants}명 · 생성자: ${challenge.creatorName || '알 수 없음'}`;
+            if (challenge.type === 'team-joined') {
+                statusClass = 'status-team';
+                statusText = '팀 참여 중';
             }
 
+            const statusHtml = `<div class="challenge-status ${statusClass}">${statusText}</div>`;
+            const detailText = `${remainingDays}일 남음 · ${successCount}/${durationDays}일`;
 
             const card = document.createElement('div');
             card.className = 'challenge-list-item interactive';
@@ -1020,7 +812,7 @@
                  return;
             }
 
-            // 챌린지 데이터 로드 시작 (기본값: 내 챌린지 탭)
+            // 챌린지 데이터 로드 시작
             fetchMyChallenges();
 
         } else if (isAuthAttempted) {
@@ -1068,7 +860,6 @@
 
         // 초기 스켈레톤 로딩
         generateSkeleton('my-challenge-skeleton');
-        generateSkeleton('explore-challenge-skeleton');
     });
 </script>
 </body>
