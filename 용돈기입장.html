@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>용돈 기입장 - Notion 100% 동일 스타일</title>
+    <title>용돈 기입장 - Notion 100% 동일 스타일 (로컬 저장)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         /* Notion Global Styles */
@@ -14,8 +14,8 @@
             --background-color: #ffffff;
             --hover-bg-color: rgba(55, 53, 47, 0.03);
             --active-bg-color: rgba(55, 53, 47, 0.05);
-            --focus-border-color: #246a9e; /* Not exactly Notion, but for focus */
-            --notion-blue: #0b6e9e; /* Custom Notion-like blue for accents */
+            --focus-border-color: #246a9e;
+            --notion-blue: #0b6e9e;
             --notion-red: #d33c3f;
             --notion-green: #298d5c;
         }
@@ -23,16 +23,16 @@
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
             color: var(--text-color);
-            background-color: #f7f7f7; /* Notion app background is usually a very light grey */
+            background-color: #f7f7f7;
             margin: 0;
-            padding: 40px 0; /* Padding around the main content area */
+            padding: 40px 0;
             line-height: 1.5;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
 
         .container {
-            max-width: 900px; /* Wider for Notion feel */
+            max-width: 900px;
             margin: 0 auto;
             padding: 0 24px;
         }
@@ -43,7 +43,7 @@
         }
 
         h1 {
-            font-size: 38px; /* Slightly larger for Notion title feel */
+            font-size: 38px;
             font-weight: 700;
             color: var(--text-color);
             margin-bottom: 8px;
@@ -53,7 +53,7 @@
 
         h1 span {
             margin-right: 12px;
-            font-size: 32px; /* Emoji size */
+            font-size: 32px;
         }
 
         header p {
@@ -66,9 +66,9 @@
         .notion-block {
             background-color: var(--background-color);
             border: 1px solid var(--border-color);
-            border-radius: 3px; /* Subtle Notion border-radius */
+            border-radius: 3px;
             margin-bottom: 24px;
-            padding: 24px; /* Notion-like padding */
+            padding: 24px;
         }
 
         .notion-block h2, .notion-block h3 {
@@ -92,15 +92,15 @@
             grid-template-columns: repeat(3, 1fr);
             gap: 20px;
             text-align: center;
-            padding-top: 12px; /* Space from border-bottom */
-            border-bottom: 2px solid var(--notion-blue); /* Accent border */
+            padding-top: 12px;
+            border-bottom: 2px solid var(--notion-blue);
             padding-bottom: 24px;
         }
 
         .balance-summary > div {
             padding: 12px;
             border-radius: 3px;
-            background-color: var(--hover-bg-color); /* Light background for each summary item */
+            background-color: var(--hover-bg-color);
         }
 
         .balance-summary p {
@@ -122,41 +122,37 @@
         .balance-summary .main-balance {
             font-size: 28px;
             font-weight: 800;
-            color: var(--text-color); /* Default balance color */
+            color: var(--text-color);
         }
 
         .income-text { color: var(--notion-green); }
         .expense-text { color: var(--notion-red); }
 
-        /* Form Styles */
+        /* Form & Input Styles */
         .transaction-form {
             display: grid;
-            grid-template-columns: repeat(6, 1fr); /* 6 columns for desktop */
-            gap: 10px; /* Smaller gap for tighter Notion feel */
+            grid-template-columns: repeat(6, 1fr);
+            gap: 10px;
         }
 
-        .transaction-form input[type="date"],
-        .transaction-form input[type="text"],
-        .transaction-form input[type="number"],
-        .transaction-form select {
+        .notion-input {
             width: 100%;
-            padding: 8px 10px; /* Notion-like padding */
+            padding: 8px 10px;
             border: 1px solid var(--border-color);
             border-radius: 3px;
             font-size: 14px;
             color: var(--text-color);
             background-color: var(--background-color);
-            -webkit-appearance: none; /* Remove default browser styling */
+            -webkit-appearance: none;
             -moz-appearance: none;
             appearance: none;
-            box-sizing: border-box; /* Include padding in width */
+            box-sizing: border-box;
         }
 
-        .transaction-form input:focus,
-        .transaction-form select:focus {
+        .notion-input:focus {
             outline: none;
             border-color: var(--notion-blue);
-            box-shadow: 0 0 0 1px var(--notion-blue); /* Subtle blue focus ring */
+            box-shadow: 0 0 0 1px var(--notion-blue);
         }
 
         .transaction-form button {
@@ -174,7 +170,7 @@
         }
 
         .transaction-form button:hover {
-            background-color: #085f8a; /* Darker blue on hover */
+            background-color: #085f8a;
         }
 
         .transaction-form button:disabled {
@@ -182,11 +178,51 @@
             cursor: not-allowed;
             opacity: 0.8;
         }
+        
+        /* Local Storage Status */
+        #user-status {
+            text-align: center;
+            padding: 10px;
+            font-size: 14px;
+            color: var(--subtle-text-color);
+        }
+
 
         /* Transaction List */
+        .transaction-list-controls {
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .transaction-list-controls > div {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px; /* For mobile wrap */
+        }
+        
+        #transfer-btn {
+            background: var(--background-color);
+            color: var(--notion-blue);
+            border: 1px solid var(--border-color);
+            padding: 8px 10px;
+            border-radius: 3px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.1s ease-in-out;
+            min-width: 130px;
+        }
+        #transfer-btn:hover {
+            background-color: var(--hover-bg-color);
+            border-color: var(--notion-blue);
+        }
+
         .transaction-list-header {
             display: grid;
-            grid-template-columns: 2fr 5fr 2fr 2fr 1fr; /* Notion-like column distribution */
+            grid-template-columns: 2fr 5fr 2fr 2fr 1fr;
             padding: 8px 10px;
             font-size: 13px;
             font-weight: 500;
@@ -200,10 +236,10 @@
             grid-template-columns: 2fr 5fr 2fr 2fr 1fr;
             align-items: center;
             padding: 8px 10px;
-            border-bottom: 1px solid var(--border-color); /* Subtle divider */
+            border-bottom: 1px solid var(--border-color);
             font-size: 14px;
             transition: background-color 0.1s ease-in-out;
-            cursor: pointer; /* To indicate it's an interactive row */
+            cursor: pointer;
         }
 
         .transaction-item:hover {
@@ -218,7 +254,7 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            padding-right: 8px; /* Spacing between columns */
+            padding-right: 8px;
         }
 
         .transaction-item .date { color: var(--subtle-text-color); }
@@ -232,11 +268,11 @@
             color: var(--subtle-text-color);
             cursor: pointer;
             padding: 4px;
-            margin-left: auto; /* Push to the right */
-            display: flex; /* For centering SVG */
+            margin-left: auto;
+            display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 3px; /* For hover effect */
+            border-radius: 3px;
             transition: background-color 0.1s ease-in-out, color 0.1s ease-in-out;
         }
 
@@ -258,26 +294,23 @@
             font-size: 15px;
         }
 
-        /* Modal Styles (Notion-like Popover) */
+        /* Modal Styles */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.3); /* Subtle overlay */
-            display: flex;
+            background-color: rgba(0, 0, 0, 0.3);
+            display: none; 
             align-items: center;
             justify-content: center;
             z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.1s ease-in-out, visibility 0.1s ease-in-out;
+            overflow-y: auto;
         }
 
         .modal-overlay.visible {
-            opacity: 1;
-            visibility: visible;
+            display: flex;
         }
 
         .modal-content {
@@ -286,8 +319,11 @@
             border-radius: 3px;
             padding: 24px;
             width: 90%;
-            max-width: 400px;
+            max-width: 600px;
             color: var(--text-color);
+            max-height: 90vh;
+            margin: 20px 0;
+            box-sizing: border-box;
         }
 
         .modal-content h4 {
@@ -299,7 +335,7 @@
 
         .modal-content p {
             font-size: 15px;
-            margin-bottom: 24px;
+            margin-bottom: 15px;
             color: var(--subtle-text-color);
         }
 
@@ -307,6 +343,7 @@
             display: flex;
             justify-content: flex-end;
             gap: 10px;
+            margin-top: 20px;
         }
 
         .modal-actions button {
@@ -335,110 +372,77 @@
             background-color: #b52a2d;
             border-color: #b52a2d;
         }
+        
+        /* Transfer Modal Specific Styles */
+        
+        .transfer-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .transfer-buttons button {
+             padding: 8px 15px;
+             background-color: var(--notion-blue);
+             color: white;
+             border: none;
+             transition: background-color 0.1s ease-in-out;
+             border-radius: 3px;
+        }
+        
+        .transfer-buttons .import-btn {
+            background-color: var(--notion-green);
+        }
+        .transfer-buttons .import-btn:hover {
+            background-color: #217349;
+        }
+        
+        .transfer-buttons button:hover {
+            background-color: #085f8a;
+        }
+        
+        .modal-status-message {
+            font-size: 14px;
+            font-weight: 500;
+            margin-top: 10px;
+            text-align: center;
+        }
 
-        /* Responsive adjustments */
+        /* Responsive adjustments (CSS remains the same for responsiveness) */
         @media (max-width: 768px) {
-            .container {
-                padding: 0 16px;
-            }
-            h1 {
-                font-size: 32px;
-            }
-            header p {
-                font-size: 15px;
-            }
-            .notion-block {
-                padding: 16px;
-            }
-            .notion-block h2, .notion-block h3 {
-                font-size: 18px;
-                margin-bottom: 12px;
-            }
-            .balance-summary {
-                grid-template-columns: 1fr; /* Stack on small screens */
-                gap: 10px;
-                padding-bottom: 16px;
-            }
-            .balance-summary .value {
-                font-size: 18px;
-            }
-             .balance-summary .main-balance {
-                font-size: 24px;
-            }
-
-            .transaction-form {
-                grid-template-columns: 1fr; /* Stack inputs on small screens */
-                gap: 8px;
-            }
-            .transaction-form button {
-                 margin-top: 8px; /* Space above button if inputs stack */
-            }
-
-            .transaction-list-header {
-                display: none; /* Hide header on mobile for simpler view */
-            }
-
-            .transaction-item {
-                grid-template-columns: 1fr auto; /* Date/Description on left, Amount/Delete on right */
-                gap: 0; /* No gap needed */
-                padding: 10px 10px;
-            }
-            .transaction-item .date {
-                grid-column: 1 / 2;
-                font-size: 12px;
-                margin-bottom: 4px;
-                padding-right: 0;
-            }
-            .transaction-item .description {
-                grid-column: 1 / 2;
-                font-size: 14px;
-                font-weight: 600;
-                padding-right: 0;
-            }
-            .transaction-item .type {
-                display: none; /* Hide type for mobile to save space */
-            }
-            .transaction-item .amount {
-                grid-column: 2 / 3;
-                grid-row: 1 / 3; /* Span date and description rows */
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: flex-end;
-                padding-right: 0; /* No right padding */
-            }
-            .delete-btn {
-                grid-column: 3 / 4;
-                grid-row: 1 / 3;
-                align-self: center;
-                justify-self: center;
-                padding: 0;
-            }
-            .transaction-item .amount span {
-                display: block;
-                font-size: 14px;
-                line-height: 1.2;
-            }
-            .transaction-item .amount .type-indicator {
-                font-size: 11px;
-                color: var(--subtle-text-color);
-            }
+            .container { padding: 0 16px; }
+            h1 { font-size: 32px; }
+            .notion-block { padding: 16px; }
+            .balance-summary { grid-template-columns: 1fr; gap: 10px; padding-bottom: 16px; }
+            .transaction-form { grid-template-columns: 1fr; gap: 8px; }
+            .transaction-form button { margin-top: 8px; }
+            .transaction-list-header { display: none; }
+            .transaction-item { grid-template-columns: 1fr auto; padding: 10px 10px; }
+            .transaction-item .date { grid-column: 1 / 2; font-size: 12px; margin-bottom: 4px; padding-right: 0; }
+            .transaction-item .description { grid-column: 1 / 2; font-size: 14px; font-weight: 600; padding-right: 0; }
+            .transaction-item .type { display: none; }
+            .transaction-item .amount { grid-column: 2 / 3; grid-row: 1 / 3; display: flex; flex-direction: column; justify-content: center; align-items: flex-end; padding-right: 0; }
+            .delete-btn { grid-column: 3 / 4; grid-row: 1 / 3; align-self: center; justify-self: center; padding: 0; }
+            #transfer-btn { margin-right: auto; }
+            .transaction-list-controls { flex-direction: column; align-items: stretch;}
+            .transaction-list-controls > div { justify-content: space-between; gap: 5px; margin-bottom: 0; }
         }
     </style>
 </head>
 <body>
-
-    <!-- 로컬 저장소 사용으로 로딩 인디케이터 필요 없음 --><div id="loading-indicator" class="hidden"></div>
-
+    
     <div class="container">
-        <!-- 헤더 및 제목 --><header>
+        
+        <header>
             <h1>
                 <span>📓</span> 용돈 기입장
             </h1>
             <p>기록은 기억을 지배합니다. 당신의 재정을 관리하세요.</p>
         </header>
 
-        <!-- 잔액 및 요약 카드 --><div class="notion-block">
+        
+        <div class="notion-block">
             <h2>재정 요약</h2>
             <div class="balance-summary">
                 <div>
@@ -462,23 +466,24 @@
             </div>
         </div>
 
-        <!-- 새 거래 추가 폼 --><section class="notion-block">
+        
+        <section class="notion-block">
             <h3>새로운 기록 추가</h3>
             <form id="transaction-form" class="transaction-form">
                 <div style="grid-column: span 1;">
-                    <input type="date" id="date" required title="날짜">
+                    <input type="date" id="date" required title="날짜" class="notion-input">
                 </div>
                 <div style="grid-column: span 2;">
-                    <input type="text" id="description" placeholder="내용 (예: 점심 식사, 용돈)" required>
+                    <input type="text" id="description" placeholder="내용 (예: 점심 식사, 용돈)" required class="notion-input">
                 </div>
                 <div style="grid-column: span 1;">
-                    <select id="type" required title="유형">
+                    <select type="type" id="type" required title="유형" class="notion-input">
                         <option value="expense">지출</option>
                         <option value="income">수입</option>
                     </select>
                 </div>
                 <div style="grid-column: span 1;">
-                    <input type="number" id="amount" placeholder="금액" required min="1">
+                    <input type="number" id="amount" placeholder="금액" required min="1" class="notion-input">
                 </div>
                 <div style="grid-column: span 1;">
                     <button type="submit" id="add-btn">
@@ -486,20 +491,37 @@
                     </button>
                 </div>
             </form>
+            <div id="user-status">
+                (데이터는 이 브라우저의 로컬 저장소에 저장됩니다.)
+            </div>
         </section>
 
-        <!-- 거래 내역 목록 --><section class="notion-block">
-            <h3>전체 거래 내역</h3>
+        
+        <section class="notion-block">
+            <div class="transaction-list-controls">
+                <h3>전체 거래 내역</h3>
+                <div>
+                    <button id="transfer-btn" title="다른 기기로 데이터를 옮기거나 백업합니다.">
+                        데이터 이전/백업
+                    </button>
+                    <select id="sort-order" class="notion-input" style="width: 150px;">
+                        <option value="desc">최신순 (날짜 내림차순)</option>
+                        <option value="asc">오래된순 (날짜 오름차순)</option>
+                    </select>
+                </div>
+            </div>
             
             <div class="transaction-list-header">
                 <div>날짜</div>
                 <div>내용</div>
                 <div style="text-align: center;">유형</div>
                 <div style="text-align: right;">금액</div>
-                <div></div> <!-- For delete button column --></div>
+                <div></div> 
+            </div>
 
             <div id="transaction-list">
-                <!-- JS로 로드되는 항목들 --></div>
+                <!-- 거래 항목이 여기에 렌더링됩니다. -->
+            </div>
 
             <p id="no-transactions" class="hidden">
                 아직 기록된 거래가 없습니다. 첫 기록을 추가해보세요!
@@ -507,7 +529,8 @@
         </section>
     </div>
 
-    <!-- 커스텀 모달 (삭제 확인용) --><div id="delete-modal" class="modal-overlay">
+    <!-- 삭제 확인 모달 -->
+    <div id="delete-modal" class="modal-overlay">
         <div class="modal-content">
             <h4>🗑️ 기록 삭제 확인</h4>
             <p>정말로 이 기록을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.</p>
@@ -521,9 +544,51 @@
             </div>
         </div>
     </div>
+    
+    <!-- 데이터 이전/복원 모달 -->
+    <div id="transfer-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h4>🔄 데이터 이전/백업</h4>
+            <p>파일 다운로드 및 업로드를 통해 다른 기기로 데이터를 옮기거나 백업할 수 있습니다.</p>
+            
+            <div style="border: 1px solid var(--border-color); border-radius: 3px; padding: 15px;">
+                
+                <!-- 1. 다운로드 (Export) UI -->
+                <p style="font-size: 14px; margin-bottom: 8px; color: var(--text-color); font-weight: 600;">1. 데이터 내보내기 (백업)</p>
+                <p style="font-size: 13px; color: var(--subtle-text-color); margin-bottom: 15px;">
+                    현재 기록을 '.용돈' 확장자 파일로 다운로드하여 백업합니다.
+                </p>
+                
+                <button id="download-data-btn" class="notion-input" style="width: auto; background-color: var(--notion-blue); color: white;">
+                    백업 파일 다운로드 (.용돈)
+                </button>
+
+                <!-- 2. 업로드 (Import) UI -->
+                <p style="font-size: 14px; margin-bottom: 8px; color: var(--notion-red); font-weight: 600; margin-top: 30px;">2. 데이터 가져오기 (복원)</p>
+                <p style="font-size: 13px; color: var(--notion-red); margin-bottom: 15px;">
+                    주의: 복원 시 **현재 브라우저의 모든 기록은 삭제**되고 업로드한 파일의 데이터로 대체됩니다.
+                </p>
+                
+                <!-- Hidden file input -->
+                <input type="file" id="file-input" accept=".용돈, .json" style="display: none;">
+
+                <div class="transfer-buttons">
+                    <button id="upload-file-btn" class="notion-input import-btn">
+                        .용돈 파일 업로드 및 복원
+                    </button>
+                    <button id="cancel-transfer-btn" class="notion-input cancel-btn" style="background-color: var(--background-color); color: var(--text-color); border-color: var(--border-color);">
+                        닫기
+                    </button>
+                </div>
+                <div id="transfer-status" class="modal-status-message"></div>
+            </div>
+        </div>
+    </div>
+
 
     <script>
-        const LOCAL_STORAGE_KEY = 'notion_style_money_book_transactions_v2'; // 버전 업그레이드
+        // 로컬 저장소 키
+        const LOCAL_STORAGE_KEY = 'notion_style_money_book_transactions_local';
 
         // DOM 요소
         const transactionForm = document.getElementById('transaction-form');
@@ -533,28 +598,30 @@
         const totalExpenseEl = document.getElementById('total-expense');
         const noTransactionsEl = document.getElementById('no-transactions');
         const addBtn = document.getElementById('add-btn');
+        const sortOrderSelect = document.getElementById('sort-order');
+        const transferBtn = document.getElementById('transfer-btn');
 
         // 모달 관련 요소
         const deleteModal = document.getElementById('delete-modal');
         const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
         const cancelDeleteBtn = document.getElementById('cancel-delete-btn');
 
+        const transferModal = document.getElementById('transfer-modal');
+        const transferStatus = document.getElementById('transfer-status');
+        
+        // 파일 이전 관련 요소 (복사/붙여넣기 관련 요소는 모두 제거됨)
+        const downloadDataBtn = document.getElementById('download-data-btn'); // New
+        const uploadFileBtn = document.getElementById('upload-file-btn');     // New
+        const fileInput = document.getElementById('file-input');             // New
+
         let transactionToDeleteId = null;
 
         // 오늘 날짜로 기본 설정
         document.getElementById('date').value = new Date().toISOString().substring(0, 10);
 
-        /**
-         * 화폐 단위 포맷 (한국 원)
-         */
-        function formatCurrency(number) {
-            // 소수점 이하는 제거
-            const cleanNumber = Math.floor(number);
-            return new Intl.NumberFormat('ko-KR', {
-                style: 'currency',
-                currency: 'KRW'
-            }).format(cleanNumber);
-        }
+        // =========================================================
+        // 1. Local Storage Handlers
+        // =========================================================
 
         /**
          * 로컬 저장소에서 거래 내역 불러오기
@@ -562,7 +629,12 @@
         function loadTransactions() {
             try {
                 const json = localStorage.getItem(LOCAL_STORAGE_KEY);
-                return json ? JSON.parse(json) : [];
+                // Ensure unique IDs are generated if not present (for compatibility)
+                const transactions = json ? JSON.parse(json) : [];
+                return transactions.map(tx => {
+                    if (!tx.id) tx.id = Date.now().toString() + Math.random().toString().slice(2, 6);
+                    return tx;
+                });
             } catch (e) {
                 console.error("로컬 저장소 불러오기 오류:", e);
                 return [];
@@ -580,40 +652,64 @@
             }
         }
 
+        // =========================================================
+        // 2. UI Rendering and Sorting
+        // =========================================================
+        
+        // 정렬 드롭다운 변경 시 UI 렌더링
+        sortOrderSelect.addEventListener('change', renderUI);
+
+
         /**
-         * UI 업데이트 및 잔액 계산
+         * UI 업데이트 및 잔액 계산 (로컬 캐시 데이터 사용)
          */
-        function updateUI() {
+        function renderUI() {
             let transactions = loadTransactions();
-            
-            // 날짜 기준으로 내림차순 정렬 (최신순)
-            transactions.sort((a, b) => (b.date > a.date) ? 1 : ((a.date > b.date) ? -1 : 0));
+            const sortOrder = sortOrderSelect.value;
+            let sortedTransactions = [...transactions];
+
+            // 1. In-memory Sorting (날짜 및 ID 기준)
+            sortedTransactions.sort((a, b) => {
+                const dateA = a.date;
+                const dateB = b.date;
+
+                // 날짜 비교
+                if (dateA < dateB) return sortOrder === 'asc' ? -1 : 1;
+                if (dateA > dateB) return sortOrder === 'asc' ? 1 : -1;
+
+                // 날짜가 같으면 ID (생성 시점)로 비교 (최신 추가된 항목이 더 뒤로 가게)
+                if (a.id < b.id) return sortOrder === 'asc' ? -1 : 1;
+                if (a.id > b.id) return sortOrder === 'asc' ? 1 : -1;
+                
+                return 0;
+            });
 
             transactionListContainer.innerHTML = '';
             let totalIncome = 0;
             let totalExpense = 0;
 
-            if (transactions.length === 0) {
+            if (sortedTransactions.length === 0) {
                 noTransactionsEl.classList.remove('hidden');
             } else {
                 noTransactionsEl.classList.add('hidden');
             }
 
-            transactions.forEach(tx => {
+            // 2. Calculate totals and render items
+            sortedTransactions.forEach(tx => {
+                // Ensure amount is a number before calculation
+                const amount = parseFloat(tx.amount);
                 if (tx.type === 'income') {
-                    totalIncome += tx.amount;
+                    totalIncome += amount;
                 } else {
-                    totalExpense += tx.amount;
+                    totalExpense += amount;
                 }
-
-                // 거래 내역 목록 항목 생성
                 const item = createTransactionItem(tx);
                 transactionListContainer.appendChild(item);
             });
             
             const currentBalance = totalIncome - totalExpense;
 
-            // 요약 업데이트
+            // 3. Update Summary
             totalIncomeEl.textContent = '+' + formatCurrency(totalIncome);
             totalExpenseEl.textContent = '-' + formatCurrency(totalExpense);
             
@@ -625,6 +721,21 @@
                  currentBalanceEl.classList.add('income-text');
             }
         }
+        
+        // =========================================================
+        // 3. UI Helpers
+        // =========================================================
+
+        /**
+         * 화폐 단위 포맷 (한국 원)
+         */
+        function formatCurrency(number) {
+            const cleanNumber = Math.floor(number);
+            return new Intl.NumberFormat('ko-KR', {
+                style: 'currency',
+                currency: 'KRW'
+            }).format(cleanNumber);
+        }
 
         /**
          * 거래 내역 목록 항목 (Div) 생성 (Notion 스타일)
@@ -634,6 +745,7 @@
             const amountClass = isExpense ? 'expense-text' : 'income-text';
             const typeText = isExpense ? '지출' : '수입';
             const typeEmoji = isExpense ? '🔻' : '🔺';
+            const amountValue = parseFloat(tx.amount);
 
             // 한국 날짜 포맷 (YYYY.MM.DD)
             const formattedDate = tx.date.replace(/-/g, '.');
@@ -645,7 +757,7 @@
                 <div class="description">${tx.description}</div>
                 <div class="type">${typeEmoji} ${typeText}</div>
                 <div class="amount ${amountClass}">
-                    ${(isExpense ? '-' : '+') + formatCurrency(tx.amount)}
+                    ${(isExpense ? '-' : '+') + formatCurrency(amountValue)}
                 </div>
                 <button data-id="${tx.id}" class="delete-btn" title="삭제">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
@@ -653,6 +765,10 @@
             `;
             return item;
         }
+
+        // =========================================================
+        // 4. CRUD Operations
+        // =========================================================
 
         /**
          * 거래 추가 핸들러
@@ -667,10 +783,11 @@
             const description = document.getElementById('description').value.trim();
             const amount = parseFloat(document.getElementById('amount').value);
             const type = document.getElementById('type').value;
-            const id = Date.now().toString(); // 고유 ID 생성
+            // 고유 ID 생성 (로컬 저장소용)
+            const id = Date.now().toString() + Math.random().toString().slice(2, 6); 
 
             if (isNaN(amount) || amount <= 0 || !description) {
-                alert("금액은 양수여야 하며 내용은 비워둘 수 없습니다.");
+                console.error("금액은 양수여야 하며 내용은 비워둘 수 없습니다.");
                 addBtn.disabled = false;
                 addBtn.textContent = '추가';
                 return;
@@ -678,12 +795,13 @@
 
             try {
                 const transactions = loadTransactions();
-                transactions.push({ id, date, description, amount, type });
+                // 금액을 숫자로 저장하도록 명확히
+                transactions.push({ id, date, description, amount: amount, type }); 
                 saveTransactions(transactions);
 
                 transactionForm.reset();
-                document.getElementById('date').value = new Date().toISOString().substring(0, 10); // 날짜 리셋
-                updateUI();
+                document.getElementById('date').value = new Date().toISOString().substring(0, 10);
+                renderUI(); // UI 갱신
                 
             } catch (error) {
                 console.error("거래 추가 오류: ", error);
@@ -692,6 +810,10 @@
                 addBtn.textContent = '추가';
             }
         });
+
+        // ----------------------
+        // Delete Modal Handlers
+        // ----------------------
 
         /**
          * 거래 삭제 핸들러 (이벤트 위임)
@@ -725,7 +847,7 @@
                 // 해당 ID를 가진 거래 제거
                 transactions = transactions.filter(tx => tx.id !== transactionToDeleteId);
                 saveTransactions(transactions);
-                updateUI();
+                renderUI(); // UI 갱신
                 
                 console.log("로컬 저장소에서 거래 삭제 완료 ID:", transactionToDeleteId);
             } catch (error) {
@@ -744,8 +866,123 @@
         });
 
 
+        // =========================================================
+        // 5. Data Transfer (File Download/Upload)
+        // =========================================================
+
+        /**
+         * 데이터를 JSON 문자열로 변환하고 .용돈 파일로 다운로드 (Export)
+         */
+        function downloadData() {
+            const transactions = loadTransactions();
+            const jsonString = JSON.stringify(transactions, null, 2);
+            
+            // 1. Blob 생성
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            // 2. 임시 <a> 태그를 이용해 다운로드 트리거
+            const a = document.createElement('a');
+            a.href = url;
+            // 파일명: 용돈_기입장_백업_YYYY-MM-DD.용돈
+            a.download = `용돈_기입장_백업_${new Date().toISOString().substring(0, 10)}.용돈`;
+            
+            // 3. 다운로드 실행 및 정리
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            transferStatus.textContent = '✅ 백업 파일 다운로드가 완료되었습니다.';
+            transferStatus.style.color = 'var(--notion-green)';
+        }
+        
+        // 다운로드 버튼 이벤트 리스너
+        downloadDataBtn.addEventListener('click', downloadData);
+
+
+        /**
+         * 파일 업로드 및 데이터 복원 (Import)
+         */
+        uploadFileBtn.addEventListener('click', () => {
+            // 숨겨진 파일 입력 필드를 클릭하여 파일 선택 대화 상자를 엽니다.
+            fileInput.click();
+            transferStatus.textContent = ''; // 상태 메시지 초기화
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) {
+                transferStatus.textContent = '❌ 파일을 선택하지 않았습니다.';
+                transferStatus.style.color = 'var(--notion-red)';
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const jsonString = event.target.result;
+                try {
+                    const importedData = JSON.parse(jsonString);
+
+                    // 간단한 유효성 검사
+                    if (!Array.isArray(importedData) || (importedData.length > 0 && 
+                        (!importedData[0].id || !importedData[0].date || typeof importedData[0].amount !== 'number'))) {
+                        
+                        throw new Error("유효하지 않은 데이터 형식입니다. 올바른 JSON 배열인지 확인해주세요.");
+                    }
+
+                    // 데이터 복원 및 덮어쓰기
+                    saveTransactions(importedData);
+                    renderUI();
+                    transferStatus.textContent = `✨ ${file.name} 파일로 데이터 복원 및 덮어쓰기가 완료되었습니다!`;
+                    transferStatus.style.color = 'var(--notion-green)';
+                    
+                } catch (error) {
+                    console.error("데이터 복원 오류:", error);
+                    transferStatus.textContent = '❌ 파일 복원에 실패했습니다: ' + (error.message || '파일 내용이 올바른 JSON 형식이 아닙니다.');
+                    transferStatus.style.color = 'var(--notion-red)';
+                }
+            };
+            
+            reader.onerror = () => {
+                 transferStatus.textContent = '❌ 파일 읽기 오류가 발생했습니다.';
+                 transferStatus.style.color = 'var(--notion-red)';
+            };
+
+            reader.readAsText(file);
+            e.target.value = ''; // 파일 입력 초기화 (같은 파일을 다시 선택할 수 있도록)
+        });
+
+
+        // ----------------------
+        // Transfer Modal Handlers
+        // ----------------------
+
+        /**
+         * 데이터 이전 모달 열기
+         */
+        transferBtn.addEventListener('click', () => {
+            transferStatus.textContent = ''; // 상태 메시지 초기화
+            transferModal.classList.add('visible');
+        });
+
+        /**
+         * 데이터 이전 모달 닫기
+         */
+        cancelTransferBtn.addEventListener('click', () => {
+            transferModal.classList.remove('visible');
+        });
+        
+        // 모달 외부 클릭 시 닫기
+        transferModal.addEventListener('click', (e) => {
+            if (e.target === transferModal) {
+                transferModal.classList.remove('visible');
+            }
+        });
+
+
         // 앱 시작 시 데이터 로드 및 UI 업데이트
-        updateUI();
+        renderUI();
     </script>
 </body>
 </html>
