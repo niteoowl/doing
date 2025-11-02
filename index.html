@@ -16,7 +16,6 @@
             --color-white: #ffffff;
             --color-black: #000000;
             --color-accent: #1E90FF; /* 포인트 블루 (Dodger Blue) */
-            --color-active-bg: #e3f2fd; /* 활성화된 아이템 배경 (매우 연한 블루) */
             --color-app-bg: #ffffff; 
             --color-content-bg: #ffffff; 
             --color-border: #e0e0e0;
@@ -93,7 +92,7 @@
             padding: 0 var(--mobile-padding-x); 
         }
         
-        /* 하단 내비게이션 바 (모바일) - 네이티브 앱 스타일로 개선 */
+        /* 하단 내비게이션 바 (모바일) - 앱 스타일로 수정 */
         .bottom-nav {
             width: 100%;
             height: var(--bottom-nav-height); 
@@ -116,55 +115,28 @@
             max-width: none;
         }
         
-        /* 내비게이션 아이템 컨테이너 */
+        /* 내비게이션 아이템 (모바일 기본: 세로 정렬) */
+        .nav-item i.material-icons { 
+            font-size: 24px; 
+            margin-bottom: 2px; 
+        }
         .nav-item {
             color: #999; 
             text-decoration: none;
             display: flex;
+            flex-direction: column; 
             align-items: center; 
             justify-content: center; 
-            flex-grow: 1; /* 공간 균등 분할 */
-            height: 100%; /* 전체 높이 사용 */
-            padding-top: 5px; /* 상하 여백 조정 */
+            gap: 0; 
+            font-size: 0.75rem; 
+            padding: 0.5rem; 
+            border-radius: 12px;
+            transition: color 0.2s ease, background-color 0.2s ease;
         }
         
-        /* 내비게이션 아이템 콘텐츠 (필 효과 적용 대상) */
-        .nav-item-content {
-            display: flex;
-            flex-direction: column; /* 아이콘과 텍스트 수직 정렬 */
-            align-items: center; 
-            justify-content: center;
-            gap: 2px; /* 아이콘과 텍스트 사이 간격 */
-            font-size: 0.7rem; /* 텍스트 크기 */
-            font-weight: 500;
-            padding: 4px 12px; /* 필 배경의 내부 여백 */
-            border-radius: 9999px; /* 알약 모양 */
-            transition: background-color 0.3s ease, color 0.3s ease;
-            text-align: center;
-            min-width: 60px; /* 최소 너비 */
-        }
-
-        /* 아이콘 스타일 */
-        .nav-item i.material-icons { 
-            font-size: 22px; /* 모바일 아이콘 크기 */
-            transition: color 0.3s ease;
-        }
-        
-        /* 활성화 상태 */
-        .nav-item.active .nav-item-content {
-            background-color: var(--color-active-bg); /* 연한 배경색 */
-        }
-        
-        .nav-item.active i.material-icons,
-        .nav-item.active span {
-            color: var(--color-accent); /* 포인트 색상으로 변경 */
-            font-weight: 700;
-        }
-        
-        /* 기본 상태 */
-        .nav-item:not(.active) i.material-icons,
-        .nav-item:not(.active) span {
-            color: #999; /* 비활성화 색상 */
+        .nav-item.active {
+            color: var(--color-accent); 
+            font-weight: 600;
         }
         
         /* ------------------ PC 환경 (Min-width: 640px) 오버라이드 ------------------ */
@@ -213,18 +185,14 @@
             /* 내비게이션 아이템 PC 스타일 (가로 정렬) */
             .nav-item i.material-icons { 
                 font-size: 20px; 
+                margin-bottom: 0; 
             }
-            .nav-item-content { 
+            .nav-item { 
                 flex-direction: row; 
                 gap: 8px; 
                 font-size: 0.9rem; 
                 padding: 0.5rem 1rem; 
-                min-width: 80px;
             } 
-            .nav-item.active i.material-icons,
-            .nav-item.active span {
-                font-weight: 600;
-            }
         }
 
         /* ------------------ 공통 리디자인 스타일 (PC/모바일 공용) ------------------ */
@@ -313,38 +281,26 @@
 <body>
 
 <div id="app-container">
-    <!-- 하단 내비게이션 바 -->
-    <div class="bottom-nav">
-        <!-- 홈 아이템 (활성화) -->
+    <!-- 하단 내비게이션 바 --><div class="bottom-nav">
         <a class="nav-item interactive active" href="/">
-            <div class="nav-item-content">
-                <i class="material-icons">home</i>
-                <span>홈</span>
-            </div>
+            <i class="material-icons">home</i>
+            <span>홈</span>
         </a>
-        <!-- 도전 아이템 -->
         <a class='nav-item interactive' href='/challenge'>
-            <div class="nav-item-content">
-                <i class="material-icons">local_fire_department</i> 
-                <span>도전</span>
-            </div>
+            <i class="material-icons">local_fire_department</i> 
+            <span>도전</span>
         </a>
-        <!-- 마이 아이템 -->
         <a class="nav-item interactive" href="/my">
-            <div class="nav-item-content">
-                <i class="material-icons">person</i>
-                <span>마이</span>
-            </div>
+            <i class="material-icons">person</i>
+            <span>마이</span>
         </a>
     </div>
 
-    <!-- 메인 헤더 -->
-    <header class="main-header" id="main-header">
+    <!-- 메인 헤더 --><header class="main-header" id="main-header">
         홈
     </header>
     
-    <!-- 탭 바 -->
-    <div class="tab-bar">
+    <!-- 탭 바 --><div class="tab-bar">
         <div class="tab-item-container">
             <div id="tab-challenge-btn" class="tab-item interactive active" onclick="switchTab('challenge')">챌린지</div>
         </div>
@@ -354,31 +310,23 @@
     </div>
 
 
-    <!-- ------------------ 뷰 컨테이너 ------------------ -->
-    <div id="home-view" class="view active">
+    <!-- ------------------ 뷰 컨테이너 ------------------ --><div id="home-view" class="view active">
         
-        <!-- 탭 내용 컨테이너 -->
-        <div id="tab-content-challenge">
+        <!-- 탭 내용 컨테이너 --><div id="tab-content-challenge">
             
-            <!-- 새싹 레벨 카드 -->
-            <div class="sprout-card interactive">
+            <!-- 새싹 레벨 카드 --><div class="sprout-card interactive">
                 <div class="sprout-card-content"> 
-                    <!-- 새싹 이미지 -->
-                    <img src="/image/sprout.webp" alt="새싹 아이콘" 
+                    <!-- 새싹 이미지 --><img src="/image/sprout.webp" alt="새싹 아이콘" 
                          onerror="this.onerror=null; this.src='https://placehold.co/45x45/ffffff/000?text=🌱'; this.alt='새싹 이모지';" />
                     <div>
-                        <!-- 사용자 닉네임 -->
-                        <p class="sprout-text-primary"><span id="user-nickname">도전러</span>님은 새싹 레벨이에요</p>
-                        <!-- 배지 -->
-                        <span class="sprout-badge">도전 1개 더 완료시 레벨업!</span>
+                        <!-- 사용자 닉네임 --><p class="sprout-text-primary"><span id="user-nickname">도전러</span>님은 새싹 레벨이에요</p>
+                        <!-- 배지 --><span class="sprout-badge">도전 1개 더 완료시 레벨업!</span>
                     </div>
                 </div>
-                <!-- 오른쪽 화살표 -->
-                <i class="material-icons arrow-icon">chevron_right</i> 
+                <!-- 오른쪽 화살표 --><i class="material-icons arrow-icon">chevron_right</i> 
             </div>
     
-            <!-- 나의 진행 중인 챌린지 리스트 -->
-            <div class="challenge-section">
+            <!-- 나의 진행 중인 챌린지 리스트 --><div class="challenge-section">
                 <h2> 
                     내 챌린지
                 </h2>
@@ -390,8 +338,7 @@
                     <!-- 내 챌린지가 없을 때 표시되는 빈 상태 -->
                     <div id="personal-challenge-empty-state" class="empty-state-section" style="display: none;">
                         <div class="empty-state-content">
-                            <!-- 박스 이미지 -->
-                            <img src="/image/box.webp" alt="빈 상자 이미지"
+                            <!-- 박스 이미지 --><img src="/image/box.webp" alt="빈 상자 이미지"
                                  onerror="this.onerror=null; this.src='https://placehold.co/120x120/f7e0c4/966A45?text=BOX'; this.alt='박스 이모지';"/>
                             <p>아직 만든 챌린지가 없어요</p>
                             <button class="create-challenge-button interactive" onclick="showModal('챌린지 만들기', '이동할 챌린지 생성 페이지가 없습니다.')">
@@ -402,8 +349,7 @@
                 </div>
             </div>
             
-            <!-- 팀 챌린지 섹션 -->
-            <div class="team-challenge-section">
+            <!-- 팀 챌린지 섹션 --><div class="team-challenge-section">
                 <h2> 
                     팀챌린지
                 </h2>
@@ -415,8 +361,7 @@
                     <!-- 팀 챌린지가 없을 때 표시되는 빈 상태 -->
                     <div id="team-challenge-empty-state" class="empty-state-section" style="display: none;">
                         <div class="empty-state-content">
-                            <!-- 박스 이미지 -->
-                            <img src="/image/box.webp" alt="열린 박스 이미지"
+                            <!-- 박스 이미지 --><img src="/image/box.webp" alt="열린 박스 이미지"
                                  onerror="this.onerror=null; this.src='https://placehold.co/120x120/f7e0c4/966A45?text=BOX'; this.alt='박스 이모지';"/>
                             <p>아직 가입한 팀챌린지가 없어요</p>
                             <button class="explore-button interactive" onclick="showModal('팀 챌린지 탐색', '이동할 팀 챌린지 탐색 페이지가 없습니다.')">
@@ -428,8 +373,7 @@
             </div>
         </div>
         
-        <!-- 인사이트 탭 내용 (임시) -->
-        <div id="tab-content-insight" style="display: none;"> 
+        <!-- 인사이트 탭 내용 (임시) --><div id="tab-content-insight" style="display: none;"> 
             <h3>인사이트 준비 중</h3> 
             <p>나의 도전 기록을 분석하여 통찰력을 제공해 드릴 예정입니다.</p>
         </div>
@@ -437,8 +381,7 @@
     
 </div>
 
-<!-- 모달 팝업 구조 (메시지 박스 용도) -->
-<div id="modal">
+<!-- 모달 팝업 구조 (메시지 박스 용도) --><div id="modal">
     <div class="modal-content">
         <h3 class="modal-title" id="modal-title"></h3>
         <p class="modal-text" id="modal-text"></p>
@@ -609,8 +552,7 @@
                     <p>${daysText}</p>
                 </div>
                 <div class="fire-icon-wrap">
-                    <!-- 불 이미지 -->
-                    <img src="/image/fire.webp" alt="성공 불꽃 아이콘"
+                    <!-- 불 이미지 --><img src="/image/fire.webp" alt="성공 불꽃 아이콘"
                          onerror="this.onerror=null; this.src='https://placehold.co/40x40/ffffff/ff0000?text=🔥'; this.alt='불꽃 이모지';" />
                     <span class="fire-count">${successCount}</span>
                 </div>
