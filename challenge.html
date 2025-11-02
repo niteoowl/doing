@@ -2,13 +2,14 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
+    <!-- 뷰포트 메타 태그: 반응형 디자인 및 노치(safe area) 처리를 위해 수정 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"> 
     <title>Doing! - 챌린지</title>
     <!-- Favicon 경로 설정 --><link rel="icon" type="image/x-icon" href="/image/favicon.ico">
     <!-- Pretendard 폰트 CDN 적용 --><link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
-    <!-- Google Material Icons (Google Fonts Icons) 추가 --><link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Google Material Icons (Google Fonts Icons) 추가 --><link hㅁref="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
-    <!-- 공통 및 반응형 스타일 -->
+    <!-- 공통 및 반응형 스타일 적용 (index.html과 동일) -->
     <style>
         /* 기본 스타일 및 반응형 변수 */
         :root {
@@ -18,7 +19,7 @@
             --color-app-bg: #ffffff; 
             --color-content-bg: #ffffff; 
             --color-border: #e0e0e0;
-            --bottom-nav-height: 60px; 
+            --bottom-nav-height: 65px; 
             --pc-max-width: 1200px; 
             --header-height: 4.5rem; 
             --mobile-padding-x: 1.5rem; 
@@ -57,14 +58,18 @@
 
         /* ------------------ 모바일 기본 스타일 (Default) ------------------ */
         
+        /* 뷰 컨텐츠 패딩: 모바일 패딩 적용. 하단은 하단바 높이 + Safe Area 확보 */
         .view {
             padding: 1.5rem var(--mobile-padding-x); 
             padding-bottom: calc(1.5rem + var(--bottom-nav-height) + max(0px, env(safe-area-inset-bottom))); 
             padding-top: 0; 
         }
 
-        /* 메인 헤더: 챌린지 탭 버튼이 타이틀 위치를 차지하도록 설정 */
+        /* 메인 헤더: 모바일 패딩 및 폰트 크기 조정 */
         .main-header {
+            font-size: 1.75rem; 
+            font-weight: 800; 
+            color: var(--color-black); 
             display: flex;
             align-items: center; 
             min-height: var(--header-height); 
@@ -73,98 +78,70 @@
             top: 0;
             z-index: 10;
             background-color: var(--color-app-bg);
-            justify-content: flex-start; 
-        }
-
-        /* 헤더 탭 버튼 컨테이너 */
-        .header-tab-buttons {
-            display: flex;
-            align-items: center;
-        }
-
-        /* 헤더 탭 아이템 스타일 (타이틀 크기 및 굵기 적용) */
-        .header-tab-item { 
-            font-size: 1.75rem; /* 타이틀 폰트 크기 적용 */
-            font-weight: 400; /* 미활성화 시 폰트 굵기 */
-            color: #ccc; 
-            cursor: pointer; 
-            padding: 0; 
-            transition: color 0.2s ease, font-weight 0.2s ease;
-        }
-        .header-tab-item.active { 
-            color: var(--color-black); 
-            font-weight: 800; /* 활성화 시 타이틀 굵기로 */
-        }
-        .header-tab-item:not(:last-child) {
-            margin-right: 1.5rem; /* 버튼 사이 간격 */
-        }
-
-        /* 검색 및 생성 버튼을 위한 컨트롤 바 */
-        .control-bar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 var(--mobile-padding-x);
-            margin-top: 1rem;
-            margin-bottom: 1rem;
-            position: sticky;
-            top: var(--header-height);
-            z-index: 9;
-            background-color: var(--color-app-bg);
-        }
-
-        /* 검색 입력란 */
-        .search-input-container {
-            position: relative;
-            flex-grow: 1;
-            margin-right: 1rem;
-            padding: 0;
-        }
-        .search-input {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            padding-left: 3rem; /* 아이콘 공간 확보 */
-            border: none;
-            background-color: #f5f5f5;
-            border-radius: 12px;
-            font-size: 1rem;
-            transition: all 0.2s;
-        }
-        .search-input:focus {
-            background-color: #fff;
-            box-shadow: 0 0 0 2px var(--color-accent);
-        }
-        .search-input-container .material-icons {
-            position: absolute;
-            left: 1rem; 
-            top: 50%;
-            transform: translateY(-50%);
-            color: #999;
-            font-size: 24px;
         }
         
-        /* 챌린지 생성 버튼 */
-        .create-btn {
-            background-color: transparent;
-            border: none;
-            color: var(--color-black);
-            font-size: 32px;
-            font-weight: 300;
-            padding: 0;
-            width: 32px;
-            height: 32px;
+        /* 챌린지 탭 전용: 헤더를 탭으로 사용하고 '+' 버튼을 오른쪽에 배치 */
+        .challenge-tab-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%; 
+            padding: 0 var(--mobile-padding-x); 
+            min-height: var(--header-height); 
+            position: sticky; 
+            top: 0;
+            z-index: 10;
+            background-color: var(--color-app-bg);
+            /* 수정: 홈 화면과 일관되게 하단 경계선 제거 */
+            border-bottom: none;
+        }
+        
+        .challenge-tab-group {
+            display: flex;
+            flex-grow: 1;
+        }
+
+        .challenge-tab-item {
+            font-size: 1.5rem; /* 홈 헤더 폰트보다 약간 작게 */
+            font-weight: 800; 
+            color: #ccc; 
+            cursor: pointer; 
+            position: relative; 
+            transition: color 0.2s ease; 
+            padding: 0 0.75rem 0.5rem 0; /* padding 조정 */
+            margin-right: 1.25rem; /* 탭 간격 */
+        }
+        
+        .challenge-tab-item.active { 
+            color: var(--color-black); 
+        }
+        
+        /* 수정: 활성 탭 밑줄 제거 (요청사항 반영) */
+        /* .challenge-tab-item.active::after { 
+            content: ''; 
+            position: absolute; 
+            bottom: -1px; 
+            left: 0; 
+            width: 100%; 
+            height: 3px; 
+            background-color: var(--color-black); 
+            border-radius: 9999px; 
+        } */
+        
+        .add-button {
             display: flex;
             align-items: center;
             justify-content: center;
+            width: 40px;
+            height: 40px;
             cursor: pointer;
-            transition: opacity 0.2s;
-            flex-shrink: 0;
-        }
-        .create-btn:hover {
-            opacity: 0.7;
+            color: var(--color-black);
+            font-size: 2rem;
+            font-weight: 200;
         }
 
-        /* 하단 내비게이션 바 (모바일) */
+
+        /* 하단 내비게이션 바 (모바일) - 앱 스타일로 수정 */
         .bottom-nav {
             width: 100%;
             height: var(--bottom-nav-height); 
@@ -176,16 +153,22 @@
             position: fixed;
             bottom: 0;
             top: auto;
+            /* Safe Area까지 배경색을 확장 */
             padding-bottom: max(0px, env(safe-area-inset-bottom)); 
+            /* 그림자 제거 및 1px 테두리로 변경 */
             border-top: 1px solid var(--color-border); 
-            box-shadow: 0 -1px 8px rgba(0, 0, 0, 0.05); 
+            box-shadow: none; 
+            transition: box-shadow 0.3s ease;
             left: 0;
             transform: none;
             max-width: none;
         }
         
-        /* 내비게이션 아이템 */
-        .nav-item i.material-icons { font-size: 24px; margin-bottom: 2px; }
+        /* 내비게이션 아이템 (모바일 기본: 세로 정렬) */
+        .nav-item i.material-icons { 
+            font-size: 24px; 
+            margin-bottom: 2px; 
+        }
         .nav-item {
             color: #999; 
             text-decoration: none;
@@ -195,23 +178,74 @@
             justify-content: center; 
             gap: 0; 
             font-size: 0.75rem; 
-            padding: 0.5rem; 
+            /* 터치 영역 확대를 위해 패딩 증가 */
+            padding: 0.75rem 0.5rem; 
             border-radius: 12px;
             transition: color 0.2s ease, background-color 0.2s ease;
         }
-        .nav-item.active { color: var(--color-accent); font-weight: 600; }
         
-        /* 오늘 참여/미참여 섹션 헤더 */
-        .section-header {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--color-black); 
-            opacity: 0.7; 
-            margin-top: 2rem;
-            margin-bottom: 1rem;
+        .nav-item.active {
+            color: var(--color-accent); 
+            font-weight: 600;
         }
         
-        /* 챌린지 리스트 아이템 */
+        /* ------------------ PC 환경 (Min-width: 640px) 오버라이드 ------------------ */
+        @media (min-width: 640px) {
+            
+            /* PC Body 중앙 정렬 */
+            body {
+                justify-content: center;
+                align-items: flex-start; 
+            }
+        
+            #app-container {
+                /* PC: 최대 너비 적용 */
+                max-width: var(--pc-max-width); 
+                box-shadow: none; 
+            }
+        
+            /* 뷰 컨텐츠 PC 패딩 */
+            .view {
+                padding: 1.5rem 3rem; 
+                padding-bottom: calc(1.5rem + var(--bottom-nav-height)); 
+            }
+            
+            /* 챌린지 탭 헤더 PC 스타일 */
+            .challenge-tab-header {
+                padding: 0 3rem; 
+            }
+
+            .challenge-tab-item {
+                font-size: 2rem; 
+            }
+            
+            /* 하단 내비게이션 PC 스타일 */
+            .bottom-nav {
+                /* 최대 너비 및 중앙 정렬 */
+                left: 50%;
+                transform: translateX(-50%);
+                max-width: var(--pc-max-width);
+                padding-bottom: 0; 
+                /* PC에서는 그림자가 필요 없으므로 제거 */
+                box-shadow: none; 
+            }
+        
+            /* 내비게이션 아이템 PC 스타일 (가로 정렬) */
+            .nav-item i.material-icons { 
+                font-size: 20px; 
+                margin-bottom: 0; 
+            }
+            .nav-item { 
+                flex-direction: row; 
+                gap: 8px; 
+                font-size: 0.9rem; 
+                padding: 0.5rem 1rem; 
+            } 
+        }
+
+        /* ------------------ 공통 리디자인 스타일 (PC/모바일 공용) ------------------ */
+        
+        /* 챌린지 리스트 스타일 (index.html에서 복사) */
         .challenge-list-item { 
             display: flex; 
             align-items: center; 
@@ -235,27 +269,62 @@
             justify-content: center; 
             flex-shrink: 0; 
         }
-        /* 불꽃 아이콘 (placeholder 사용) */
-        .fire-icon-wrap span { 
-            font-size: 30px;
-        }
+        .fire-icon-wrap img { width: 30px; height: 30px; margin-bottom: 4px; }
         .fire-count { position: static; font-size: 0.875rem; font-weight: 700; color: var(--color-black); transform: none; }
         
-        /* 로딩 스피너 */
-        .spin {
-            animation: spin 1.5s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .challenge-section-status { 
+            font-size: 0.9rem; 
+            font-weight: 600; 
+            color: #888; 
+            margin-top: 1rem;
+            margin-bottom: 0.5rem; 
         }
 
-        /* 공통 리디자인 스타일 */
+        /* Empty State 공통 스타일 (index.html에서 복사) */
+        .empty-state-section { margin-top: 1rem; margin-bottom: 2rem; }
+        .empty-state-content { 
+            padding: 0; 
+            background-color: transparent; 
+            border-radius: 0; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            text-align: center;
+        }
+        .empty-state-content img { 
+            width: 120px; 
+            height: auto; 
+            margin-bottom: 20px; 
+        }
+        .empty-state-content p { 
+            font-size: 1.1rem; 
+            font-weight: 600; 
+            color: #4b5563; 
+            margin-bottom: 20px; 
+        }
+        .create-challenge-button, .explore-button { 
+            width: 100%; 
+            max-width: 250px; 
+            padding: 0.75rem 1.5rem; 
+            background-color: var(--color-black); 
+            color: var(--color-white); 
+            border: none; 
+            border-radius: 9999px; 
+            font-size: 1rem; 
+            font-weight: 700; 
+            cursor: pointer; 
+            transition: opacity 0.2s; 
+            box-shadow: none; 
+        }
+        .create-challenge-button:hover, .explore-button:hover { opacity: 0.8; } 
+
+        /* Ripple Effect (물결 효과) - index.html에서 복사 */
         .interactive { position: relative; overflow: hidden; transform: translate3d(0, 0, 0); }
         .ripple { position: absolute; border-radius: 50%; transform: scale(0); animation: ripple-animation 0.5s linear; background-color: rgba(0, 0, 0, 0.1); pointer-events: none; z-index: 100; }
         @keyframes ripple-animation { to { transform: scale(4); opacity: 0; } }
-
-        /* 모달 스타일 */
+        
+        /* 모달 스타일 (index.html에서 복사) */
         #modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0, 0, 0, 0.4); justify-content: center; align-items: center; }
         .modal-content { background-color: var(--color-content-bg); padding: 30px; padding-bottom: 20px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2); width: 90%; max-width: 400px; text-align: center; transform: scale(0.9); opacity: 0; transition: all 0.2s ease-out; }
         .modal-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 10px; color: var(--color-black); }
@@ -263,85 +332,99 @@
         #modal-close-button { width: 100%; padding: 0.75rem; margin-top: 10px; background-color: var(--color-accent); color: var(--color-white); border: none; border-radius: 12px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s; }
         #modal-close-button:hover { background-color: #0d79e6; }
 
-        /* ------------------ PC 환경 (Min-width: 640px) 오버라이드 ------------------ */
-        @media (min-width: 640px) {
-            body { justify-content: center; align-items: flex-start; }
-            #app-container { max-width: var(--pc-max-width); box-shadow: none; }
-            .view { padding: 1.5rem 3rem; padding-bottom: calc(1.5rem + var(--bottom-nav-height)); }
-            
-            .main-header { padding: 0 3rem; }
-            .control-bar { padding: 0 3rem; }
-
-            /* 하단 내비게이션 PC 스타일 */
-            .bottom-nav { left: 50%; transform: translateX(-50%); max-width: var(--pc-max-width); padding-bottom: 0; }
-            /* 내비게이션 아이템 PC 스타일 */
-            .nav-item i.material-icons { font-size: 20px; margin-bottom: 0; }
-            .nav-item { flex-direction: row; gap: 8px; font-size: 0.9rem; padding: 0.5rem 1rem; } 
-        }
-
     </style>
 </head>
 <body>
 
 <div id="app-container">
-    
-    <!-- 메인 헤더: 챌린지 탭 버튼이 타이틀 위치를 차지하도록 설정 -->
-    <header class="main-header">
-        <div class="header-tab-buttons">
-            <div id="tab-my-btn" class="header-tab-item interactive active" onclick="switchTab('my')">내 챌린지</div>
-            <div id="tab-team-btn" class="header-tab-item interactive" onclick="switchTab('team')">팀 챌린지</div>
-        </div>
-    </header>
-
-    <!-- 검색 및 생성 컨트롤 바 -->
-    <div class="control-bar">
-        <div class="search-input-container">
-            <i class="material-icons">search</i>
-            <input type="text" id="search-input" class="search-input" placeholder="관심 챌린지를 검색해보세요" />
-        </div>
-        <!-- 챌린지 생성 버튼 (+) -->
-        <button class="create-btn interactive" 
-                onclick="showModal('챌린지 만들기', '이동할 챌린지 생성 페이지가 없습니다.')">
-            <i class="material-icons">add</i>
-        </button>
-    </div>
-
-    <!-- ------------------ 뷰 컨테이너 ------------------ -->
-    <div id="challenge-view" class="view">
-        
-        <!-- 로딩 스피너 -->
-        <div id="loading-spinner" style="text-align: center; padding-top: 4rem; display: none;">
-            <i class="material-icons spin" style="font-size: 32px; color: var(--color-accent);">sync</i>
-            <p style="color: #888;">챌린지를 불러오는 중...</p>
-        </div>
-
-        <!-- 내 챌린지 탭 내용 (여기에 데이터가 렌더링됨) -->
-        <div id="tab-content-my">
-            <!-- Firestore 데이터 기반으로 '오늘 미참여'와 '오늘 참여' 섹션이 생성됩니다. -->
-        </div>
-        
-        <!-- 팀 챌린지 탭 내용 -->
-        <div id="tab-content-team" style="display: none;"> 
-            <!-- Firestore 데이터 기반으로 렌더링되거나 빈 상태 메시지가 표시됩니다. -->
-        </div>
-    </div>
-    
-    <!-- 하단 내비게이션 바 (challenge 탭 활성화) -->
+    <!-- 하단 내비게이션 바 (challenge 탭 active) -->
     <div class="bottom-nav">
-        <a class="nav-item interactive" href="index.html">
+        <a class="nav-item interactive" href="/">
             <i class="material-icons">home</i>
             <span>홈</span>
         </a>
-        <a class='nav-item interactive active' href='challenge.html'>
+        <a class='nav-item interactive active' href='/challenge'>
             <i class="material-icons">local_fire_department</i> 
             <span>챌린지</span>
         </a>
-        <a class="nav-item interactive" onclick="showModal('마이 페이지', '마이 페이지로 이동할 예정입니다.')">
+        <a class="nav-item interactive" href="/my">
             <i class="material-icons">person</i>
             <span>마이</span>
         </a>
     </div>
 
+    <!-- 챌린지 탭 헤더 (내 챌린지 / 팀 챌린지 & + 버튼) -->
+    <header class="challenge-tab-header">
+        <div class="challenge-tab-group">
+            <div id="tab-personal-btn" class="challenge-tab-item interactive active" onclick="switchChallengeTab('personal')">내 챌린지</div>
+            <div id="tab-team-btn" class="challenge-tab-item interactive" onclick="switchChallengeTab('team')">팀챌린지</div>
+        </div>
+        <div class="add-button interactive" onclick="showModal('챌린지 만들기', '이동할 챌린지 생성 페이지가 없습니다.')">
+            +
+        </div>
+    </header>
+    
+    <!-- ------------------ 뷰 컨테이너 ------------------ -->
+    <div id="challenge-view" class="view active">
+        
+        <!-- 내 챌린지 탭 내용 -->
+        <div id="tab-content-personal">
+            
+            <!-- 오늘 미참여 챌린지 목록 -->
+            <div id="personal-missed-list-container">
+                <p id="challenge-missed-status" class="challenge-section-status" style="display: none;">오늘 미참여</p>
+                <div id="personal-missed-challenge-list" class="challenge-list">
+                    <!-- 미참여 챌린지 목록이 로드될 곳 -->
+                    <p id="loading-message-personal">챌린지 목록을 불러오는 중...</p>
+                </div>
+            </div>
+            
+            <!-- 오늘 참여 챌린지 목록 -->
+            <div id="personal-participated-list-container" style="margin-top: 2rem;">
+                <p id="challenge-participated-status" class="challenge-section-status" style="display: none;">오늘 참여</p>
+                <div id="personal-participated-challenge-list" class="challenge-list">
+                    <!-- 참여 챌린지 목록이 로드될 곳 -->
+                </div>
+            </div>
+
+            <!-- 내 챌린지가 없을 때 표시되는 빈 상태 -->
+            <div id="personal-challenge-empty-state" class="empty-state-section" style="display: none;">
+                <div class="empty-state-content">
+                    <!-- 박스 이미지 -->
+                    <img src="/image/box.webp" alt="빈 상자 이미지"
+                         onerror="this.onerror=null; this.src='https://placehold.co/120x120/f7e0c4/966A45?text=BOX'; this.alt='박스 이모지';"/>
+                    <p>아직 진행 중인 챌린지가 없어요</p>
+                    <button class="create-challenge-button interactive" onclick="showModal('챌린지 만들기', '이동할 챌린지 생성 페이지가 없습니다.')">
+                        챌린지 만들기
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 팀 챌린지 탭 내용 (초기에는 숨김) -->
+        <div id="tab-content-team" style="display: none;"> 
+            
+            <!-- 팀 챌린지 목록 -->
+            <div id="team-challenge-list-container">
+                <div id="team-challenge-list" class="challenge-list">
+                    <p id="loading-message-team">팀 챌린지 목록을 불러오는 중...</p>
+                </div>
+                <!-- 팀 챌린지가 없을 때 표시되는 빈 상태 -->
+                <div id="team-challenge-empty-state" class="empty-state-section" style="display: none;">
+                    <div class="empty-state-content">
+                        <!-- 박스 이미지 -->
+                        <img src="/image/box.webp" alt="열린 박스 이미지"
+                             onerror="this.onerror=null; this.src='https://placehold.co/120x120/f7e0c4/966A45?text=BOX'; this.alt='박스 이모지';"/>
+                        <p>아직 가입한 팀챌린지가 없어요</p>
+                        <button class="explore-button interactive" onclick="showModal('팀 챌린지 탐색', '이동할 팀 챌린지 탐색 페이지가 없습니다.')">
+                            탐색하기
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
 </div>
 
 <!-- 모달 팝업 구조 (메시지 박스 용도) -->
@@ -354,23 +437,48 @@
 </div>
 
 <script type="module">
-    // Global Variables for Firebase/Canvas environment
-    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-    const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-
-    // Firebase Import
+    // Firebase SDK Import
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, collection, query, onSnapshot, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { 
+        getAuth, 
+        onAuthStateChanged,
+        signInWithCustomToken 
+    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { 
+        getFirestore, 
+        collection, 
+        query, 
+        onSnapshot, 
+        where 
+    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    // Firebase Global Instances
-    let db;
-    let auth;
-    let currentUserId = null;
-    let currentTab = 'my';
-    let unsubscribeMyChallenges = null;
-    let unsubscribeTeamChallenges = null;
+    // --- Firebase 설정 및 초기화 ---
+    // 개발 테스트용 임시 설정 (배포 시 __firebase_config가 사용됨)
+    const userFirebaseConfig = { 
+        apiKey: "AIzaSyBMowSIHMdz69dYY-mAW8l6VjKxBW54SfU",
+        authDomain: "doing-a.firebaseapp.com",
+        projectId: "doing-a",
+        storageBucket: "doing-a.firebasestorage.app",
+        messagingSenderId: "24279439955",
+        appId: "1:24279439955:web:2bf5c965de1b0a236884a6",
+        measurementId: "G-VJ5YQRGNE3"
+    };
     
+    // 환경 변수 우선 사용 (필수 조건)
+    const firebaseConfig = typeof __firebase_config !== 'undefined' && JSON.parse(__firebase_config).apiKey 
+        ? JSON.parse(__firebase_config) 
+        : userFirebaseConfig;
+        
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+    
+    // 글로벌 변수
+    let currentUserId = null;
+    let isAuthAttempted = false; 
+
     // --- UI/UX 함수 ---
     const modal = document.getElementById('modal');
     const modalTitle = document.getElementById('modal-title');
@@ -401,7 +509,35 @@
     }
     
     /**
-     * Ripple Effect 추가 함수
+     * 챌린지 탭 (내 챌린지 / 팀 챌린지) 전환 함수
+     */
+    window.switchChallengeTab = function(tabName) {
+        const personalContent = document.getElementById('tab-content-personal');
+        const teamContent = document.getElementById('tab-content-team');
+        const personalBtn = document.getElementById('tab-personal-btn');
+        const teamBtn = document.getElementById('tab-team-btn');
+        
+        if (tabName === 'personal') {
+            personalContent.style.display = 'block';
+            teamContent.style.display = 'none';
+            personalBtn.classList.add('active');
+            teamBtn.classList.remove('active');
+        } else if (tabName === 'team') {
+            personalContent.style.display = 'none';
+            teamContent.style.display = 'block';
+            teamBtn.classList.add('active');
+            personalBtn.classList.remove('active');
+            
+            // 팀 챌린지 탭으로 이동 시, 팀 챌린지 데이터 로드 시도
+            // 이미 로드되었으면 함수 내부에서 리턴됨
+            if (currentUserId) {
+                 fetchTeamChallenges();
+            }
+        }
+    }
+    
+    /**
+     * Ripple Effect 추가 함수 (index.html에서 복사)
      */
     function addRippleEffect(event) {
         const button = event.currentTarget;
@@ -425,313 +561,284 @@
         });
     }
 
-    // --- Firebase/Data 함수 ---
-    
-    // Firestore 연결 오류 또는 데이터가 없을 시 UI 구조 유지를 위한 최소한의 더미 데이터
-    const dummyChallenges = [
-         { id: 'dummy-1', name: 'UI 테스트 챌린지 (오늘 참여)', totalDays: 18, dailyCheckCount: 16, lastCheckInDate: new Date().toDateString() },
-         { id: 'dummy-2', name: 'UI 테스트 챌린지 (미참여)', totalDays: 100, dailyCheckCount: 41, lastCheckInDate: 'Thu Oct 31 2024' },
-    ];
-
-
     /**
-     * 챌린지 아이템을 HTML 문자열로 생성
+     * 오늘 날짜를 YYYY-MM-DD 형식의 문자열로 반환
      */
-    function createChallengeItemHTML(challenge) {
-        const fireCount = challenge.dailyCheckCount || 0;
-        const totalDays = challenge.totalDays || 1;
-        const remainingDays = Math.max(0, totalDays - fireCount);
-        // lastCheckInDate 필드는 toDateString() 포맷으로 저장된다고 가정
-        const statusText = `${remainingDays}일 남음 · ${fireCount}/${totalDays}일`;
-        
-        return `
-            <div class="challenge-list-item interactive" data-id="${challenge.id}"
-                 onclick="showModal('${challenge.name}', '총 ${totalDays}일 중 현재까지 ${fireCount}회 성공. 잔여일 ${remainingDays}일.')">
-                <div class="challenge-info">
-                    <h3>${challenge.name}</h3>
-                    <p>${statusText}</p>
-                </div>
-                <!-- 불꽃 아이콘 및 횟수 -->
-                <div class="fire-icon-wrap">
-                    <span style="font-size: 30px;">🔥</span>
-                    <span class="fire-count">${fireCount}</span>
-                </div>
-            </div>
-        `;
+    function getTodayDateString() {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
     }
 
+    // --- 데이터 및 비즈니스 로직 ---
+
     /**
-     * 챌린지 데이터를 분류하여 렌더링
+     * 챌린지 카드를 렌더링합니다. (개인/팀 공통)
      */
-    function renderChallenges(challenges, targetElementId, isErrorFallback = false) {
-        const container = document.getElementById(targetElementId);
-        if (!container) return;
-
-        // 에러 상황이 아니고, 데이터가 없을 때 빈 상태 메시지 표시
-        if (challenges.length === 0 && !isErrorFallback) {
-             const message = targetElementId === 'tab-content-my' 
-                ? '아직 참여 중인 챌린지가 없습니다.' 
-                : '참여할 수 있는 팀 챌린지를 찾아보세요';
-             const buttonText = targetElementId === 'tab-content-my' 
-                ? '새로운 챌린지 시작하기' 
-                : '팀 챌린지 탐색하기';
-
-             container.innerHTML = `
-                <div class="empty-state-section" style="text-align: center; padding-top: 3rem;">
-                    <div class="empty-state-content">
-                         <i class="material-icons" style="font-size: 80px; color: #f0f0f0; margin-bottom: 1rem;">sentiment_dissatisfied</i>
-                         <p style="margin-bottom: 3rem; color: #888;">${message}</p>
-                         <button class="explore-button interactive" 
-                                 style="max-width: 300px; background-color: var(--color-accent); color: var(--color-white); padding: 0.75rem 1.5rem; border-radius: 12px;" 
-                                 onclick="showModal('챌린지 탐색', '이동할 챌린지 탐색 페이지가 없습니다.')">
-                             ${buttonText}
-                         </button>
-                    </div>
-                </div>
-             `;
-             return; 
-        }
-        
-        // 데이터가 있을 경우: 오늘 참여/미참여 섹션 생성
-        const missedSection = document.createElement('div');
-        missedSection.innerHTML = '<p class="section-header">오늘 미참여</p><div class="challenge-list"></div>';
-        
-        const participatedSection = document.createElement('div');
-        participatedSection.innerHTML = '<p class="section-header">오늘 참여</p><div class="challenge-list"></div>';
-
-        const missedList = missedSection.querySelector('.challenge-list');
-        const participatedList = participatedSection.querySelector('.challenge-list');
-
-        const today = new Date().toDateString();
+    function renderChallenges(listId, challenges, todayString) {
+        const listContainer = document.getElementById(listId);
+        listContainer.innerHTML = ''; 
+        const today = new Date().getTime();
         
         challenges.forEach(challenge => {
-            // Firestore 필드 lastCheckInDate가 오늘 날짜와 같으면 참여로 간주
-            // Firestore Timestamp 객체일 경우 toDate().toDateString()을 호출해야 하므로, 문자열이라면 그대로 사용
-            const lastCheckInDateString = (challenge.lastCheckInDate && typeof challenge.lastCheckInDate.toDate === 'function') 
-                ? challenge.lastCheckInDate.toDate().toDateString()
-                : challenge.lastCheckInDate;
-
-            const isParticipatedToday = lastCheckInDateString === today; 
-            const itemHTML = createChallengeItemHTML({
-                ...challenge,
-                lastCheckInDate: lastCheckInDateString // HTML 생성 함수에 문자열로 전달
-            });
+            // Firestore Timestamp를 Date로 변환 후 getTime() 호출
+            const startedAt = challenge.startDate ? new Date(challenge.startDate).getTime() : today;
+            const durationDays = challenge.durationDays || 30;
+            const proofHistory = challenge.proofHistory || {};
             
-            if (isParticipatedToday) {
-                participatedList.innerHTML += itemHTML;
-            } else {
-                missedList.innerHTML += itemHTML;
-            }
+            // 실제 성공 횟수 (proofHistory 객체의 키 개수)
+            const successCount = Object.keys(proofHistory).length; 
+            
+            // 오늘 참여 여부 확인
+            const isTodayProofed = !!proofHistory[todayString];
+
+            // 시작일로부터 경과일 계산 (챌린지의 시작일이 과거라고 가정)
+            const msPerDay = 1000 * 60 * 60 * 24;
+            // 1일을 더하여 시작일 포함 계산
+            const daysPassed = Math.max(1, Math.ceil((today - startedAt) / msPerDay) + 1); 
+
+            // 잔여일 (남은 기간)
+            const remainingDays = Math.max(0, durationDays - daysPassed); 
+
+            // 표시할 진행도 문구
+            const daysText = `${remainingDays}일 남음 · ${successCount}/${durationDays}일`;
+
+            const card = document.createElement('div');
+            card.className = 'challenge-list-item interactive';
+            
+            // 챌린지 제목에 따라 모달 메시지 변경
+            card.setAttribute('onclick', `showModal('${challenge.title}', '총 ${durationDays}일 중 현재까지 ${successCount}회 성공했습니다. 남은 일수: ${remainingDays}일. ${isTodayProofed ? '오늘 인증 완료.' : '오늘 인증이 필요합니다.'}')`);
+
+            card.innerHTML = `
+                <div class="challenge-info">
+                    <h3>${challenge.title}</h3>
+                    <p>${daysText}</p>
+                </div>
+                <div class="fire-icon-wrap" style="${isTodayProofed ? 'background-color: #ffe0b2;' : 'background-color: #f5f5f5;'}">
+                    <!-- 불 이미지 (오늘 참여 시 색상 강조) -->
+                    <img src="/image/fire.webp" alt="성공 불꽃 아이콘"
+                         onerror="this.onerror=null; this.src='https://placehold.co/40x40/ffffff/${isTodayProofed ? 'ff9800' : 'ff0000'}?text=🔥'; this.alt='불꽃 이모지';" />
+                    <span class="fire-count">${successCount}</span>
+                </div>
+            `;
+            listContainer.appendChild(card);
         });
 
-        container.innerHTML = ''; // 기존 내용 지우기
-        
-        if (missedList.children.length > 0) {
-            container.appendChild(missedSection);
-        }
-        if (participatedList.children.length > 0) {
-            container.appendChild(participatedSection);
-        }
-        
-        // 렌더링 후 Ripple Effect 재적용 
-        document.querySelectorAll('.interactive').forEach(el => {
-            if (!el.hasAttribute('data-ripple-attached')) {
-                el.addEventListener('mousedown', addRippleEffect);
-                el.setAttribute('data-ripple-attached', 'true');
-            }
-        });
+        // 로딩 메시지 제거
+        document.getElementById(`loading-message-${listId.includes('personal') ? 'personal' : 'team'}`)?.remove(); 
     }
 
     /**
-     * 챌린지 데이터 리스너 해지
+     * Firestore에서 개인 챌린지 목록을 실시간으로 가져옵니다.
      */
-    function unsubscribeAll() {
-        if (unsubscribeMyChallenges) {
-            unsubscribeMyChallenges();
-            unsubscribeMyChallenges = null;
-        }
-        if (unsubscribeTeamChallenges) {
-            unsubscribeTeamChallenges();
-            unsubscribeTeamChallenges = null;
-        }
-    }
+    function fetchPersonalChallenges() {
+        if (!currentUserId) return;
 
-    /**
-     * 챌린지 데이터 리스너 설정: Firestore에서 실시간으로 데이터를 가져옵니다.
-     */
-    function setupChallengeListener(tab) {
-        if (!db || !currentUserId) {
-            console.error("Firebase is not initialized or user is not logged in.");
-            return;
-        }
+        const missedList = document.getElementById('personal-missed-challenge-list');
+        const participatedList = document.getElementById('personal-participated-challenge-list');
+        const emptyState = document.getElementById('personal-challenge-empty-state');
+        const missedStatus = document.getElementById('challenge-missed-status');
+        const participatedStatus = document.getElementById('challenge-participated-status');
+
+        const todayString = getTodayDateString();
         
-        unsubscribeAll(); 
-
-        const loadingSpinner = document.getElementById('loading-spinner');
-        loadingSpinner.style.display = 'block';
+        // 개인 챌린지 컬렉션 경로
+        const path = `/artifacts/${appId}/users/${currentUserId}/challenges`;
+        const challengesRef = collection(db, path);
         
-        document.getElementById('tab-content-my').innerHTML = '';
-        document.getElementById('tab-content-team').innerHTML = '';
+        const q = query(challengesRef); 
 
-        let collectionPath;
-        let targetElementId;
-        let unsubscribe;
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            const allChallenges = [];
+            snapshot.forEach((doc) => {
+                allChallenges.push({ id: doc.id, ...doc.data() });
+            });
 
-        if (tab === 'my') {
-            // 개인 챌린지 경로: /artifacts/{appId}/users/{userId}/my_challenges
-            collectionPath = `/artifacts/${appId}/users/${currentUserId}/my_challenges`;
-            targetElementId = 'tab-content-my';
-        } else if (tab === 'team') {
-            // 팀 챌린지 경로: /artifacts/{appId}/public/data/team_challenges
-            collectionPath = `/artifacts/${appId}/public/data/team_challenges`;
-            targetElementId = 'tab-content-team';
-        }
+            // 챌린지를 오늘 참여 여부에 따라 분류
+            const missedChallenges = [];
+            const participatedChallenges = [];
 
-        const q = query(collection(db, collectionPath));
-        
-        unsubscribe = onSnapshot(q, (snapshot) => {
-            loadingSpinner.style.display = 'none';
-            const challenges = [];
-            snapshot.forEach(doc => {
-                const data = doc.data();
-                // Timestamp 객체를 toDateString()으로 변환 (날짜 비교를 위해)
-                // Firestore Timestamp 객체일 경우 toDate().toDateString()을 호출해야 함.
-                if (data.lastCheckInDate && typeof data.lastCheckInDate.toDate === 'function') {
-                    data.lastCheckInDate = data.lastCheckInDate.toDate().toDateString();
+            allChallenges.forEach(challenge => {
+                const proofHistory = challenge.proofHistory || {};
+                const isTodayProofed = !!proofHistory[todayString];
+                
+                if (isTodayProofed) {
+                    participatedChallenges.push(challenge);
+                } else {
+                    missedChallenges.push(challenge);
                 }
-                challenges.push({ id: doc.id, ...data });
             });
             
-            // 실제 Firestore 데이터를 렌더링. 
-            renderChallenges(challenges, targetElementId);
+            // 챌린지 목록 렌더링
+            renderChallenges('personal-missed-challenge-list', missedChallenges, todayString);
+            renderChallenges('personal-participated-challenge-list', participatedChallenges, todayString);
             
+            // 상태 메시지 및 빈 상태 처리
+            const totalCount = allChallenges.length;
+            
+            if (totalCount === 0) {
+                missedList.style.display = 'none';
+                participatedList.style.display = 'none';
+                missedStatus.style.display = 'none';
+                participatedStatus.style.display = 'none';
+                emptyState.style.display = 'block';
+            } else {
+                emptyState.style.display = 'none';
+
+                if (missedChallenges.length > 0) {
+                    missedList.style.display = 'block';
+                    missedStatus.style.display = 'block';
+                } else {
+                    missedList.style.display = 'none';
+                    missedStatus.style.display = 'none';
+                }
+
+                if (participatedChallenges.length > 0) {
+                    participatedList.style.display = 'block';
+                    participatedStatus.style.display = 'block';
+                } else {
+                    participatedList.style.display = 'none';
+                    participatedStatus.style.display = 'none';
+                }
+            }
+            
+            console.log("Firestore Personal Challenges Updated: Total", totalCount);
+
         }, (error) => {
-            // Firestore 접속 오류 또는 권한 문제 발생 시
-            console.error("Error listening to challenges:", error);
-            loadingSpinner.style.display = 'none';
-            showModal('데이터 로드 실패', `챌린지 데이터를 불러오는 데 실패했습니다. (경로: ${collectionPath}) 권한 또는 데이터 구조를 확인하세요.`);
-            // 오류 발생 시 더미 데이터 표시
-            renderChallenges(dummyChallenges, targetElementId, true); 
+            console.error("Firestore Personal Challenges Error:", error);
+            showModal('데이터 오류', '개인 챌린지 목록을 불러오는 중 오류가 발생했습니다.');
         });
-
-        if (tab === 'my') {
-            unsubscribeMyChallenges = unsubscribe;
-        } else {
-            unsubscribeTeamChallenges = unsubscribe;
-        }
+        
+        return unsubscribe;
     }
-
 
     /**
-     * 탭 전환 함수
+     * Firestore에서 팀 챌린지 (참여 중인 공개 챌린지) 목록을 실시간으로 가져옵니다.
      */
-    window.switchTab = function(tabName) {
-        if (tabName === currentTab) return; 
+    let teamUnsubscribe = null; 
+    function fetchTeamChallenges() {
+        if (!currentUserId) return;
+        // 이미 리스너가 설정되어 있으면 중복 실행 방지
+        if (teamUnsubscribe) return; 
 
-        currentTab = tabName;
+        const listContainer = document.getElementById('team-challenge-list');
+        const emptyState = document.getElementById('team-challenge-empty-state');
+        const todayString = getTodayDateString();
         
-        const myContent = document.getElementById('tab-content-my');
-        const teamContent = document.getElementById('tab-content-team');
-        const myBtn = document.getElementById('tab-my-btn');
-        const teamBtn = document.getElementById('tab-team-btn');
+        // 팀 챌린지 컬렉션 경로 (공개 데이터)
+        const path = `/artifacts/${appId}/public/data/challenges`;
+        const challengesRef = collection(db, path);
         
-        // UI 업데이트
-        myBtn.classList.remove('active');
-        teamBtn.classList.remove('active');
-        myContent.style.display = 'none';
-        teamContent.style.display = 'none';
+        // 쿼리: participantIds 배열에 현재 사용자의 ID가 포함된 문서
+        const q = query(challengesRef, where("participantIds", "array-contains", currentUserId)); 
 
-        if (tabName === 'my') {
-            myBtn.classList.add('active');
-            myContent.style.display = 'block';
-        } else if (tabName === 'team') {
-            teamBtn.classList.add('active');
-            teamContent.style.display = 'block';
-        }
+        teamUnsubscribe = onSnapshot(q, (snapshot) => {
+            const challenges = [];
+            snapshot.forEach((doc) => {
+                challenges.push({ id: doc.id, ...doc.data() });
+            });
+            
+            if (challenges.length === 0) {
+                listContainer.style.display = 'none';
+                emptyState.style.display = 'block';
+            } else {
+                listContainer.style.display = 'block';
+                emptyState.style.display = 'none';
+                renderChallenges('team-challenge-list', challenges, todayString);
+            }
+            
+            console.log("Firestore Team Challenges Updated:", challenges.length);
+
+        }, (error) => {
+            console.error("Firestore Team Challenges Error:", error);
+            showModal('데이터 오류', '팀 챌린지 목록을 불러오는 중 오류가 발생했습니다.');
+            teamUnsubscribe = null; // 오류 발생 시 리스너 해제
+        });
         
-        // Firestore 데이터 로드
-        if (currentUserId) {
-            setupChallengeListener(tabName);
-        }
+        return teamUnsubscribe;
     }
+
+
+    // --- 인증 및 초기화 ---
+    
+    /**
+     * 사용자 인증 상태 확인 및 UI 업데이트
+     */
+    onAuthStateChanged(auth, async (user) => {
+        if (!isAuthAttempted) {
+            const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+            isAuthAttempted = true; 
+
+            if (!user && initialAuthToken) {
+                try {
+                    // Custom Token으로 로그인 시도
+                    await signInWithCustomToken(auth, initialAuthToken);
+                    return; 
+                } catch (error) {
+                    console.error("Custom token login failed. Forcing redirect to /auth", error);
+                    window.location.href = "/auth";
+                    return;
+                }
+            } else if (!user) {
+                console.warn("User not authenticated. Forcing redirect to /auth");
+                window.location.href = "/auth";
+                return; 
+            }
+        }
+
+        if (user) {
+            currentUserId = user.uid;
+            if (user.isAnonymous) {
+                 console.warn("Anonymous user detected. Forcing redirect to /auth");
+                 window.location.href = "/auth";
+                 return;
+            }
+
+            // '내 챌린지' 탭의 데이터 로드 시작 (초기 화면)
+            fetchPersonalChallenges();
+            // 팀 챌린지 데이터는 탭 전환 시 로드
+        } else if (isAuthAttempted) {
+             console.warn("Authentication failed or logged out. Redirecting to /auth");
+             window.location.href = "/auth";
+             return;
+        }
+        
+        // 폰트 로드 확인 후 앱 컨테이너 표시
+        document.fonts.ready.then(() => {
+             document.getElementById('app-container').classList.add('font-loaded');
+        });
+    });
+
 
     // --- 초기화 로직 ---
-    window.addEventListener('load', async () => {
-        // App Container 크기 조정 및 리사이즈 핸들러
+    window.addEventListener('load', () => {
         const appContainer = document.getElementById('app-container');
-        const adjustMinHeight = () => {
+        appContainer.style.minHeight = `${window.innerHeight}px`;
+        
+        window.addEventListener('resize', () => {
             appContainer.style.minHeight = `${window.innerHeight}px`;
-        };
-        adjustMinHeight();
-        window.addEventListener('resize', adjustMinHeight);
+        });
         
-        // 모달 배경 클릭 시 닫기
+        // 모달 배경 클릭 시 닫기 기능 추가
         modal.addEventListener('click', (event) => {
-            if (event.target === modal) { hideModal(); }
-        });
-        
-        // Ripple Effect 초기화 
-        document.querySelectorAll('.interactive').forEach(el => {
-            if (!el.hasAttribute('data-ripple-attached')) {
-                el.addEventListener('mousedown', addRippleEffect);
-                el.setAttribute('data-ripple-attached', 'true');
+            if (event.target === modal) {
+                hideModal();
             }
         });
         
-        // 폰트 로드 후 앱 컨테이너 표시
-        document.fonts.ready.then(() => {
-             appContainer.classList.add('font-loaded');
-        });
-        
-        // 1. Firebase 설정 및 초기화
-        // 사용자가 제공한 실제 Firebase Config 사용
-        const firebaseConfig = {
-            apiKey: "AIzaSyBMowSIHMdz69dYY-mAW8l6VjKxBW54SfU",
-            authDomain: "doing-a.firebaseapp.com",
-            projectId: "doing-a",
-            storageBucket: "doing-a.firebasestorage.app",
-            messagingSenderId: "24279439955",
-            appId: "1:24279439955:web:2bf5c965de1b0a236884a6",
-            measurementId: "G-VJ5YQRGNE3"
-        };
-
-
-        try {
-            const app = initializeApp(firebaseConfig);
-            db = getFirestore(app);
-            auth = getAuth(app);
-            setLogLevel('debug'); // Firestore 로그 레벨 설정
-
-            // 2. 인증 처리: __initial_auth_token이 있으면 Custom Token으로, 없으면 익명으로 로그인
-            if (initialAuthToken) {
-                await signInWithCustomToken(auth, initialAuthToken);
+        // Ripple Effect 초기화
+        document.querySelectorAll('.interactive').forEach(button => {
+            if (button.classList.contains('nav-item') || button.classList.contains('challenge-tab-item')) {
+                // 탭/네비게이션 아이템은 mousedown에 리플 추가 (클릭 전에 보이도록)
+                button.addEventListener('mousedown', (event) => {
+                    setTimeout(() => addRippleEffect(event), 0);
+                });
             } else {
-                await signInAnonymously(auth);
+                button.addEventListener('click', addRippleEffect);
             }
-
-            onAuthStateChanged(auth, (user) => {
-                if (user) {
-                    currentUserId = user.uid;
-                    // 3. 인증 완료 후 현재 탭 (기본: 내 챌린지) 데이터 로드
-                    setupChallengeListener(currentTab);
-                } else {
-                    console.log("No user signed in. Using anonymous fallback.");
-                    // 익명 로그인 실패나 로그아웃 발생 시
-                    currentUserId = 'anonymous-user-id'; 
-                    document.getElementById('loading-spinner').style.display = 'none';
-                    // 빈 상태로 시작 
-                    renderChallenges([], 'tab-content-my'); 
-                }
-            });
-
-        } catch (error) {
-            console.error("Firebase Initialization or Auth Error:", error);
-            document.getElementById('loading-spinner').style.display = 'none';
-            // Firebase SDK 또는 다른 초기화 오류 시
-            showModal('초기화 오류', `Firebase 연결에 실패했습니다: ${error.message}. 콘솔을 확인해주세요.`);
-            // 오류 발생 시 더미 데이터로 시작
-            renderChallenges(dummyChallenges, 'tab-content-my', true); 
-        }
+        });
     });
 </script>
 </body>
