@@ -68,7 +68,7 @@
             padding-top: 0; 
         }
 
-        /* [재수정] 메인 헤더: 모바일 패딩 및 폰트 크기 조정 - 1.75rem으로 index.html과 통일 */
+        /* 메인 헤더: 모바일 패딩 및 폰트 크기 조정 */
         .main-header {
             font-size: 1.75rem; 
             font-weight: 800; 
@@ -152,7 +152,7 @@
                 padding-bottom: calc(1.5rem + var(--bottom-nav-height)); 
             }
             
-            /* [재수정] 메인 헤더 PC 스타일 - 2rem으로 index.html과 통일 */
+            /* 메인 헤더 PC 스타일 */
             .main-header {
                 padding: 0 3rem; 
                 font-size: 2rem; 
@@ -238,7 +238,7 @@
             }
         }
         
-        /* ------------------ 공통 리스트 스타일 (index.html에서 복사) ------------------ */
+        /* ------------------ 공통 리스트 스타일 ------------------ */
         
         .challenge-list-item { 
             display: flex; 
@@ -350,8 +350,52 @@
         }
         .create-challenge-button:hover, .explore-button:hover { opacity: 0.8; } 
         
-        #loading-message-my, #loading-message-team { text-align: center; color: #777; padding: 2rem 0; }
-        
+        /* ------------------ 스켈레톤 로더 스타일 ------------------ */
+        .skeleton-loader {
+            animation: loading-shimmer 1.5s infinite linear;
+            background: #f6f7f9;
+            background-image: linear-gradient(to right, #f6f7f9 0%, #e9ebee 20%, #f6f7f9 40%, #f6f7f9 100%);
+            background-repeat: no-repeat;
+            background-size: 800px 104px;
+            height: 100%;
+            border-radius: 8px;
+            display: inline-block;
+        }
+        @keyframes loading-shimmer {
+            0% { background-position: -468px 0 }
+            100% { background-position: 468px 0 }
+        }
+
+        .skeleton-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .skeleton-item:last-child { border-bottom: none; }
+
+        .skeleton-info {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .skeleton-title {
+            height: 20px;
+            width: 60%;
+        }
+        .skeleton-detail {
+            height: 14px;
+            width: 40%;
+        }
+        .skeleton-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-left: 1rem;
+        }
+        /* ------------------ 스켈레톤 로더 스타일 끝 ------------------ */
+
         /* Ripple Effect */
         .interactive { position: relative; overflow: hidden; transform: translate3d(0, 0, 0); }
         .ripple { position: absolute; border-radius: 50%; transform: scale(0); animation: ripple-animation 0.5s linear; background-color: rgba(0, 0, 0, 0.1); pointer-events: none; z-index: 100; }
@@ -398,7 +442,8 @@
         </div>
         <!-- 챌린지 생성 버튼 (+) -->
         <div class="create-button-container">
-            <button class="create-challenge-icon interactive" onclick="showModal('새 챌린지 만들기', '챌린지 생성 페이지로 이동합니다.')">
+            <!-- 챌린지 생성 페이지로 이동하도록 수정 -->
+            <button class="create-challenge-icon interactive" onclick="window.location.href = '/challenge/create';">
                 <i class="material-icons">add</i>
             </button>
         </div>
@@ -409,11 +454,14 @@
         
         <!-- 내 챌린지 탭 내용 -->
         <div id="tab-content-my">
-            <!-- 나의 진행 중인 챌린지 리스트 -->
             <div class="challenge-section">
                 <!-- 챌린지 목록이 로드될 곳 -->
-                <div id="my-challenge-list" class="challenge-list">
-                    <p id="loading-message-my">내 챌린지 목록을 불러오는 중...</p>
+                <div id="my-challenge-list" class="challenge-list" style="display: none;">
+                    <!-- Loaded challenges will be here -->
+                </div>
+                <!-- 스켈레톤 UI가 로드될 곳 -->
+                <div id="my-challenge-skeleton" class="challenge-list">
+                    <!-- Skeleton will be generated here -->
                 </div>
                 <!-- 내 챌린지가 없을 때 표시되는 빈 상태 -->
                 <div id="my-challenge-empty-state" class="empty-state-section" style="display: none;">
@@ -422,7 +470,8 @@
                         <img src="/image/box.webp" alt="빈 상자 이미지"
                              onerror="this.onerror=null; this.src='https://placehold.co/120x120/f7e0c4/966A45?text=BOX'; this.alt='박스 이모지';"/>
                         <p>아직 만든 챌린지가 없어요</p>
-                        <button class="create-challenge-button interactive" onclick="showModal('챌린지 만들기', '이동할 챌린지 생성 페이지가 없습니다.')">
+                        <!-- 버튼을 /challenge/create로 이동하도록 수정 -->
+                        <button class="create-challenge-button interactive" onclick="window.location.href = '/challenge/create';">
                             챌린지 만들기
                         </button>
                     </div>
@@ -432,20 +481,27 @@
         
         <!-- 팀 챌린지 탭 내용 -->
         <div id="tab-content-team" style="display: none;"> 
-            <!-- 팀 챌린지 목록이 로드될 곳 -->
-            <div id="team-challenge-list" class="challenge-list">
-                <p id="loading-message-team">팀 챌린지 목록을 불러오는 중...</p>
-            </div>
-            <!-- 팀 챌린지가 없을 때 표시되는 빈 상태 -->
-            <div id="team-challenge-empty-state" class="empty-state-section" style="display: none;">
-                <div class="empty-state-content">
-                    <!-- 박스 이미지 -->
-                    <img src="/image/box.webp" alt="열린 박스 이미지"
-                         onerror="this.onerror=null; this.src='https://placehold.co/120x120/f7e0c4/966A45?text=BOX'; this.alt='박스 이모지';"/>
-                    <p>아직 가입한 팀챌린지가 없어요</p>
-                    <button class="explore-button interactive" onclick="showModal('팀 챌린지 탐색', '이동할 팀 챌린지 탐색 페이지가 없습니다.')">
-                        탐색하기
-                    </button>
+            <div class="challenge-section">
+                <!-- 팀 챌린지 목록이 로드될 곳 -->
+                <div id="team-challenge-list" class="challenge-list" style="display: none;">
+                     <!-- Loaded challenges will be here -->
+                </div>
+                <!-- 스켈레톤 UI가 로드될 곳 -->
+                <div id="team-challenge-skeleton" class="challenge-list">
+                     <!-- Skeleton will be generated here -->
+                </div>
+                <!-- 팀 챌린지가 없을 때 표시되는 빈 상태 -->
+                <div id="team-challenge-empty-state" class="empty-state-section" style="display: none;">
+                    <div class="empty-state-content">
+                        <!-- 박스 이미지 -->
+                        <img src="/image/box.webp" alt="열린 박스 이미지"
+                             onerror="this.onerror=null; this.src='https://placehold.co/120x120/f7e0c4/966A45?text=BOX'; this.alt='박스 이모지';"/>
+                        <p>아직 가입한 팀챌린지가 없어요</p>
+                        <!-- 탐색 버튼은 임시 모달 유지 -->
+                        <button class="explore-button interactive" onclick="showModal('팀 챌린지 탐색', '팀 챌린지 탐색 페이지로 이동할 수 있습니다.')">
+                            탐색하기
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -503,6 +559,8 @@
     // 글로벌 변수
     let currentUserId = null;
     let isAuthAttempted = false; 
+    let unsubscribeMy = null;
+    let unsubscribeTeam = null;
 
     // --- UI/UX 함수 ---
     const modal = document.getElementById('modal');
@@ -548,7 +606,7 @@
         
         // 콘텐츠 표시/숨김
         myContent.style.display = tabName === 'my' ? 'block' : 'none';
-        teamContent.style.display = tabName === 'team' ? 'block' : 'none';
+        teamContent.style.display = tabName === 'my' ? 'none' : 'block';
         
         // 데이터 로드
         if (tabName === 'my') {
@@ -582,6 +640,32 @@
             ripple.remove();
         });
     }
+    
+    /**
+     * 스켈레톤 UI를 생성하고 표시합니다.
+     * @param {string} skeletonId - 스켈레톤 컨테이너 ID (예: 'my-challenge-skeleton')
+     */
+    function generateSkeleton(skeletonId) {
+        const container = document.getElementById(skeletonId);
+        if (!container) return;
+
+        container.innerHTML = ''; // 기존 내용 제거
+        container.style.display = 'block';
+
+        for (let i = 0; i < 4; i++) {
+            const item = document.createElement('div');
+            item.className = 'skeleton-item';
+            item.innerHTML = `
+                <div class="skeleton-info">
+                    <div class="skeleton-title skeleton-loader"></div>
+                    <div class="skeleton-detail skeleton-loader"></div>
+                </div>
+                <div class="skeleton-icon skeleton-loader"></div>
+            `;
+            container.appendChild(item);
+        }
+    }
+
 
     // --- 데이터 및 비즈니스 로직 ---
 
@@ -647,9 +731,6 @@
             `;
             listContainer.appendChild(card);
         });
-
-        // 로딩 메시지 제거
-        document.getElementById(`loading-message-${listId.includes('my') ? 'my' : 'team'}`)?.remove(); 
     }
 
     /**
@@ -657,22 +738,34 @@
      */
     function fetchPersonalChallenges() {
         if (!currentUserId) return;
+        
+        // 이전 구독 해제
+        if (unsubscribeMy) unsubscribeMy();
 
         const listContainer = document.getElementById('my-challenge-list');
         const emptyState = document.getElementById('my-challenge-empty-state');
-        
+        const skeletonContainer = document.getElementById('my-challenge-skeleton');
+
+        // 로딩 시작: 스켈레톤 표시, 리스트 및 빈 상태 숨김
+        generateSkeleton('my-challenge-skeleton');
+        listContainer.style.display = 'none';
+        emptyState.style.display = 'none';
+
         // 개인 챌린지 컬렉션 경로
         const path = `/artifacts/${appId}/users/${currentUserId}/challenges`;
         const challengesRef = collection(db, path);
         
         const q = query(challengesRef); 
 
-        const unsubscribe = onSnapshot(q, (snapshot) => {
+        unsubscribeMy = onSnapshot(q, (snapshot) => {
             const challenges = [];
             snapshot.forEach((doc) => {
                 challenges.push({ id: doc.id, ...doc.data() });
             });
             
+            // 로딩 완료: 스켈레톤 숨김
+            skeletonContainer.style.display = 'none';
+
             if (challenges.length === 0) {
                 listContainer.style.display = 'none';
                 emptyState.style.display = 'block';
@@ -687,9 +780,8 @@
         }, (error) => {
             console.error("Firestore Personal Challenges Error:", error);
             showModal('데이터 오류', '개인 챌린지 목록을 불러오는 중 오류가 발생했습니다.');
+            skeletonContainer.style.display = 'none'; // 에러 시 스켈레톤 숨김
         });
-        
-        return unsubscribe;
     }
 
     /**
@@ -698,9 +790,18 @@
     function fetchTeamChallenges() {
         if (!currentUserId) return;
 
+        // 이전 구독 해제
+        if (unsubscribeTeam) unsubscribeTeam();
+
         const listContainer = document.getElementById('team-challenge-list');
         const emptyState = document.getElementById('team-challenge-empty-state');
+        const skeletonContainer = document.getElementById('team-challenge-skeleton');
         
+        // 로딩 시작: 스켈레톤 표시, 리스트 및 빈 상태 숨김
+        generateSkeleton('team-challenge-skeleton');
+        listContainer.style.display = 'none';
+        emptyState.style.display = 'none';
+
         // 팀 챌린지 컬렉션 경로 (공개 데이터)
         const path = `/artifacts/${appId}/public/data/challenges`;
         const challengesRef = collection(db, path);
@@ -708,11 +809,14 @@
         // 쿼리: participantIds 배열에 현재 사용자의 ID가 포함된 문서
         const q = query(challengesRef, where("participantIds", "array-contains", currentUserId)); 
 
-        const unsubscribe = onSnapshot(q, (snapshot) => {
+        unsubscribeTeam = onSnapshot(q, (snapshot) => {
             const challenges = [];
             snapshot.forEach((doc) => {
                 challenges.push({ id: doc.id, ...doc.data() });
             });
+            
+            // 로딩 완료: 스켈레톤 숨김
+            skeletonContainer.style.display = 'none';
             
             if (challenges.length === 0) {
                 listContainer.style.display = 'none';
@@ -728,9 +832,8 @@
         }, (error) => {
             console.error("Firestore Team Challenges Error:", error);
             showModal('데이터 오류', '팀 챌린지 목록을 불러오는 중 오류가 발생했습니다.');
+            skeletonContainer.style.display = 'none'; // 에러 시 스켈레톤 숨김
         });
-        
-        return unsubscribe;
     }
 
 
