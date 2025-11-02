@@ -187,7 +187,7 @@
         /* 상단 탭 (내 챌린지/탐색) 스타일 */
         .main-header.top-tabs {
             justify-content: flex-start;
-            gap: 1.5rem; /* 탭 간격 */
+            gap: 0.75rem; /* 탭 간격: 1.5rem -> 0.75rem으로 줄임 */
             padding-right: 0.5rem; /* 버튼 공간 확보 */
         }
         
@@ -234,7 +234,7 @@
         /* PC 환경 오버라이드 (간격 조정) */
         @media (min-width: 640px) {
             .main-header.top-tabs {
-                gap: 2rem; 
+                gap: 1rem; /* 탭 간격: 2rem -> 1rem으로 줄임 */
             }
         }
         
@@ -457,15 +457,15 @@
     <!-- 상단 탭 전환 및 생성 버튼 (메인 헤더 대체) -->
     <header class="main-header top-tabs" id="main-header">
         <div class="tab-item-container">
-            <!-- 현재 페이지이므로 항상 active -->
-            <div id="tab-my-btn" class="main-tab-item active">내 챌린지</div>
+            <!-- 탭 이름: 내 챌린지 -> 참여 중 -->
+            <div id="tab-my-btn" class="main-tab-item active">참여 중</div>
         </div>
         <div class="tab-item-container">
-            <!-- 클릭 시 탐색 페이지로 이동 -->
+            <!-- 탭 이름: 팀 챌린지 탐색 -> 탐색 -->
             <div id="tab-explore-btn" 
                  class="main-tab-item interactive" 
                  onclick="window.location.href = '/challenge/explore'">
-                팀 챌린지 탐색
+                탐색
             </div>
         </div>
         <!-- 챌린지 생성 버튼 (+) -->
