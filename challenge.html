@@ -240,6 +240,40 @@
         
         /* ------------------ 공통 리스트 스타일 ------------------ */
         
+        /* **New Group Header Style** */
+        .challenge-group-header {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--color-black);
+            padding: 1rem 0 0.5rem 0; /* 상단 패딩 추가 */
+            border-bottom: 1px solid var(--color-border); /* 구분선 추가 */
+            margin-top: 2.5rem; /* 그룹 간 간격 */
+        }
+        .challenge-group-header:first-of-type {
+            margin-top: 0; /* 첫 번째 헤더는 상단 마진 제거 */
+        }
+        .challenge-group-header.hidden {
+            display: none !important;
+        }
+        
+        /* **Team Badge Style** */
+        .team-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px; /* 원형 크기 */
+            height: 24px;
+            border-radius: 50%;
+            background-color: var(--color-accent); /* 포인트 색상 */
+            color: var(--color-white);
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-right: 8px;
+            flex-shrink: 0;
+            border: 2px solid var(--color-white);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
         .challenge-list-item { 
             display: flex; 
             align-items: center; 
@@ -247,11 +281,9 @@
             padding: 1rem 0; 
             border-bottom: 1px solid #f0f0f0; 
             transition: background-color 0.15s ease;
-            flex-direction: column; /* 세로 정렬로 변경하여 상태바와 제목 분리 */
-            align-items: flex-start;
             cursor: pointer; /* 클릭 가능하도록 */
         }
-        .challenge-list-item > div:first-child { /* 첫 번째 자식 (상태/정보)에 대한 Flex 설정 */
+        .challenge-list-item > div { /* 챌린지 정보 + 불꽃 */
             width: 100%;
             display: flex;
             justify-content: space-between;
@@ -259,29 +291,9 @@
         }
         .challenge-list-item:last-child { border-bottom: none; }
         
-        /* 챌린지 상태 표시 (오늘 참여/미참여) */
-        .challenge-status {
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            padding: 3px 8px;
-            border-radius: 6px;
-        }
-        .status-not-joined {
-            color: #d94b4b; /* 오늘 미참여 */
-            background-color: #fcebeb;
-        }
-        .status-joined {
-            color: #10b981; /* 오늘 참여 */
-            background-color: #ebfef5;
-        }
-        .status-team {
-            color: var(--color-accent); /* 팀 챌린지 (내 챌린지 탭에서) */
-            background-color: #ebf5ff;
-        }
-        
         .challenge-info {
-             flex-grow: 1; /* challenge-info가 공간을 채우도록 */
+             flex-grow: 1; 
+             margin-right: 1rem;
         }
         
         .challenge-info h3 { 
@@ -289,6 +301,8 @@
             font-weight: 700; 
             color: var(--color-black); 
             margin: 0; 
+            display: flex; /* 뱃지 인라인 정렬 */
+            align-items: center;
         }
         .challenge-detail-text { /* index.html의 p 태그 스타일 대체 */
             font-size: 0.85rem; 
@@ -311,24 +325,23 @@
         .fire-icon-wrap img { width: 30px; height: 30px; margin-bottom: 4px; }
         .fire-count { position: static; font-size: 0.875rem; font-weight: 700; color: var(--color-black); transform: none; }
         
-        .challenge-list-item > div:nth-child(2) { 
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        /* ------------------ 빈 상태 (Empty State) 스타일 수정 ------------------ */
+        .empty-state-section { 
+            margin-top: 3rem; 
+            margin-bottom: 2rem; 
+            /* FIX: 전체 섹션이 뷰 내에서 중앙 정렬되도록 함 (JS에서 display: flex로 설정) */
+            display: flex; 
+            flex-direction: column;
+            align-items: center; 
+            width: 100%; 
         }
-        .challenge-list-item > div:nth-child(2) .fire-icon-wrap {
-            margin-left: 1rem;
-        }
-        
-        .empty-state-section { margin-top: 3rem; margin-bottom: 2rem; }
         .empty-state-content { 
             padding: 0; 
             background-color: transparent; 
             border-radius: 0; 
             display: flex; 
             flex-direction: column; 
-            align-items: center; 
+            align-items: center; /* 자식 요소 중앙 정렬 */
             justify-content: center; 
             text-align: center;
         }
@@ -343,7 +356,7 @@
             color: #4b5563; 
             margin-bottom: 20px; 
         }
-        .create-challenge-button, .explore-button { 
+        .explore-button { 
             width: 100%; 
             max-width: 250px; 
             padding: 0.75rem 1.5rem; 
@@ -356,9 +369,11 @@
             cursor: pointer; 
             transition: opacity 0.2s; 
             box-shadow: none; 
+            /* FIX: display: block과 margin: auto를 사용해 버튼 자체를 중앙 정렬 */
+            display: block;
+            margin: 0 auto; 
         }
-        .create-challenge-button:hover, .explore-button:hover { opacity: 0.8; } 
-        
+        .explore-button:hover { opacity: 0.8; } 
         /* ------------------ 스켈레톤 로더 스타일 ------------------ */
         .skeleton-loader {
             animation: loading-shimmer 1.5s infinite linear;
@@ -464,25 +479,35 @@
     <!-- ------------------ 뷰 컨테이너 (내 챌린지만 표시) ------------------ -->
     <div id="challenge-view" class="view active">
         
-        <!-- ------------------ 내 챌린지 목록 (개인 + 참여 팀 챌린지) ------------------ -->
         <div id="tab-content-my">
-            <div class="challenge-section">
-                <div id="my-challenge-list" class="challenge-list" style="display: none;">
-                    <!-- Loaded combined challenges will be here -->
+            <!-- 챌린지 로딩 중 스켈레톤 -->
+            <div id="my-challenge-skeleton" class="challenge-list">
+                <!-- Skeleton will be generated here -->
+            </div>
+            
+            <div id="my-challenge-content" style="display: none;">
+                <!-- 오늘 미참여 섹션 -->
+                <h2 id="not-joined-header" class="challenge-group-header">오늘 미참여</h2>
+                <div id="not-joined-list" class="challenge-list">
+                    <!-- 미참여 챌린지 렌더링 위치 -->
                 </div>
-                <div id="my-challenge-skeleton" class="challenge-list">
-                    <!-- Skeleton will be generated here -->
+
+                <!-- 오늘 참여 섹션 -->
+                <h2 id="joined-header" class="challenge-group-header">오늘 참여</h2>
+                <div id="joined-list" class="challenge-list">
+                    <!-- 참여 챌린지 렌더링 위치 -->
                 </div>
-                <div id="my-challenge-empty-state" class="empty-state-section" style="display: none;">
-                    <div class="empty-state-content">
-                        <img src="/image/box.webp" alt="빈 상자 이미지"
-                             onerror="this.onerror=null; this.src='https://placehold.co/120x120/f7e0c4/966A45?text=BOX'; this.alt='박스 이모지';"/>
-                        <p>참여 중인 챌린지가 없어요</p>
-                        <!-- 클릭 시 탐색 페이지로 이동 -->
-                        <button class="explore-button interactive" onclick="window.location.href = '/challenge/explore'">
-                            새 챌린지 탐색하기
-                        </button>
-                    </div>
+            </div>
+
+            <div id="my-challenge-empty-state" class="empty-state-section" style="display: none;">
+                <div class="empty-state-content">
+                    <img src="/image/box.webp" alt="빈 상자 이미지"
+                         onerror="this.onerror=null; this.src='https://placehold.co/120x120/f7e0c4/966A45?text=BOX'; this.alt='박스 이모지';"/>
+                    <p>참여 중인 챌린지가 없어요</p>
+                    <!-- 클릭 시 탐색 페이지로 이동 -->
+                    <button class="explore-button interactive" onclick="window.location.href = '/challenge/explore'">
+                        새 챌린지 탐색하기
+                    </button>
                 </div>
             </div>
         </div>
@@ -548,7 +573,15 @@
     let unsubscribePersonal = null;
     let unsubscribeJoinedTeam = null;
     
-    // --- UI/UX 함수 ---
+    // --- 유틸리티 및 UI/UX 함수 ---
+    
+    /**
+     * 오늘 날짜 키 (YYYY-MM-DD)를 반환합니다.
+     */
+    function getTodayKey() {
+        return new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+    }
+
     const modal = document.getElementById('modal');
     const modalTitle = document.getElementById('modal-title');
     const modalText = document.getElementById('modal-text');
@@ -631,28 +664,73 @@
     // --- 데이터 및 비즈니스 로직 ---
     
     /**
-     * 현재 챌린지 목록을 병합하고 렌더링합니다.
+     * 현재 챌린지 목록을 병합하고 상태별로 분류하여 렌더링합니다.
      */
     function renderMyChallenges() {
-        const listContainer = document.getElementById('my-challenge-list');
+        const contentContainer = document.getElementById('my-challenge-content');
         const emptyState = document.getElementById('my-challenge-empty-state');
         const skeletonContainer = document.getElementById('my-challenge-skeleton');
+        const notJoinedHeader = document.getElementById('not-joined-header');
+        const joinedHeader = document.getElementById('joined-header');
 
         // 로딩 완료: 스켈레톤 숨김
         skeletonContainer.style.display = 'none';
 
         const combinedChallenges = [...personalChallengesCache, ...joinedTeamChallengesCache];
         
-        // 업데이트 시간 기준 내림차순 정렬 (최신순)
-        combinedChallenges.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+        // 상태별로 챌린지 분류
+        const todayKey = getTodayKey();
+        const notJoinedToday = [];
+        const joinedToday = [];
+
+        combinedChallenges.forEach(challenge => {
+            // proofHistory가 객체이고 오늘 날짜 키가 존재하는지 확인
+            const isTodayJoined = (challenge.proofHistory && typeof challenge.proofHistory === 'object' && challenge.proofHistory !== null) 
+                                ? !!challenge.proofHistory[todayKey]
+                                : false;
+                                
+            if (isTodayJoined) {
+                joinedToday.push(challenge);
+            } else {
+                notJoinedToday.push(challenge);
+            }
+        });
+        
+        // 정렬 기준: 성공 횟수 (Fire Count) 내림차순
+        const sortBySuccessCount = (a, b) => {
+            const countA = (a.proofHistory && Object.keys(a.proofHistory).length) || 0;
+            const countB = (b.proofHistory && Object.keys(b.proofHistory).length) || 0;
+            return countB - countA;
+        };
+        
+        notJoinedToday.sort(sortBySuccessCount);
+        joinedToday.sort(sortBySuccessCount);
 
         if (combinedChallenges.length === 0) {
-            listContainer.style.display = 'none';
-            emptyState.style.display = 'block';
+            // 챌린지가 없을 경우, 빈 상태 표시
+            contentContainer.style.display = 'none';
+            // emptyState.style.display = 'flex'; // CSS에서 .empty-state-section에 display: flex를 설정하고 JS에서 토글
+            emptyState.style.display = 'flex';
         } else {
-            listContainer.style.display = 'block';
+            // 챌린지가 있을 경우, 목록 표시
+            contentContainer.style.display = 'block';
             emptyState.style.display = 'none';
-            renderChallenges(combinedChallenges);
+            
+            // 상태별 목록 렌더링
+            renderChallenges('not-joined-list', notJoinedToday);
+            renderChallenges('joined-list', joinedToday);
+
+            // 해당 그룹이 비어 있으면 헤더 숨김
+            notJoinedHeader.classList.toggle('hidden', notJoinedToday.length === 0);
+            joinedHeader.classList.toggle('hidden', joinedToday.length === 0);
+            
+            // 미참여 목록이 비어 있고 참여 목록만 있을 경우, 참여 목록 헤더의 상단 마진을 제거하여 위로 붙임
+            if (notJoinedToday.length === 0 && joinedToday.length > 0) {
+                joinedHeader.style.marginTop = '0';
+            } else {
+                 // CSS 기본값인 2.5rem으로 복원
+                joinedHeader.style.marginTop = '2.5rem'; 
+            }
         }
     }
 
@@ -662,13 +740,13 @@
     function fetchMyChallenges() {
         if (!currentUserId) return;
         
-        const listContainer = document.getElementById('my-challenge-list');
+        const contentContainer = document.getElementById('my-challenge-content');
         const emptyState = document.getElementById('my-challenge-empty-state');
 
         // 로딩 시작: 스켈레톤 표시
         if (personalChallengesCache.length === 0 && joinedTeamChallengesCache.length === 0) {
             generateSkeleton('my-challenge-skeleton');
-            listContainer.style.display = 'none';
+            contentContainer.style.display = 'none';
             emptyState.style.display = 'none';
         }
         
@@ -712,11 +790,12 @@
     }
 
     /**
-     * 챌린지 카드를 렌더링합니다. (내 챌린지 전용)
+     * 챌린지 카드를 렌더링합니다.
+     * @param {string} containerId - 렌더링할 컨테이너 ID (예: 'not-joined-list', 'joined-list')
      * @param {Array} challenges - 챌린지 배열
      */
-    function renderChallenges(challenges) {
-        const listContainer = document.getElementById('my-challenge-list');
+    function renderChallenges(containerId, challenges) {
+        const listContainer = document.getElementById(containerId);
         listContainer.innerHTML = ''; 
         
         const today = new Date().getTime();
@@ -736,20 +815,13 @@
             // 잔여일 (남은 기간)
             const remainingDays = Math.max(0, durationDays - daysPassed); 
 
-            // 오늘 참여 여부 및 타입 표시
-            const todayKey = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-            const isTodayJoined = challenge.proofHistory && challenge.proofHistory[todayKey] ? true : false;
-            
-            let statusClass = isTodayJoined ? 'status-joined' : 'status-not-joined';
-            let statusText = isTodayJoined ? '오늘 참여' : '오늘 미참여';
-
-            if (challenge.type === 'team-joined') {
-                statusClass = 'status-team';
-                statusText = '팀 참여 중';
-            }
-
-            const statusHtml = `<div class="challenge-status ${statusClass}">${statusText}</div>`;
             const detailText = `${remainingDays}일 남음 · ${successCount}/${durationDays}일`;
+
+            // 챌린지 타입 뱃지
+            const teamBadgeHtml = challenge.type === 'team-joined' 
+                ? '<span class="team-badge">팀</span>' 
+                : '';
+
 
             const card = document.createElement('div');
             card.className = 'challenge-list-item interactive';
@@ -759,11 +831,8 @@
 
             card.innerHTML = `
                 <div>
-                    ${statusHtml}
-                </div>
-                <div>
                     <div class="challenge-info">
-                        <h3>${challenge.title}</h3>
+                        <h3>${teamBadgeHtml}${challenge.title}</h3>
                         <p class="challenge-detail-text">${detailText}</p>
                     </div>
                     <div class="fire-icon-wrap">
