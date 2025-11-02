@@ -19,7 +19,7 @@
             --color-app-bg: #ffffff; 
             --color-content-bg: #ffffff; 
             --color-border: #e0e0e0;
-            --bottom-nav-height: 60px; /* 기본/PC 하단 내비게이션 높이 */ 
+            --bottom-nav-height: 65px; /* 네이티브 앱처럼 보이도록 높이 증가 (60px -> 65px) */ 
             --pc-max-width: 1200px; /* PC 최대 너비 */ 
             --header-height: 4.5rem; /* 헤더 높이 */ 
             --mobile-padding-x: 1.5rem; /* 모바일 기본 좌우 패딩 */
@@ -129,7 +129,8 @@
             justify-content: center; 
             gap: 0; 
             font-size: 0.75rem; 
-            padding: 0.5rem; 
+            /* 터치 영역 확대를 위해 패딩 증가 */
+            padding: 0.75rem 0.5rem; 
             border-radius: 12px;
             transition: color 0.2s ease, background-color 0.2s ease;
         }
@@ -206,6 +207,7 @@
         .sprout-card-content { display: flex; align-items: center; }
         .sprout-card img { width: 45px; height: 45px; margin-right: 1rem; }
         .sprout-text-primary { font-size: 1.1rem; font-weight: 700; color: var(--color-black); line-height: 1.3; margin: 0; }
+        /* 명칭 변경: 도전 -> 챌린지 */
         .sprout-badge { display: inline-block; background-color: #966A45; color: #ffffff; padding: 0.2rem 0.5rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; margin-top: 4px; }
         .sprout-card .material-icons.arrow-icon { font-size: 1.25rem; color: #9ca3af; }
 
@@ -261,6 +263,7 @@
         #loading-message-personal, #loading-message-team { text-align: center; color: #777; padding: 2rem 0; }
         
         #tab-content-insight { padding-top: 2rem; padding-bottom: 2rem; text-align: center; color: #6b7280; }
+        /* 명칭 변경: 나의 도전 기록 -> 나의 챌린지 기록 */
         #tab-content-insight h3 { font-size: 1.125rem; font-weight: 600; margin-bottom: 0.75rem; }
 
         /* Ripple Effect (물결 효과) */
@@ -281,14 +284,16 @@
 <body>
 
 <div id="app-container">
-    <!-- 하단 내비게이션 바 --><div class="bottom-nav">
+    <!-- 하단 내비게이션 바 -->
+    <div class="bottom-nav">
         <a class="nav-item interactive active" href="/">
             <i class="material-icons">home</i>
             <span>홈</span>
         </a>
+        <!-- 명칭 변경: 도전 -> 챌린지 -->
         <a class='nav-item interactive' href='/challenge'>
             <i class="material-icons">local_fire_department</i> 
-            <span>도전</span>
+            <span>챌린지</span>
         </a>
         <a class="nav-item interactive" href="/my">
             <i class="material-icons">person</i>
@@ -296,11 +301,13 @@
         </a>
     </div>
 
-    <!-- 메인 헤더 --><header class="main-header" id="main-header">
+    <!-- 메인 헤더 -->
+    <header class="main-header" id="main-header">
         홈
     </header>
     
-    <!-- 탭 바 --><div class="tab-bar">
+    <!-- 탭 바 -->
+    <div class="tab-bar">
         <div class="tab-item-container">
             <div id="tab-challenge-btn" class="tab-item interactive active" onclick="switchTab('challenge')">챌린지</div>
         </div>
@@ -310,23 +317,31 @@
     </div>
 
 
-    <!-- ------------------ 뷰 컨테이너 ------------------ --><div id="home-view" class="view active">
+    <!-- ------------------ 뷰 컨테이너 ------------------ -->
+    <div id="home-view" class="view active">
         
-        <!-- 탭 내용 컨테이너 --><div id="tab-content-challenge">
+        <!-- 탭 내용 컨테이너 -->
+        <div id="tab-content-challenge">
             
-            <!-- 새싹 레벨 카드 --><div class="sprout-card interactive">
+            <!-- 새싹 레벨 카드 -->
+            <div class="sprout-card interactive">
                 <div class="sprout-card-content"> 
-                    <!-- 새싹 이미지 --><img src="/image/sprout.webp" alt="새싹 아이콘" 
+                    <!-- 새싹 이미지 -->
+                    <img src="/image/sprout.webp" alt="새싹 아이콘" 
                          onerror="this.onerror=null; this.src='https://placehold.co/45x45/ffffff/000?text=🌱'; this.alt='새싹 이모지';" />
                     <div>
-                        <!-- 사용자 닉네임 --><p class="sprout-text-primary"><span id="user-nickname">도전러</span>님은 새싹 레벨이에요</p>
-                        <!-- 배지 --><span class="sprout-badge">도전 1개 더 완료시 레벨업!</span>
+                        <!-- 명칭 변경: 도전러 -> 챌린지러 -->
+                        <p class="sprout-text-primary"><span id="user-nickname">챌린지러</span>님은 새싹 레벨이에요</p>
+                        <!-- 명칭 변경: 도전 -> 챌린지 -->
+                        <span class="sprout-badge">챌린지 1개 더 완료시 레벨업!</span>
                     </div>
                 </div>
-                <!-- 오른쪽 화살표 --><i class="material-icons arrow-icon">chevron_right</i> 
+                <!-- 오른쪽 화살표 -->
+                <i class="material-icons arrow-icon">chevron_right</i> 
             </div>
     
-            <!-- 나의 진행 중인 챌린지 리스트 --><div class="challenge-section">
+            <!-- 나의 진행 중인 챌린지 리스트 -->
+            <div class="challenge-section">
                 <h2> 
                     내 챌린지
                 </h2>
@@ -338,7 +353,8 @@
                     <!-- 내 챌린지가 없을 때 표시되는 빈 상태 -->
                     <div id="personal-challenge-empty-state" class="empty-state-section" style="display: none;">
                         <div class="empty-state-content">
-                            <!-- 박스 이미지 --><img src="/image/box.webp" alt="빈 상자 이미지"
+                            <!-- 박스 이미지 -->
+                            <img src="/image/box.webp" alt="빈 상자 이미지"
                                  onerror="this.onerror=null; this.src='https://placehold.co/120x120/f7e0c4/966A45?text=BOX'; this.alt='박스 이모지';"/>
                             <p>아직 만든 챌린지가 없어요</p>
                             <button class="create-challenge-button interactive" onclick="showModal('챌린지 만들기', '이동할 챌린지 생성 페이지가 없습니다.')">
@@ -349,7 +365,8 @@
                 </div>
             </div>
             
-            <!-- 팀 챌린지 섹션 --><div class="team-challenge-section">
+            <!-- 팀 챌린지 섹션 -->
+            <div class="team-challenge-section">
                 <h2> 
                     팀챌린지
                 </h2>
@@ -361,7 +378,8 @@
                     <!-- 팀 챌린지가 없을 때 표시되는 빈 상태 -->
                     <div id="team-challenge-empty-state" class="empty-state-section" style="display: none;">
                         <div class="empty-state-content">
-                            <!-- 박스 이미지 --><img src="/image/box.webp" alt="열린 박스 이미지"
+                            <!-- 박스 이미지 -->
+                            <img src="/image/box.webp" alt="열린 박스 이미지"
                                  onerror="this.onerror=null; this.src='https://placehold.co/120x120/f7e0c4/966A45?text=BOX'; this.alt='박스 이모지';"/>
                             <p>아직 가입한 팀챌린지가 없어요</p>
                             <button class="explore-button interactive" onclick="showModal('팀 챌린지 탐색', '이동할 팀 챌린지 탐색 페이지가 없습니다.')">
@@ -373,15 +391,18 @@
             </div>
         </div>
         
-        <!-- 인사이트 탭 내용 (임시) --><div id="tab-content-insight" style="display: none;"> 
+        <!-- 인사이트 탭 내용 (임시) -->
+        <div id="tab-content-insight" style="display: none;"> 
             <h3>인사이트 준비 중</h3> 
-            <p>나의 도전 기록을 분석하여 통찰력을 제공해 드릴 예정입니다.</p>
+            <!-- 명칭 변경: 나의 도전 기록 -> 나의 챌린지 기록 -->
+            <p>나의 챌린지 기록을 분석하여 통찰력을 제공해 드릴 예정입니다.</p>
         </div>
     </div>
     
 </div>
 
-<!-- 모달 팝업 구조 (메시지 박스 용도) --><div id="modal">
+<!-- 모달 팝업 구조 (메시지 박스 용도) -->
+<div id="modal">
     <div class="modal-content">
         <h3 class="modal-title" id="modal-title"></h3>
         <p class="modal-text" id="modal-text"></p>
@@ -552,7 +573,8 @@
                     <p>${daysText}</p>
                 </div>
                 <div class="fire-icon-wrap">
-                    <!-- 불 이미지 --><img src="/image/fire.webp" alt="성공 불꽃 아이콘"
+                    <!-- 불 이미지 -->
+                    <img src="/image/fire.webp" alt="성공 불꽃 아이콘"
                          onerror="this.onerror=null; this.src='https://placehold.co/40x40/ffffff/ff0000?text=🔥'; this.alt='불꽃 이모지';" />
                     <span class="fire-count">${successCount}</span>
                 </div>
@@ -680,7 +702,8 @@
                  return;
             }
 
-            const displayName = user.displayName || '도전러';
+            // 명칭 변경: 도전러 -> 챌린지러
+            const displayName = user.displayName || '챌린지러';
             
             // UI 업데이트
             document.getElementById('user-nickname').textContent = displayName;
