@@ -68,9 +68,9 @@
             padding-top: 0; 
         }
 
-        /* 메인 헤더: 모바일 패딩 및 폰트 크기 조정 */
+        /* [수정됨] 메인 헤더: 모바일 패딩 및 폰트 크기 조정 */
         .main-header {
-            font-size: 1.75rem; 
+            font-size: 2rem; /* 모바일 기본 크기를 2rem으로 조정 */
             font-weight: 800; 
             color: var(--color-black); 
             display: flex;
@@ -152,10 +152,10 @@
                 padding-bottom: calc(1.5rem + var(--bottom-nav-height)); 
             }
             
-            /* 메인 헤더 PC 스타일 */
+            /* [수정됨] 메인 헤더 PC 스타일 */
             .main-header {
                 padding: 0 3rem; 
-                font-size: 2rem; 
+                font-size: 2.25rem; /* PC 크기를 2.25rem로 조정 */
             }
         
             /* 하단 내비게이션 PC 스타일 */
@@ -197,8 +197,8 @@
         }
         
         .main-tab-item { 
-            font-size: 1.75rem; 
-            font-weight: 800; 
+            /* [수정됨] font-size를 제거하여 .main-header에서 상속받도록 함 (2rem 또는 2.25rem) */
+            font-weight: 800;  
             color: #ccc; /* 비활성 색상 */
             cursor: pointer; 
             position: relative; 
@@ -208,19 +208,6 @@
         .main-tab-item.active { 
             color: var(--color-black); 
         }
-        /* [수정] 밑줄을 제거합니다. */
-        /*
-        .main-tab-item.active::after { 
-            content: ''; 
-            position: absolute; 
-            bottom: 0px; 
-            left: 0; 
-            width: 100%; 
-            height: 4px; 
-            background-color: var(--color-black); 
-            border-radius: 9999px; 
-        }
-        */
         
         /* 생성 버튼 스타일 */
         .create-button-container {
@@ -402,9 +389,11 @@
     <!-- 상단 탭 전환 및 생성 버튼 (메인 헤더 대체) -->
     <header class="main-header top-tabs" id="main-header">
         <div class="tab-item-container">
+            <!-- 이제 .main-header로부터 2rem 크기를 상속받습니다. -->
             <div id="tab-my-btn" class="main-tab-item interactive active" onclick="switchTopTab('my')">내 챌린지</div>
         </div>
         <div class="tab-item-container">
+            <!-- 이제 .main-header로부터 2rem 크기를 상속받습니다. -->
             <div id="tab-team-btn" class="main-tab-item interactive" onclick="switchTopTab('team')">팀 챌린지</div>
         </div>
         <!-- 챌린지 생성 버튼 (+) -->
