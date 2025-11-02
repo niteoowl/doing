@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>용돈 기입장 - Notion 100% 동일 스타일 (로컬 저장)</title>
+    <title>용돈 기입장</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         /* Notion Global Styles */
@@ -325,6 +325,17 @@
             margin: 20px 0;
             box-sizing: border-box;
         }
+        
+        /* New Font Styles for Alert Modal */
+        .alert-content {
+            /* 굴림체 */
+            font-family: 'Gulim', 'Malgun Gothic', sans-serif; 
+        }
+        .alert-content h4 {
+            /* 궁서체 */
+            font-family: 'GungSeo', serif; 
+            font-weight: normal;
+        }
 
         .modal-content h4 {
             font-size: 18px;
@@ -576,11 +587,30 @@
                     <button id="upload-file-btn" class="notion-input import-btn">
                         .용돈 파일 업로드 및 복원
                     </button>
-                    <button id="cancel-transfer-btn" class="notion-input cancel-btn" style="background-color: var(--background-color); color: var(--text-color); border-color: var(--border-color);">
+                    <!-- 닫기 버튼 수정됨 -->
+                    <button id="close-transfer-modal-btn" class="notion-input cancel-btn" style="background-color: var(--background-color); color: var(--text-color); border-color: var(--border-color);">
                         닫기
                     </button>
                 </div>
                 <div id="transfer-status" class="modal-status-message"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 알림 팝업 (데이터 손실 경고) - 시작 시 자동으로 표시 -->
+    <div id="alert-modal" class="modal-overlay visible">
+        <div class="modal-content alert-content">
+            <h4 style="text-align: center;">알 림</h4>
+            <p style="font-size: 15px; margin-bottom: 25px; line-height: 1.6; color: var(--notion-red); text-align: center;">
+                현재 업데이트로 인해 데이타가 손실되었습니다. 업데이트가 있을시 데이타는 손실되므로 매일 백업해놓으시기 바랍니다.
+            </p>
+            <p style="font-size: 14px; text-align: center; color: var(--text-color); margin-bottom: 0;">
+                [백업은 하단에서 가능합니다]
+            </p>
+            <div class="modal-actions" style="justify-content: center;">
+                <button id="close-alert-btn" class="cancel-btn" style="border-color: var(--notion-blue); color: var(--notion-blue);">
+                    확인
+                </button>
             </div>
         </div>
     </div>
@@ -608,11 +638,16 @@
 
         const transferModal = document.getElementById('transfer-modal');
         const transferStatus = document.getElementById('transfer-status');
+        const closeTransferModalBtn = document.getElementById('close-transfer-modal-btn'); // ID 변경됨
+
+        // 파일 이전 관련 요소
+        const downloadDataBtn = document.getElementById('download-data-btn'); 
+        const uploadFileBtn = document.getElementById('upload-file-btn');     
+        const fileInput = document.getElementById('file-input');             
         
-        // 파일 이전 관련 요소 (복사/붙여넣기 관련 요소는 모두 제거됨)
-        const downloadDataBtn = document.getElementById('download-data-btn'); // New
-        const uploadFileBtn = document.getElementById('upload-file-btn');     // New
-        const fileInput = document.getElementById('file-input');             // New
+        // 알림 팝업 관련 요소 (NEW)
+        const alertModal = document.getElementById('alert-modal');
+        const closeAlertBtn = document.getElementById('close-alert-btn');
 
         let transactionToDeleteId = null;
 
@@ -678,10 +713,12 @@
                 if (dateA > dateB) return sortOrder === 'asc' ? 1 : -1;
 
                 // 날짜가 같으면 ID (생성 시점)로 비교 (최신 추가된 항목이 더 뒤로 가게)
-                if (a.id < b.id) return sortOrder === 'asc' ? -1 : 1;
-                if (a.id > b.id) return sortOrder === 'asc' ? 1 : -1;
-                
-                return 0;
+                // 로컬 저장소 기반 앱이므로, ID(timestamp + random)가 최종 생성 순서를 결정합니다.
+                if (sortOrder === 'desc') {
+                    return b.id.localeCompare(a.id);
+                } else {
+                    return a.id.localeCompare(b.id);
+                }
             });
 
             transactionListContainer.innerHTML = '';
@@ -865,7 +902,6 @@
             }
         });
 
-
         // =========================================================
         // 5. Data Transfer (File Download/Upload)
         // =========================================================
@@ -924,7 +960,7 @@
                 try {
                     const importedData = JSON.parse(jsonString);
 
-                    // 간단한 유효성 검사
+                    // 간단한 유효성 검사: 배열이며, 첫 항목에 필수 필드가 있는지 확인
                     if (!Array.isArray(importedData) || (importedData.length > 0 && 
                         (!importedData[0].id || !importedData[0].date || typeof importedData[0].amount !== 'number'))) {
                         
@@ -936,6 +972,11 @@
                     renderUI();
                     transferStatus.textContent = `✨ ${file.name} 파일로 데이터 복원 및 덮어쓰기가 완료되었습니다!`;
                     transferStatus.style.color = 'var(--notion-green)';
+                    
+                    // 성공 시 모달 닫기
+                    setTimeout(() => {
+                        transferModal.classList.remove('visible');
+                    }, 1500);
                     
                 } catch (error) {
                     console.error("데이터 복원 오류:", error);
@@ -955,7 +996,7 @@
 
 
         // ----------------------
-        // Transfer Modal Handlers
+        // Transfer Modal Handlers (수정됨)
         // ----------------------
 
         /**
@@ -967,9 +1008,9 @@
         });
 
         /**
-         * 데이터 이전 모달 닫기
+         * 데이터 이전 모달 닫기 버튼 (닫기)
          */
-        cancelTransferBtn.addEventListener('click', () => {
+        closeTransferModalBtn.addEventListener('click', () => {
             transferModal.classList.remove('visible');
         });
         
@@ -979,9 +1020,25 @@
                 transferModal.classList.remove('visible');
             }
         });
+        
+        // =========================================================
+        // 6. Initial Alert Modal (NEW)
+        // =========================================================
+        
+        closeAlertBtn.addEventListener('click', () => {
+            alertModal.classList.remove('visible');
+        });
+
+        alertModal.addEventListener('click', (e) => {
+            if (e.target === alertModal) {
+                alertModal.classList.remove('visible');
+            }
+        });
 
 
-        // 앱 시작 시 데이터 로드 및 UI 업데이트
+        // 앱 시작 시 데이터 로드 및 UI 업데이트 (Alert Modal은 CSS에서 visible 상태로 시작)
+        // renderUI(); 
+        // Initial renderUI is intentionally skipped until the alert is dismissed if needed, but for simplicity and robustness, we keep it here.
         renderUI();
     </script>
 </body>
