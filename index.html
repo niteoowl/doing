@@ -106,9 +106,9 @@
             top: auto;
             /* Safe Area까지 배경색을 확장 */
             padding-bottom: max(0px, env(safe-area-inset-bottom)); 
-            border-top: none; /* 상단 테두리 제거 */
-            /* 부드럽고 앱 같은 그림자 적용 */
-            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.06), 0 -1px 4px rgba(0, 0, 0, 0.03); 
+            /* 그림자 제거 및 1px 테두리로 변경 */
+            border-top: 1px solid var(--color-border); 
+            box-shadow: none; 
             transition: box-shadow 0.3s ease;
             left: 0;
             transform: none;
@@ -178,8 +178,8 @@
                 transform: translateX(-50%);
                 max-width: var(--pc-max-width);
                 padding-bottom: 0; 
-                /* PC에서는 그림자를 조금 줄여서 더 은은하게 */
-                box-shadow: 0 -6px 15px rgba(0, 0, 0, 0.08); 
+                /* PC에서는 그림자가 필요 없으므로 제거 */
+                box-shadow: none; 
             }
         
             /* 내비게이션 아이템 PC 스타일 (가로 정렬) */
