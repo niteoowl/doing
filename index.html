@@ -8,6 +8,7 @@
     <!-- Favicon 경로 설정 --><link rel="icon" type="image/x-icon" href="/image/favicon.ico">
     <!-- Pretendard 폰트 CDN 적용 --><link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
     <!-- Google Material Icons (Google Fonts Icons) 추가 --><link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="manifest" href="/manifest.json">
     
     <!-- 공통 및 반응형 스타일 적용 -->
     <style>
@@ -752,6 +753,21 @@
             }
         });
     });
+
+    <script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('/service-worker.js')
+      .then(function(registration) {
+        console.log('ServiceWorker 등록 성공:', registration.scope);
+      })
+      .catch(function(error) {
+        console.log('ServiceWorker 등록 실패:', error);
+      });
+    });
+  }
+</script>
+
 </script>
 </body>
 </html>
