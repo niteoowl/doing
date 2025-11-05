@@ -1,0 +1,20 @@
+{
+  "name": "Doing",
+  "short_name": "Doing",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1e90ff",
+  "theme_color": "#1e90ff",
+  "icons": [
+    {
+      "src": "image/icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "image/icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
