@@ -17,7 +17,7 @@
             width: 100%;
             margin: 0;
             padding: 0;
-            overflow: hidden;
+            overflow: hidden; /* 전체 페이지 스크롤 방지 */
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #F8F8F8; /* 밝은 배경 고정 */
             color: #333;
@@ -33,12 +33,13 @@
 
         #top-bar {
             padding: 10px;
-            background: linear-gradient(to bottom, #4A90E2 0%, #357ABD 100%);
+            /* 눈이 편안한 빨간색 계열 */
+            background: linear-gradient(to bottom, #D4404C 0%, #B8303C 100%); 
             color: white;
             display: flex;
-            flex-direction: column;
             gap: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 20; /* 뷰어보다 위에 표시 */
         }
 
         #controls {
@@ -52,7 +53,6 @@
             display: flex;
             align-items: center;
             flex-grow: 1;
-            margin-right: 10px;
         }
 
         .mobile-button {
@@ -65,8 +65,11 @@
             transition: background-color 0.2s, box-shadow 0.1s;
             border-radius: 4px;
             text-align: center;
-            background: linear-gradient(to bottom, #7CD3F2 0%, #4FA3D3 100%);
+            /* 버튼 색상도 메인 테마에 맞춰 변경 */
+            background: linear-gradient(to bottom, #FF707D 0%, #D4404C 100%); 
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+            flex-shrink: 0; /* 버튼이 줄어들지 않도록 고정 */
+            margin-left: 10px; /* 제목과 버튼 사이 간격 */
         }
         
         #epub-file-input {
@@ -79,6 +82,7 @@
         }
         
         #file-name-display {
+            /* 책 제목이 표시됩니다. */
             flex-grow: 1;
             padding: 8px;
             background-color: rgba(255, 255, 255, 0.2);
@@ -88,83 +92,64 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            margin-right: 10px;
             min-width: 0;
+            font-weight: bold; /* 책 제목을 더 강조 */
         }
 
         #book-viewer {
             flex-grow: 1;
             background-color: white;
             overflow: hidden;
-        }
-
-        #bottom-controls {
-            display: flex;
+            position: relative; /* 상대 위치 지정 */
+            display: flex; /* 로딩 메시지 중앙 정렬을 위해 추가 */
             justify-content: center;
             align-items: center;
-            padding: 12px 10px;
-            background: linear-gradient(to top, #EAEAEA 0%, #F5F5F5 100%);
-            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
-            position: relative;
-            z-index: 10;
-            min-height: 44px; /* 최소 높이 확보 */
-        }
-
-        #page-status {
-            font-size: 14px;
-            color: #555;
-            text-align: center;
-            font-weight: 500;
-            padding: 0 15px;
         }
         
-        #loading-message {
+        /* 동적으로 생성될 로딩 메시지 스타일 */
+        .dynamic-loading-message {
             text-align: center;
             padding: 50px;
             font-size: 16px;
-            color: #4A90E2;
+            color: #D4404C;
         }
     </style>
 </head>
 <body id="body">
 
 <div id="app-container">
+    <!-- 상단 컨트롤 바 -->
     <div id="top-bar">
         <div id="controls">
             <div id="file-input-group">
-                <span id="file-name-display">선택된 파일 없음</span>
+                <span id="file-name-display">파일을 선택하세요.</span>
                 <input type="file" id="epub-file-input" accept=".epub">
                 <label for="epub-file-input" class="mobile-button">파일 선택</label>
             </div>
-            <!-- 다크 모드 토글 버튼 삭제됨 -->
         </div>
-        <div id="book-title" style="font-size: 13px;">현재 로드된 책: 없음</div>
     </div>
 
+    <!-- EPUB 뷰어 영역 (초기 상태는 비어 있음) -->
     <div id="book-viewer">
-        <div id="loading-message">
+        <!-- 초기 가이드 메시지 -->
+        <div class="dynamic-loading-message" id="initial-guide">
             EPUB 파일을 보려면 '파일 선택' 버튼을 눌러 로컬 파일을 업로드하세요.<br>
-            뷰어는 **밝은 모드(Light Mode) 페이지 넘기기**로 고정되어 있습니다.
+            뷰어는 **밝은 모드**로 고정되어 있으며 **스와이프 또는 좌우 탭**으로 페이지를 이동합니다.
         </div>
-        <!-- EPUB 내용이 여기에 렌더링됩니다 -->
     </div>
 
-    <div id="bottom-controls">
-        <span id="page-status"></span>
-    </div>
+    <!-- 하단 페이지 상태 표시 바 삭제됨 -->
 </div>
 
 <script>
     // 전역 변수 설정
     let book;
     let rendition;
-    let startX = 0; // 스와이프 시작 X 좌표
     const SWIPE_THRESHOLD = 70; // 스와이프 최소 거리 (픽셀)
+    const TAP_ZONE_RATIO = 0.3; // 페이지 넘김을 위한 좌우 탭 영역 비율 (30%)
     
     // UI 요소 가져오기
     const viewer = document.getElementById('book-viewer');
-    const pageStatus = document.getElementById('page-status');
-    const bookTitleElement = document.getElementById('book-title');
     const fileInput = document.getElementById('epub-file-input');
     const fileNameDisplay = document.getElementById('file-name-display');
 
@@ -172,17 +157,16 @@
     // 1. 라이트 모드 강제 적용 설정
     // ====================================
 
-    // EPUBJS의 기본 라이트 모드 테마 정의. !important를 사용하여 우선순위를 높여 검정 텍스트 문제를 방지합니다.
+    // EPUBJS의 기본 라이트 모드 테마 정의
     const lightTheme = {
         'body': {
-            'background': 'white !important', // 배경색 흰색 강제 적용
-            'color': '#333 !important' // 기본 글자색 검정 계열 강제 적용
+            'background': 'white !important', 
+            'color': '#333 !important' 
         },
-        // 주요 텍스트 태그에 강제로 스타일 적용
         'p, span, div, li, td, th': { 'color': '#333 !important' }, 
         'h1, h2, h3, h4, h5, h6': { 'color': '#333 !important' },
-        '*': { 'color': '#333 !important' }, // 모든 요소의 글자색을 검정 계열로 설정 (최후의 수단)
-        'a': { 'color': '#4A90E2 !important' }, // 링크 색상
+        '*': { 'color': '#333 !important' }, 
+        'a': { 'color': '#D4404C !important' }, /* 링크 색상도 테마에 맞춤 */
     };
 
 
@@ -206,50 +190,91 @@
         setTimeout(() => document.body.removeChild(errorElement), 3000);
     }
 
-    /** 현재 위치 정보를 분석하여 하단 상태 표시줄을 업데이트합니다. */
-    function updatePageStatus(location) {
-        if (!location) {
-            pageStatus.textContent = "위치 정보 없음";
-            return;
-        }
+    // 하단 페이지 상태 업데이트 함수는 삭제되었습니다.
 
-        // 페이지 모드 (Paginated) 전용 로직
-        const totalPages = location.total;
-        const displayed = location.displayed;
-        
-        // displayed 배열에서 첫 번째 페이지 번호를 안전하게 가져옴
-        const currentPage = (Array.isArray(displayed) && displayed.length > 0) ? displayed[0].page : undefined;
+    /** * EPUB 콘텐츠 내부에 스와이프 및 탭 핸들러를 추가합니다. 
+     * @param {Object} contents epub.js Content 인스턴스
+     */
+    function addInteractionHandlersToContent(contents) {
+        let contentStartX = 0;
+        const contentDoc = contents.window.document;
 
-        if (totalPages && totalPages > 0 && currentPage !== undefined) {
-            pageStatus.textContent = `페이지 ${currentPage + 1} / ${totalPages}`;
-        } else if (location.percentage !== undefined) {
-             // 페이지 계산 중이거나 오류 시 퍼센티지 폴백
-            const percentage = location.percentage * 100;
-            pageStatus.textContent = `읽는 중... ${percentage.toFixed(1)}%`;
-        } else {
-            pageStatus.textContent = "페이지 정보 로딩 중...";
-        }
+        // --- A. 스와이프 로직 (touchstart, touchend) ---
+
+        // 터치 시작 시점 기록
+        contentDoc.addEventListener('touchstart', (event) => {
+            if (event.touches.length !== 1) return;
+            contentStartX = event.touches[0].clientX;
+        }, { passive: true }); 
+
+        // 터치 끝 시점 및 스와이프 판별
+        contentDoc.addEventListener('touchend', (event) => {
+            if (!rendition) return;
+
+            const endX = event.changedTouches[0].clientX;
+            const deltaX = contentStartX - endX;
+            
+            // 스와이프 임계값 미만이면 무시
+            if (Math.abs(deltaX) < SWIPE_THRESHOLD) return; 
+
+            if (deltaX > 0) {
+                // 왼쪽 스와이프 -> 다음 페이지
+                rendition.next().catch(e => console.error("다음 페이지 이동 오류 (내부 스와이프):", e));
+            } else if (deltaX < 0) {
+                // 오른쪽 스와이프 -> 이전 페이지
+                rendition.prev().catch(e => console.error("이전 페이지 이동 오류 (내부 스와이프):", e));
+            }
+            // 스와이프 후 텍스트 선택 등 기본 동작 방지 유지
+            event.preventDefault(); 
+        });
+
+        // --- B. 탭/클릭 로직 (PC에서 연속 클릭을 위해 event.preventDefault() 재추가) ---
+        contentDoc.addEventListener('click', (event) => {
+            if (!rendition) return;
+            
+            // 탭/클릭이 링크(a 태그)가 아닌 경우에만 페이지 이동 처리
+            if (event.target.tagName === 'A' || event.target.closest('a')) {
+                return; 
+            }
+            
+            const contentWidth = contents.window.innerWidth; // Iframe visible width
+            const clickXInsideContent = event.clientX; 
+            const ratio = clickXInsideContent / contentWidth;
+
+            let navigated = false;
+
+            if (ratio < TAP_ZONE_RATIO) {
+                // 왼쪽 30% 영역 클릭 (이전 페이지)
+                rendition.prev().catch(e => console.error("이전 페이지 이동 오류 (내부 클릭):", e));
+                navigated = true;
+            } else if (ratio > (1 - TAP_ZONE_RATIO)) {
+                // 오른쪽 30% 영역 클릭 (다음 페이지)
+                rendition.next().catch(e => console.error("다음 페이지 이동 오류 (내부 클릭):", e));
+                navigated = true;
+            }
+            
+            // 네비게이션이 발생했을 때만 기본 동작(텍스트 선택 등)을 막아 PC 연속 클릭 문제를 해결합니다.
+            if (navigated) {
+                 event.preventDefault(); 
+            }
+        });
     }
-    
+
     /** 렌디션 이벤트 리스너 설정 및 강제 스타일 적용 훅 등록 */
     function setupRenditionListeners() {
         if (!rendition) return;
 
-        // 콘텐츠가 로드될 때마다 라이트 테마를 강제로 다시 적용하는 훅 등록
+        // 1. 콘텐츠가 로드될 때마다 테마 적용 및 상호작용 핸들러를 iframe 내부에 등록
         rendition.hooks.content.register((contents) => {
             applyLightTheme(); 
+            addInteractionHandlersToContent(contents); // <-- 스와이프/탭 핸들러 등록
         });
 
-        // 페이지 변경 시 상태 업데이트
-        rendition.on("relocated", updatePageStatus);
+        // 2. 페이지 변경 시 상태 업데이트 (하단 바 삭제로 인해 relocated 이벤트는 더 이상 사용하지 않습니다.)
+        // rendition.on("relocated", updatePageStatus);
         
-        // 초기 페이지 상태 업데이트 (rendered 이벤트 후)
-        rendition.on("rendered", () => {
-            const location = rendition.currentLocation();
-            if (location) {
-                updatePageStatus(location); 
-            }
-        });
+        // 3. 초기 페이지 상태 업데이트 
+        // rendition.on("rendered", () => { ... }); (하단 바 삭제로 인해 제거됨)
     }
 
     /**
@@ -259,23 +284,24 @@
     async function loadBook(epubFile) {
         if (!epubFile) return;
 
-        fileNameDisplay.textContent = epubFile.name;
-
+        // 1. 파일 이름 간소화 (확장자 제거)
+        const simpleFileName = epubFile.name.replace(/\.epub$/i, '');
+        
         // 기존 렌더링 정리
         if (rendition) {
             rendition.destroy();
             rendition = null;
         }
         
-        // UI 초기화 및 로딩 표시
+        // UI 초기화 및 로딩 표시 (동적 생성)
         viewer.innerHTML = '';
         const currentLoadingMessage = document.createElement('div');
-        currentLoadingMessage.id = 'loading-message';
-        currentLoadingMessage.innerHTML = `${epubFile.name} 파일을 불러오는 중입니다...`;
+        currentLoadingMessage.className = 'dynamic-loading-message';
+        currentLoadingMessage.innerHTML = `${simpleFileName} 파일을 불러오는 중입니다...`;
         viewer.appendChild(currentLoadingMessage);
         
-        bookTitleElement.textContent = `현재 로드된 책: 로딩 중...`;
-        pageStatus.textContent = '';
+        // 책 제목 표시 영역에 로딩 상태 표시
+        fileNameDisplay.textContent = `로딩 중... (${simpleFileName})`;
 
         try {
             book = new ePub(epubFile);
@@ -302,22 +328,21 @@
                 viewer.removeChild(currentLoadingMessage);
             }
             
-            // 책 제목 업데이트
+            // 책 제목 업데이트 (metadata.title 사용)
             book.loaded.metadata.then(metadata => {
-                const title = metadata.title || epubFile.name;
-                bookTitleElement.textContent = `현재 로드된 책: ${title}`;
+                const title = metadata.title || simpleFileName;
+                fileNameDisplay.textContent = title; // 책 제목을 file-name-display에 표시
             }).catch(e => {
-                bookTitleElement.textContent = `현재 로드된 책: 제목을 가져올 수 없음 (${epubFile.name})`;
+                fileNameDisplay.textContent = `제목을 가져올 수 없음 (${simpleFileName})`;
                 console.error("메타데이터 로드 실패:", e);
             });
 
         } catch (error) {
             console.error("EPUB 로드 및 렌더링 오류:", error);
-            const errorElement = viewer.querySelector('#loading-message') || currentLoadingMessage;
+            const errorElement = viewer.querySelector('.dynamic-loading-message') || currentLoadingMessage;
             errorElement.innerHTML = `EPUB 파일을 불러오는 데 실패했습니다.<br>파일이 유효한지 확인하세요.`;
             errorElement.style.color = '#CC0000';
-            bookTitleElement.textContent = `현재 로드된 책: 오류 발생`;
-            fileNameDisplay.textContent = '선택된 파일 없음';
+            fileNameDisplay.textContent = '오류 발생';
         }
     }
 
@@ -335,7 +360,7 @@
     });
 
     // ====================================
-    // 3. PC 키보드 & 모바일 스와이프 제스처 (페이지 모드 전용)
+    // 3. PC 키보드 제스처 (페이지 모드 전용)
     // ====================================
 
     // A. PC 키보드 이벤트 (화살표 키)
@@ -351,28 +376,14 @@
         }
     });
 
-    // B. 모바일 스와이프 제스처 이벤트
-    viewer.addEventListener('touchstart', (event) => {
-        if (!rendition || event.touches.length !== 1) return;
-        startX = event.touches[0].clientX;
-    }, { passive: true }); 
-
-    viewer.addEventListener('touchend', (event) => {
-        if (!rendition) return;
-
-        const endX = event.changedTouches[0].clientX;
-        const deltaX = startX - endX; 
-        
-        if (Math.abs(deltaX) < SWIPE_THRESHOLD) return; 
-
-        if (deltaX > 0) {
-            // 왼쪽 스와이프 (다음 페이지)
-            rendition.next().catch(e => console.error("다음 페이지 이동 오류 (스와이프):", e));
-        } else if (deltaX < 0) {
-            // 오른쪽 스와이프 (이전 페이지)
-            rendition.prev().catch(e => console.error("이전 페이지 이동 오류 (스와이프):", e));
+    // 초기 실행: 가이드 메시지 표시
+    window.onload = () => {
+        const guide = document.getElementById('initial-guide');
+        if (guide) {
+            guide.innerHTML = `EPUB 파일을 보려면 '파일 선택' 버튼을 눌러 로컬 파일을 업로드하세요.<br>
+            뷰어는 **밝은 모드**로 고정되어 있으며 **스와이프 또는 좌우 탭**으로 페이지를 이동합니다.`;
         }
-    });
+    };
     
 </script>
 
