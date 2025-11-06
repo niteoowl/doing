@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EMATE - 영어 본문 집중 학습 (Scramble)</title>
+
+    <style>
+        /* 폰트: Pretendard 스타일을 위해 Noto Sans KR의 가벼운 웨이트 사용 */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+        
+        /* CSS 변수: 다크 모드 */
+        :root {
+            --primary-color: #ffffff;
+            --secondary-color: #bbbbbb;
+            --background-color: #1a1a1a;
+            --light-gray-bg: #2a2a2a;
+            --darker-gray-bg: #3a3a3a;
+            --border-color: #444444;
+            --success-color: #10b981;
+            --error-color: #dc2626;
+            --warning-color: #f59e0b;
+            --accent-color: #3b82f6; /* Blue for interaction */
+            --transition-speed: 0.3s;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', 'Inter', sans-serif;
+            font-weight: 400;
+            background-color: var(--background-color);
+            color: var(--primary-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.8;
+            overflow-x: hidden;
+        }
+
+        #app {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* 헤더 */
+        .main-header {
+            background-color: var(--background-color);
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .header-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        @media (min-width: 768px) {
+            .header-content { flex-direction: row; }
+        }
+        
+        .header-title {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .main-nav { display: flex; gap: 0.75rem; }
+
+        .nav-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            transition: all var(--transition-speed) ease;
+            border: 1px solid transparent;
+            cursor: pointer;
+            font-size: 0.875rem;
+            box-shadow: none;
+        }
+
+        .nav-btn.active {
+            background-color: var(--primary-color);
+            color: var(--background-color);
+        }
+        
+        .nav-btn:not(.active) {
+            background-color: var(--light-gray-bg);
+            color: var(--secondary-color);
+        }
+
+        /* 메인 콘텐츠 */
+        .main-content {
+            flex-grow: 1;
+            max-width: 1000px; 
+            margin: 0 auto;
+            width: 100%;
+            padding: 2rem 1rem;
+        }
+
+        .app-card { background-color: transparent; padding: 0; margin-bottom: 2rem; border: none; }
+
+        .mode-btn-group { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+
+        .mode-btn {
+            font-weight: 600;
+            padding: 0.6rem 1.4rem;
+            border-radius: 9999px;
+            transition: all var(--transition-speed) ease;
+            border: none;
+            cursor: pointer;
+            flex-shrink: 0;
+            font-size: 0.9rem;
+            box-shadow: none;
+        }
+
+        .mode-btn.active {
+            background-color: var(--primary-color);
+            color: var(--background-color);
+        }
+        
+        .mode-btn:not(.active) {
+            background-color: var(--light-gray-bg);
+            color: var(--secondary-color);
+        }
+
+        /* HWP 스타일 섹션 구분선 */
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin: 2rem 0 1rem 0;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px double var(--primary-color);
+        }
+
+        #content-area { background-color: transparent; padding: 0; min-height: 400px; border: none; }
+
+        /* --- 1단계: 정독 학습 (Study Mode) --- */
+        .study-item {
+            padding: 1.5rem 0;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            background-color: transparent;
+        }
+        
+        .study-item .en-text {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .study-item .kr-text {
+            font-size: 1rem;
+            color: var(--secondary-color);
+            font-style: italic;
+            margin-bottom: 1rem;
+        }
+        
+        .detail-point {
+            margin-top: 1rem;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            background-color: var(--light-gray-bg);
+            color: var(--secondary-color);
+            font-size: 0.9rem;
+            transition: max-height var(--transition-speed) ease-in-out, opacity var(--transition-speed) ease-in-out;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            border-radius: 0.5rem;
+        }
+        
+        .detail-point.visible {
+            max-height: 500px;
+            opacity: 1;
+        }
+        
+        .point-type {
+            font-weight: 700; 
+            color: var(--primary-color);
+            margin-right: 0.5rem;
+            display: inline-block;
+            min-width: 90px;
+        }
+
+        .vocab-list {
+            margin-top: 0.5rem;
+            list-style: none;
+            padding: 0;
+        }
+        .vocab-list li {
+            margin-bottom: 0.5rem;
+            padding-left: 10px;
+            position: relative;
+        }
+        .vocab-list li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: var(--warning-color);
+        }
+        .vocab-word { font-weight: 700; color: var(--warning-color); margin-right: 0.5rem; }
+        .vocab-example { font-style: italic; color: var(--secondary-color); margin-left: 0.5rem; }
+
+        /* --- 2단계: 순서 맞추기 (Scramble Mode) --- */
+        .scramble-container {
+            background-color: var(--light-gray-bg);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
+        }
+        .kr-prompt-scramble {
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+            font-style: italic;
+        }
+        .scramble-result {
+            min-height: 4rem;
+            border: 2px dashed var(--secondary-color);
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            background-color: var(--background-color);
+            align-items: center;
+            transition: border-color var(--transition-speed) ease;
+        }
+        .scramble-result.correct { border-color: var(--success-color); }
+        .scramble-result.incorrect { border-color: var(--error-color); }
+
+        .scramble-words {
+            min-height: 3rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            background-color: var(--darker-gray-bg);
+            align-items: center;
+        }
+
+        .word-token {
+            padding: 0.5rem 0.75rem;
+            background-color: var(--accent-color);
+            color: var(--primary-color);
+            border: none;
+            border-radius: 0.3rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        .word-token:hover { background-color: #60a5fa; transform: translateY(-1px); }
+        .word-token.result-token { background-color: var(--darker-gray-bg); color: var(--primary-color); box-shadow: none; border: 1px solid var(--border-color);}
+        .word-token.result-token:hover { background-color: var(--darker-gray-bg); transform: none; }
+        .word-token.correct { background-color: var(--success-color); }
+
+        /* --- 3단계: 최종 타이핑 (Drill Mode) --- */
+        .drill-card {
+            background-color: var(--light-gray-bg);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        #user-input-drill {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 0.5rem;
+            resize: none;
+            height: 6rem;
+            transition: border-color var(--transition-speed) ease;
+            font-size: 1.1rem;
+            background-color: var(--background-color);
+            color: var(--primary-color);
+        }
+        
+        .drill-buttons { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1rem; }
+        @media (min-width: 640px) { .drill-buttons { flex-direction: row; } }
+        
+        .action-btn {
+            flex-grow: 1;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-weight: 700;
+            transition: background-color var(--transition-speed) ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: none;
+        }
+        
+        #check-btn-drill { background-color: var(--primary-color); color: var(--background-color); }
+        #hint-btn-drill { background-color: var(--secondary-color); color: var(--background-color); }
+
+        .text-success { color: var(--success-color); }
+        .text-error { color: var(--error-color); }
+        .text-warning { color: var(--warning-color); }
+
+    </style>
+</head>
+<body>
+
+    <div id="app">
+        
+        <!-- 헤더: EMATE -->
+        <header class="main-header">
+            <div class="header-content">
+                <h1 class="header-title">EMATE</h1>
+                <nav class="main-nav">
+                    <button onclick="loadLesson('lesson5')" id="btn-lesson5" class="nav-btn active">Lesson 5</button>
+                    <button onclick="loadLesson('lesson6')" id="btn-lesson6" class="nav-btn">Lesson 6</button>
+                </nav>
+            </div>
+        </header>
+
+        <!-- 메인 콘텐츠 영역 -->
+        <main class="main-content">
+
+            <!-- 제목 및 MDR 모드 선택 -->
+            <div class="app-card">
+                <h2 id="lesson-title" class="section-title">Lesson 5: meet the new world (새로운 세상을 만나다)</h2>
+                
+                <div class="mode-btn-group">
+                    <button onclick="setMode('study')" id="btn-study" class="mode-btn active">
+                        1단계: 정독 학습
+                    </button>
+                    <button onclick="setMode('scramble')" id="btn-scramble" class="mode-btn">
+                        2단계: 순서 맞추기 (Scramble)
+                    </button>
+                    <button onclick="setMode('drill')" id="btn-drill" class="mode-btn">
+                        3단계: 최종 타이핑
+                    </button>
+                </div>
+                <p style="font-size: 0.875rem; margin-top: 0.75rem; color: var(--secondary-color);">학습 단계를 밟으며 완벽하게 본문을 암기해 보세요.</p>
+            </div>
+
+            <!-- MDR 콘텐츠 영역 -->
+            <div id="content-area">
+                <!-- 모드에 따라 콘텐츠가 여기에 렌더링됩니다 -->
+            </div>
+            
+        </main>
+    </div>
+
+    <script>
+        // DOM 요소 헬퍼 함수
+        const $ = id => document.getElementById(id);
+        const $qa = sel => document.querySelectorAll(sel);
+
+        // 전역 변수 및 레슨 데이터
+        let currentLessonId = 'lesson5';
+        let currentMode = 'study'; 
+        let currentScrambleIndex = 0; // Scramble 모드 인덱스
+        let currentDrillIndex = 0; // Drill 모드 인덱스
+        
+        // --- 레슨 데이터 (어휘/포인트 강화) ---
+        const lessons = {
+            'lesson5': {
+                title: "Lesson 5: meet the new world (새로운 세상을 만나다)",
+                data: [
+                    { en: "Hi! I’m Hyunsu. Last summer, my friends and I made our own adventure game, “The Lost Island.”", kr: "안녕! 나는 현수야. 지난 여름에, 내 친구들과 나는 우리만의 어드벤처 게임, '더 로스트 아일랜드'를 만들었어.", grammar: "I'm, my friends and I(주어), made(동사), 'The Lost Island'(목적보어). made는 '만들다' 외에 '명명하다'는 5형식 용법으로 쓰임.", testPoint: "주어부(friends and I)와 동사(made)의 시제 일치 (과거). 목적보어가 게임 제목인 점 확인.",
+                      vocab: [ { word: "adventure", meaning: "명사: 모험", example: "He loves thrilling adventures." }, { word: "our own", meaning: "우리 자신의, 우리만의 (소유격 + own)", example: "We built our own house." } ]
+                    },
+                    { en: "We worked together as a team.", kr: "우리는 팀으로서 함께 일했어.", grammar: "work together as a team: '팀으로 함께 일하다' (as는 자격/역할)", testPoint: "as의 역할(자격) 암기. 'A로서'라는 뜻을 기억.",
+                      vocab: [ { word: "as", meaning: "전치사: ~로서, ~처럼 (자격/역할을 나타냄)", example: "He works as a teacher." }, { word: "together", meaning: "부사: 함께, 같이", example: "Let's work together on this project." } ]
+                    },
+                    { en: "STEP 1: Story-making", kr: "1단계: 스토리 만들기", grammar: null, testPoint: null, vocab: [] },
+                    { en: "First, I wrote a story.", kr: "먼저, 나는 이야기를 썼어.", grammar: "write-wrote-written (3단 변화 숙지)", testPoint: "부사 First로 문장의 시작을 알림.",
+                      vocab: [ { word: "First", meaning: "부사: 먼저, 첫째로 (문장 앞에서 순서를 나타냄)", example: "First, let me explain the rules." } ]
+                    },
+                    { en: "The story begins like this:", kr: "이야기는 이렇게 시작돼:", grammar: "begin-began-begun, like this: '이와 같이'", testPoint: "like (전치사) + this (대명사). begins (3인칭 단수 동사).",
+                      vocab: [ { word: "begins", meaning: "동사: 시작하다 (주어 The story가 3인칭 단수이므로 -s가 붙음)", example: "The class begins at nine." }, { word: "like this", meaning: "이와 같이, 이런 식으로", example: "Please do it like this." } ]
+                    },
+                    { en: "One day you wake up on an island.", kr: "어느 날 너는 한 섬에서 눈을 떠.", grammar: "wake up: '잠에서 깨어나다'", testPoint: "on an island (섬 위에서 깨어나다)의 전치사 on 사용.",
+                      vocab: [ { word: "wake up", meaning: "동사구: 잠에서 깨어나다 (현재 시제로 게임 상황 묘사)", example: "I usually wake up early." }, { word: "island", meaning: "명사: 섬 (S가 묵음)", example: "Jeju is a beautiful island." } ]
+                    },
+                    { en: "There are many monsters on the island.", kr: "그 섬에는 몬스터들이 많아.", grammar: "There are + 복수명사: '~들이 있다'", testPoint: "There are 구문 암기. many monsters (복수).", vocab: [] },
+                    { en: "You go through a high mountain, a long river, and a giant tower.", kr: "너는 높은 산, 긴 강, 그리고 거대한 탑을 통과해.", grammar: "go through: '~을 통과하다'", testPoint: "a high mountain, a long river, a giant tower의 병렬 구조. through의 철자 주의.",
+                      vocab: [ { word: "go through", meaning: "동사구: ~을 통과하다, 겪다", example: "We have to go through the tunnel." }, { word: "giant", meaning: "형용사: 거대한, 엄청나게 큰", example: "They built a giant statue." } ]
+                    },
+                    { en: "Choose five items and get off the island.", kr: "아이템 다섯 개를 선택해서 섬에서 탈출해.", grammar: "Choose~ and get off~: 동사원형으로 시작하는 명령문", testPoint: "get off: '~에서 내리다/탈출하다' 숙어 암기.",
+                      vocab: [ { word: "items", meaning: "명사: 품목, 아이템", example: "Put the items in the basket." }, { word: "get off", meaning: "동사구: (차/배 등에서) 내리다, (장소에서) 벗어나다", example: "He got off the bus." } ]
+                    },
+                    { en: "STEP 2: Building", kr: "2단계: 구축하기", grammar: null, testPoint: null, vocab: [] },
+                    { en: "Sujin made the background music and monster sounds.", kr: "수진이는 배경음악과 몬스터 소리를 만들었어.", grammar: "background music: 배경 음악 (복합 명사)", testPoint: "made의 과거 시제와 the 사용 확인.",
+                      vocab: [ { word: "background music", meaning: "배경음악 (BGM)", example: "The movie has great background music." }, { word: "sounds", meaning: "명사: 소리들 (복수)", example: "I heard strange sounds." } ]
+                    },
+                    { en: "Jean drew the main character and NPCs.", kr: "진은 주인공과 NPC들을 그렸어.", grammar: "drew: draw의 과거형, NPC: Non-Player Character (게임 용어)", testPoint: "drew의 철자와 발음 주의.",
+                      vocab: [ { word: "drew", meaning: "동사: 그리다 (draw의 과거형)", example: "She drew a picture yesterday." }, { word: "NPCs", meaning: "Non-Player Characters (비 플레이어 캐릭터)", example: "NPCs give you missions in the game." } ]
+                    },
+                    { en: "Every character looked real.", kr: "모든 캐릭터가 진짜처럼 보였어.", grammar: "Every + 단수 명사 + 단수 동사. look + 형용사: '~처럼 보이다'", testPoint: "Every character (단수)와 looked real (형용사 보어)의 연결.",
+                      vocab: [ { word: "Every", meaning: "형용사: 모든 (단수 명사와 함께 쓰여 단수 취급)", example: "Every student must attend." }, { word: "real", meaning: "형용사: 진짜의, 실제의 (look의 보어로 사용)", example: "The flowers look real." } ]
+                    },
+                    { en: "Minwoo coded the game.", kr: "민우는 게임을 코딩했어.", grammar: "coded: code의 과거형", testPoint: "coded의 과거형 철자 주의.", vocab: [] },
+                    { en: "He put all the parts together.", kr: "그는 모든 요소들을 하나로 합쳤어.", grammar: "put together: '~을 합치다/모으다'. put은 과거형도 put.", testPoint: "put ~ together의 숙어 암기.",
+                      vocab: [ { word: "put together", meaning: "동사구: ~을 조립하다, 합치다 (put의 3단 변화는 put-put-put)", example: "He put the puzzle together." }, { word: "parts", meaning: "명사: 부분, 요소", example: "We need all the parts." } ]
+                    },
+                    { en: "Sounds, characters, and a story were in the game.", kr: "소리, 캐릭터, 그리고 이야기가 게임 안에 있었어.", grammar: "A, B, and C (복수 주어) + were(복수 동사)", testPoint: "복수 주어에 따른 were 사용 확인.", vocab: [] },
+                    { en: "Our game looked and sounded good.", kr: "우리 게임은 보기에도 좋았고 소리도 멋졌어.", grammar: "look/sound + good: 2형식 동사 + 형용사 보어", testPoint: "good (형용사) 사용.", vocab: [] },
+                    { en: "STEP 3: Testing", kr: "3단계: 테스트하기", grammar: null, testPoint: null, vocab: [] },
+                    { en: "Sumin played the game many times.", kr: "수민이는 게임을 여러 번 플레이했어.", grammar: "many times: '여러 번'", testPoint: "many times (횟수)의 위치 확인.",
+                      vocab: [ { word: "many times", meaning: "부사구: 여러 번, 자주", example: "I have told you many times." } ]
+                    },
+                    { en: "Then she shared her ideas.", kr: "그리고 나서 그녀는 자신의 아이디어를 공유했어.", grammar: "share A with B: 'A를 B와 공유하다' (여기선 with B 생략)", testPoint: "Then she shared (과거 시제).",
+                      vocab: [ { word: "shared", meaning: "동사: 공유했다 (share의 과거형)", example: "She shared her lunch with me." } ]
+                    },
+                    { en: "She said, “I enjoyed playing the game. But it ends too soon.”", kr: "그녀는 “게임하는 것은 즐거웠어. 하지만 너무 빨리 끝나.”라고 말했어.", grammar: "enjoy + -ing (동명사). too soon: '너무 일찍/빨리'", testPoint: "enjoy playing (동명사). ends (3인칭 단수) 주의.",
+                      vocab: [ { word: "enjoyed", meaning: "동사: 즐겼다 (enjoy는 뒤에 동명사(-ing)를 목적어로 취함)", example: "We enjoyed hiking." }, { word: "too soon", meaning: "부사구: 너무 일찍/빨리", example: "Don't leave too soon." } ]
+                    },
+                    { en: "“It needs one more stage. And add more items like a life jacket.”", kr: "“스테이지 하나가 더 필요해. 그리고 구명조끼 같은 아이템들을 더 추가해.”", grammar: "one more stage (단수), more items (복수). like: '~같은'", testPoint: "needs (3인칭 단수). add more items (명령문).",
+                      vocab: [ { word: "needs", meaning: "동사: 필요하다 (주어 It이 3인칭 단수이므로 -s가 붙음)", example: "He needs a pen." }, { word: "like", meaning: "전치사: ~처럼, ~같은", example: "Items like this are useful." } ]
+                    },
+                    { en: "So we added an ice lake stage and more useful items.", kr: "그래서 우리는 얼음 호수 스테이지와 더 유용한 아이템들을 추가했어.", grammar: "added: add의 과거형", testPoint: "So (그래서)의 쓰임. more useful items (비교급 useful).",
+                      vocab: [ { word: "So", meaning: "접속사: 그래서, 그러므로 (결과를 나타냄)", example: "It was raining, so I took an umbrella." }, { word: "useful", meaning: "형용사: 유용한, 쓸모 있는", example: "That tool is very useful." } ]
+                    },
+                    { en: "Now our game looked great.", kr: "이제 우리 게임은 훨씬 멋져 보였어.", grammar: "great: good의 강조형. look + 형용사", testPoint: "looked great (감각 동사 + 형용사).", vocab: [] },
+                    { en: "STEP 4: Publishing", kr: "4단계: 출시하기", grammar: null, testPoint: null, vocab: [] },
+                    { en: "We finally published the game on the app market.", kr: "우리는 마침내 앱 마켓에 그 게임을 출시했어.", grammar: "publish: '출판하다, 출시하다'", testPoint: "finally (마침내)의 위치. on the app market (전치사 on).",
+                      vocab: [ { word: "finally", meaning: "부사: 마침내, 드디어", example: "He finally arrived." }, { word: "published", meaning: "동사: 출판/출시했다 (publish의 과거형)", example: "The book was published last year." } ]
+                    },
+                    { en: "We got a lot of reviews!", kr: "우리는 많은 리뷰를 받았어!", grammar: "a lot of: '많은' (셀 수 있는 명사, 셀 수 없는 명사 모두 사용 가능)", testPoint: "a lot of reviews (복수).",
+                      vocab: [ { word: "a lot of", meaning: "많은 수의/양의", example: "She has a lot of friends." }, { word: "reviews", meaning: "명사: 리뷰, 후기", example: "The product got good reviews." } ]
+                    },
+                    { en: "Making a game was hard, but we did it together as a team.", kr: "게임을 만드는 것은 힘들었지만, 우리는 팀으로서 그것을 함께 해냈어.", grammar: "Making a game: 동명사 주어 (단수 취급) + was. do it together as a team: '팀으로서 함께 해내다'", testPoint: "동명사 주어 (Making a game)에 따른 단수 동사 (was) 사용.",
+                      vocab: [ { word: "Making", meaning: "동명사: 만드는 것 (문장의 주어 역할, 단수 취급)", example: "Reading books is fun." } ]
+                    },
+                ]
+            },
+            'lesson6': {
+                title: "Lesson 6: walk around the world (세계 곳곳을 걷다)",
+                data: [
+                    { en: "My Summer Days in Alaska", kr: "알래스카에서의 나의 여름날들", grammar: "in Alaska: 알래스카에서 (장소 전치사 in)", testPoint: "My Summer Days (복수) 사용 확인.", vocab: [] },
+                    { en: "9:00 p.m.", kr: "오후 9시", grammar: null, testPoint: "p.m. (오후) 약자 숙지.", vocab: [] },
+                    { en: "Last summer, I visited my uncle in Alaska.", kr: "지난 여름, 나는 알래스카에 있는 삼촌을 방문했다.", grammar: "visited: visit의 과거형", testPoint: "Last summer (과거 시점)에 따른 과거 동사 visited 사용.",
+                      vocab: [ { word: "visited", meaning: "동사: 방문했다 (visit의 과거형)", example: "I visited my grandparents last week." }, { word: "uncle", meaning: "명사: 삼촌, 외삼촌", example: "My uncle is a pilot." } ]
+                    },
+                    { en: "Can you guess the time in the picture?", kr: "사진 속 시간이 몇 시인지 맞힐 수 있니?", grammar: "Can you guess~?: '~을 추측할 수 있니?'", testPoint: "in the picture (전치사 in).",
+                      vocab: [ { word: "guess", meaning: "동사: 추측하다, 짐작하다", example: "Can you guess my age?" }, { word: "in the picture", meaning: "사진 속에서", example: "Who is the person in the picture?" } ]
+                    },
+                    { en: "It was actually 9 p.m.", kr: "사실은 오후 9시였다.", grammar: "actually: '실제로, 사실은'", testPoint: "actually의 위치 및 의미 암기.",
+                      vocab: [ { word: "actually", meaning: "부사: 실제로, 사실은 (문장 중간이나 끝에 위치하여 사실을 강조)", example: "He is actually a good singer." } ]
+                    },
+                    { en: "My uncle said, “The sun doesn’t set from May to July.", kr: "삼촌은 “5월부터 7월까지는 해가 지지 않아.”라고 말씀하셨다.", grammar: "doesn't set: 3인칭 단수 주어(sun)의 부정문. from A to B: 'A부터 B까지'", testPoint: "doesn't set (현재 시제)와 from A to B 구문 암기.",
+                      vocab: [ { word: "set", meaning: "동사: (해나 달이) 지다", example: "The sun sets in the west." }, { word: "from A to B", meaning: "~부터 ~까지 (기간이나 범위를 나타냄)", example: "The store is open from 9 to 5." } ]
+                    },
+                    { en: "So Alaska is ‘The Land of the Midnight Sun.’”", kr: "그래서 알래스카는 ‘백야의 땅(The Land of the Midnight Sun)’이야.", grammar: "So: '그래서' (결과)", testPoint: "‘The Land of the Midnight Sun’의 고유 명사 표기.",
+                      vocab: [ { word: "Midnight Sun", meaning: "백야 (극지방에서 여름에 해가 지지 않는 현상)", example: "Alaska is famous for the Midnight Sun." } ]
+                    },
+                    { en: "One day, my uncle took me and my cousin, Jimmy, to the Alaska State Fair.", kr: "어느 날, 삼촌은 나와 사촌 지미를 알래스카 주 박람회에 데려갔다.", grammar: "take A to B: 'A를 B로 데려가다'", testPoint: "took (take의 과거형). Jimmy는 동격 명사구.",
+                      vocab: [ { word: "took", meaning: "동사: 데려갔다 (take의 과거형)", example: "He took his dog for a walk." }, { word: "cousin", meaning: "명사: 사촌", example: "My cousin lives nearby." }, { word: "State Fair", meaning: "주 박람회", example: "We went to the State Fair in August." } ]
+                    },
+                    { en: "Jimmy signed up for the wood cutting game.", kr: "지미는 나무 자르기 게임에 참가 신청을 했다.", grammar: "sign up for: '~에 참가 신청하다'", testPoint: "signed up for (과거 시제). wood cutting game (복합 명사).",
+                      vocab: [ { word: "signed up for", meaning: "동사구: ~에 등록/신청하다", example: "I signed up for the class." }, { word: "wood cutting", meaning: "나무 자르기 (복합 명사)", example: "Wood cutting is a difficult job." } ]
+                    },
+                    { en: "People started cutting the wood fast.", kr: "사람들은 빠르게 나무를 자르기 시작했다.", grammar: "start + -ing (동명사) / to V (부정사) 둘 다 가능", testPoint: "fast (형용사/부사) 사용.",
+                      vocab: [ { word: "started", meaning: "동사: 시작했다 (start는 뒤에 to V나 -ing 모두 목적어로 취함)", example: "She started to run." }, { word: "fast", meaning: "부사: 빠르게, 빨리 (형용사/부사 형태가 같음)", example: "Run fast." } ]
+                    },
+                    { en: "I cheered for him, but he didn’t get the prize.", kr: "나는 그를 응원했지만, 그는 상을 받지 못했다.", grammar: "cheered for: '~을 응원하다'. didn't get: 과거 부정문", testPoint: "cheered for (과거 시제)와 didn't get (과거 부정)의 연결.",
+                      vocab: [ { word: "cheered for", meaning: "동사구: ~을 응원하다", example: "The fans cheered for the team." }, { word: "prize", meaning: "명사: 상, 상품", example: "He won the first prize." } ]
+                    },
+                    { en: "“It was hard. The wood was wet,” Jimmy said.", kr: "“힘들었어. 나무가 젖어 있었거든,” 지미가 말했다.", grammar: "hard (형용사), wet (형용사)", testPoint: "hard와 wet의 뜻 및 품사 확인.",
+                      vocab: [ { word: "hard", meaning: "형용사: 힘든, 어려운", example: "The test was very hard." }, { word: "wet", meaning: "형용사: 젖은, 축축한", example: "The floor is wet." } ]
+                    },
+                    { en: "We got hungry, so we went to the food court.", kr: "우리는 배가 고파져서, 푸드코트로 갔다.", grammar: "get hungry: '배가 고파지다' (상태 변화). so: '그래서'", testPoint: "got hungry (과거 시제). so (결과 접속사) 사용.",
+                      vocab: [ { word: "got hungry", meaning: "배가 고파졌다 (get + 형용사: ~해지다)", example: "It got dark quickly." }, { word: "food court", meaning: "푸드코트", example: "Let's meet at the food court." } ]
+                    },
+                    { en: "We had salmon sandwiches.", kr: "우리는 연어 샌드위치를 먹었다.", grammar: "had: have의 과거형", testPoint: "salmon (연어) 발음 및 철자 주의.",
+                      vocab: [ { word: "salmon", meaning: "명사: 연어 (L이 묵음)", example: "Salmon is good for health." } ]
+                    },
+                    { en: "They were very new to me.", kr: "그것들은 나에게 매우 생소했다.", grammar: "new to me: '나에게 새로운'", testPoint: "new to ~ (전치사 to) 사용.",
+                      vocab: [ { word: "new to me", meaning: "~에게 새로운/생소한", example: "This culture is new to me." } ]
+                    },
+                    { en: "At home, I usually put ham and cheese in sandwiches, not salmon.", kr: "집에서는 보통 샌드위치에 연어가 아닌 햄과 치즈를 넣는다.", grammar: "usually: '보통' (빈도 부사). not A but B: A가 아니라 B", testPoint: "usually의 위치. not salmon (대비 구문).",
+                      vocab: [ { word: "usually", meaning: "부사: 보통, 대개 (일반 동사 앞, be/조동사 뒤에 위치)", example: "I usually read books." } ]
+                    },
+                    { en: "They were tasty because the salmon was so fresh.", kr: "연어가 매우 신선했기 때문에 그것들은 맛있었다.", grammar: "because: '~때문에' (이유 접속사). so fresh: '매우 신선한'", testPoint: "because 절 (이유)과 주절 (결과)의 연결. so fresh (so + 형용사).",
+                      vocab: [ { word: "tasty", meaning: "형용사: 맛있는", example: "The soup is tasty." }, { word: "because", meaning: "접속사: ~ 때문에 (이유를 나타냄)", example: "I stayed home because it rained." }, { word: "fresh", meaning: "형용사: 신선한", example: "The vegetables are fresh." } ]
+                    },
+                    { en: "We, then, went to the Giant Vegetable Contest.", kr: "그 다음에, 우리는 거대 채소 대회에 갔다.", grammar: "then: '그 다음에'", testPoint: "then의 위치 및 의미.",
+                      vocab: [ { word: "then", meaning: "부사: 그 때, 그 다음에", example: "First, wash your hands, then eat." }, { word: "Vegetable", meaning: "명사: 채소", example: "Eat more vegetables." } ]
+                    },
+                    { en: "All the vegetables were huge!", kr: "모든 채소들이 정말 거대했다!", grammar: "All the vegetables (복수 주어) + were (복수 동사). huge (형용사)", testPoint: "복수 주어 were huge.",
+                      vocab: [ { word: "huge", meaning: "형용사: 거대한, 엄청나게 큰", example: "The building is huge." } ]
+                    },
+                    { en: "My uncle entered the contest with his pumpkin.", kr: "삼촌은 자신의 호박으로 대회에 참가했다.", grammar: "enter the contest: '대회에 참가하다'", testPoint: "entered (과거 시제). with his pumpkin (수단).",
+                      vocab: [ { word: "entered", meaning: "동사: 참가했다 (enter의 과거형)", example: "He entered the room." }, { word: "pumpkin", meaning: "명사: 호박", example: "We carve pumpkins for Halloween." } ]
+                    },
+                    { en: "It was bigger than a pig!", kr: "그것은 돼지보다도 더 컸다!", grammar: "bigger than A: 'A보다 더 큰' (비교급)", testPoint: "비교급(bigger)과 than A 구문 암기.",
+                      vocab: [ { word: "bigger than", meaning: "~보다 더 큰 (비교급)", example: "My car is bigger than yours." }, { word: "pig", meaning: "명사: 돼지", example: "The pig is in the mud." } ]
+                    },
+                    { en: "“The crops get about 20 hours of sunlight a day during summer.", kr: "“여름에는 작물들이 하루에 약 20시간 동안 햇빛을 받아.", grammar: "crops (복수 주어) + get (복수 동사). during summer: 여름 동안 (during + 특정 기간)", testPoint: "about 20 hours a day (숫자 표현). during summer (during의 용법).",
+                      vocab: [ { word: "crops", meaning: "명사: 농작물 (복수)", example: "The farmer harvested the crops." }, { word: "sunlight", meaning: "명사: 햇빛", example: "Plants need sunlight to grow." }, { word: "during", meaning: "전치사: ~하는 동안 (특정 기간)", example: "He slept during the flight." } ]
+                    },
+                    { en: "So they grow bigger and sweeter,” my uncle said.", kr: "그래서 더 크고 달게 자라는 거야,” 삼촌이 말씀하셨다.", grammar: "grow + 비교급 + and + 비교급: '점점 더 ~해지다'", testPoint: "grow bigger and sweeter (비교급 병렬 구조)와 grow의 2형식 용법.",
+                      vocab: [ { word: "grow", meaning: "동사: 자라다, ~해지다 (2형식에서 보어를 취함)", example: "She is growing taller." }, { word: "sweeter", meaning: "형용사: 더 단 (sweet의 비교급)", example: "This fruit is sweeter." } ] 
+                    },
+                    { en: "When we left the fair at 10 p.m., it was not so dark.", kr: "우리가 밤 10시에 박람회를 떠날 때도, 그렇게 어둡지 않았다.", grammar: "When: '~할 때' (시간 접속사). not so dark: '그렇게 어둡지 않은'", testPoint: "When 절의 시제와 주절 시제 일치 (과거-과거).",
+                      vocab: [ { word: "left", meaning: "동사: 떠났다 (leave의 과거형)", example: "We left the party early." }, { word: "not so", meaning: "그렇게 ~하지 않은", example: "It was not so difficult." } ]
+                    },
+                    { en: "It was a fun day.", kr: "즐거운 하루였다.", grammar: "a fun day (명사를 수식하는 형용사 fun)", testPoint: "fun day (재미있는 하루) 표현 암기.", vocab: [] },
+                ]
+            }
+        };
+
+        // --- 핵심 기능 ---
+
+        /** 활성 클래스를 토글하는 헬퍼 함수 */
+        const toggleActive = (selector, activeId) => {
+            $qa(selector).forEach(btn => btn.classList.remove('active'));
+            $(activeId)?.classList.add('active');
+        };
+
+        /** Fisher-Yates 셔플 알고리즘 */
+        const shuffleArray = (array) => {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        };
+
+        /** 지정된 레슨을 로드하고 현재 모드를 다시 설정합니다. */
+        function loadLesson(lessonId) {
+            currentLessonId = lessonId;
+            $('lesson-title').textContent = lessons[lessonId].title;
+            toggleActive('.main-nav .nav-btn', `btn-${lessonId}`);
+            setMode(currentMode);
+        }
+
+        /** MDR 학습 모드를 설정하고 해당 UI를 렌더링합니다. */
+        function setMode(mode) {
+            currentMode = mode;
+            toggleActive('.mode-btn-group .mode-btn', `btn-${mode}`);
+
+            const contentArea = $('content-area');
+            contentArea.innerHTML = '';
+            
+            const modeRenderers = {
+                'study': renderStudyMode,
+                'scramble': () => { currentScrambleIndex = 0; renderScrambleMode(contentArea); },
+                'drill': () => { currentDrillIndex = 0; renderDrillMode(contentArea); },
+            };
+
+            modeRenderers[mode](contentArea);
+        }
+
+        // --- 1단계: 정독 학습 (Study Mode) ---
+
+        /** 정독 학습 모드 (리딩책 스타일) UI를 렌더링합니다. */
+        function renderStudyMode(container) {
+            const lessonData = lessons[currentLessonId].data;
+
+            let html = `
+                <h3 class="section-title" style="margin-top: 0;">1단계: 정독 학습 (어휘, 문법, 시험 포인트 상세 분석)</h3>
+                <div style="margin-bottom: 1.5rem; display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem;">
+                    <button id="toggle-points-btn" class="action-btn" onclick="toggleAllPoints()" style="background-color: var(--warning-color); color: var(--background-color); font-size: 0.9rem; flex-grow: 0;">
+                        모든 상세 포인트 보이기
+                    </button>
+                    <span style="font-size: 0.875rem; color: var(--secondary-color);">* 클릭하여 각 문장의 상세 정보를 열고 닫을 수 있습니다.</span>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+            `;
+
+            lessonData.forEach((item, index) => {
+                const points = [
+                    { type: '문법 포인트', content: item.grammar },
+                    { type: '시험 포인트', content: item.testPoint }
+                ].filter(p => p.content);
+                
+                // 어휘 섹션 구성
+                let vocabHtml = '';
+                if (item.vocab && item.vocab.length > 0) {
+                    vocabHtml = `
+                        <p style="margin-top: 1rem; font-weight: 700; color: var(--warning-color);">[어휘/표현 설명]</p>
+                        <ul class="vocab-list">
+                            ${item.vocab.map(v => `
+                                <li>
+                                    <span class="vocab-word">${v.word}</span>: ${v.meaning}
+                                    ${v.example ? `<span class="vocab-example">(${v.example})</span>` : ''}
+                                </li>
+                            `).join('')}
+                        </ul>
+                    `;
+                }
+
+                let pointsHtml = points.map(p => `
+                    <div style="margin-top: 0.5rem;">
+                        <span class="point-type">[${p.type}]</span>
+                        <span>${p.content}</span>
+                    </div>
+                `).join('');
+                
+                const hasDetails = points.length > 0 || item.vocab.length > 0;
+                const detailContent = vocabHtml + pointsHtml;
+
+                html += `
+                    <div class="study-item" onclick="togglePoint(${index})">
+                        <p class="en-text">${item.en}</p>
+                        <p class="kr-text">${item.kr}</p>
+                        ${hasDetails ? 
+                            `<div id="detail-point-${index}" class="detail-point">
+                                ${detailContent}
+                            </div>` : `<div style="font-size:0.9rem; color:var(--darker-gray-bg); padding-top:10px;"> (추가 포인트 없음) </div>`
+                        }
+                    </div>
+                `;
+            });
+
+            html += `</div>`;
+            container.innerHTML = html;
+        }
+
+        /** 개별 문장의 상세 포인트 (문법, 어휘 등)를 토글합니다. */
+        function togglePoint(index) {
+            const pointEl = $(`detail-point-${index}`);
+            if (pointEl) {
+                pointEl.classList.toggle('visible');
+            }
+        }
+
+        /** 모든 상세 포인트를 보이거나 숨깁니다. */
+        function toggleAllPoints() {
+            const allPoints = $qa('.detail-point');
+            const toggleBtn = $('toggle-points-btn');
+
+            let isAnyVisible = Array.from(allPoints).some(el => el.classList.contains('visible'));
+
+            allPoints.forEach(el => {
+                el.classList.toggle('visible', !isAnyVisible);
+            });
+            
+            toggleBtn.textContent = !isAnyVisible ? '모든 상세 포인트 숨기기' : '모든 상세 포인트 보이기';
+        }
+
+        // --- 2단계: 순서 맞추기 (Scramble Mode) ---
+
+        /** 문장을 단어 토큰으로 분리합니다. */
+        const tokenizeForScramble = (text) => {
+            // 단어 (축약, 하이픈 포함) 또는 단독 구두점을 분리
+            return text.match(/[\w'’-]+|[.,!?;:"()]/g) || [];
+        };
+
+        /** 단어 토큰을 클릭하여 이동시킵니다. */
+        function moveToken(event, sourceId, targetId) {
+            const token = event.target;
+            const source = $(sourceId);
+            const target = $(targetId);
+
+            if (token.parentNode === source) {
+                // Scramble Words -> Result
+                token.classList.add('result-token');
+                token.classList.remove('word-token');
+                target.appendChild(token);
+            } else if (token.parentNode === target) {
+                // Result -> Scramble Words
+                token.classList.add('word-token');
+                token.classList.remove('result-token');
+                source.appendChild(token);
+            }
+            // 상태 초기화
+            $(targetId).classList.remove('correct', 'incorrect');
+            $('scramble-result-message').textContent = '';
+        }
+
+        /** 정답을 확인합니다. */
+        function checkScrambleAnswer(index) {
+            const item = lessons[currentLessonId].data[index];
+            const targetTokens = tokenizeForScramble(item.en);
+            const resultArea = $(`scramble-result-${index}`);
+            const placedTokens = Array.from(resultArea.querySelectorAll('.result-token'));
+            const resultMsg = $('scramble-result-message');
+
+            if (placedTokens.length !== targetTokens.length) {
+                resultMsg.textContent = '아직 모든 단어를 배치하지 않았습니다.';
+                resultMsg.className = 'text-warning';
+                resultArea.classList.add('incorrect');
+                resultArea.classList.remove('correct');
+                return;
+            }
+
+            let allCorrect = true;
+            for (let i = 0; i < targetTokens.length; i++) {
+                // 대소문자, 구두점까지 일치하는지 확인
+                if (placedTokens[i].textContent.trim() !== targetTokens[i]) {
+                    allCorrect = false;
+                    break;
+                }
+            }
+
+            if (allCorrect) {
+                resultMsg.textContent = '정답입니다! 다음 문장으로 이동하세요.';
+                resultMsg.className = 'text-success';
+                resultArea.classList.add('correct');
+                resultArea.classList.remove('incorrect');
+                
+                // 정답 토큰 비활성화 및 색상 변경
+                placedTokens.forEach(token => {
+                    token.classList.add('correct');
+                    token.style.pointerEvents = 'none';
+                });
+                
+                // 다음 문장 로드 버튼 활성화
+                $('scramble-next-btn').style.display = 'inline-block';
+
+            } else {
+                resultMsg.textContent = '순서가 틀렸습니다. 다시 시도해 보세요.';
+                resultMsg.className = 'text-error';
+                resultArea.classList.add('incorrect');
+                resultArea.classList.remove('correct');
+            }
+        }
+        
+        /** 순서 맞추기 모드의 다음 문장으로 이동합니다. */
+        function loadNextScrambleItem() {
+            currentScrambleIndex++;
+            const data = lessons[currentLessonId].data;
+            if (currentScrambleIndex < data.length) {
+                renderScrambleContent($('scramble-container-wrapper'));
+            } else {
+                $('scramble-container-wrapper').innerHTML = `
+                    <h3 class="text-success" style="font-size: 1.5rem; text-align: center; margin-top: 5rem;">
+                        모든 문장의 순서를 맞췄습니다! 🎉 <br> 3단계 최종 타이핑을 진행해 보세요.
+                    </h3>
+                `;
+                // 버튼 숨기기
+                $('scramble-check-btn').style.display = 'none';
+                $('scramble-next-btn').style.display = 'none';
+            }
+        }
+
+        /** 순서 맞추기 모드 UI를 렌더링하고 이벤트를 설정합니다. */
+        function renderScrambleMode(container) {
+            container.innerHTML = `
+                <h3 class="section-title">2단계: 순서 맞추기 (Scramble)</h3>
+                <p style="color: var(--secondary-color); margin-bottom: 1.5rem;">한국어 뜻을 보고 단어 토큰의 순서를 클릭하여 배열해 보세요.</p>
+                
+                <div id="scramble-status" style="margin-bottom: 1rem; font-size: 1.125rem; font-weight: 600; color: var(--secondary-color);"></div>
+
+                <div id="scramble-container-wrapper">
+                    <!-- 스크램블 콘텐츠가 여기에 로드됩니다 -->
+                </div>
+
+                <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem;">
+                    <button id="scramble-check-btn" class="action-btn" onclick="checkScrambleAnswer(currentScrambleIndex)">
+                        정답 확인
+                    </button>
+                    <button id="scramble-next-btn" class="action-btn" onclick="loadNextScrambleItem()" style="display: none; background-color: var(--success-color); color: var(--background-color);">
+                        다음 문장
+                    </button>
+                </div>
+                <p id="scramble-result-message" style="margin-top: 1rem; font-size: 1.1rem; font-weight: 700;"></p>
+            `;
+
+            renderScrambleContent($('scramble-container-wrapper'));
+        }
+        
+        /** 개별 스크램블 문장 콘텐츠를 렌더링합니다. */
+        function renderScrambleContent(wrapper) {
+            const data = lessons[currentLessonId].data;
+            const item = data[currentScrambleIndex];
+            const targetTokens = tokenizeForScramble(item.en);
+            const shuffledTokens = shuffleArray([...targetTokens]); // 배열 복사 후 셔플
+
+            $('scramble-status').textContent = `문장 ${currentScrambleIndex + 1} / ${data.length}`;
+
+            // HTML 생성
+            wrapper.innerHTML = `
+                <div class="scramble-container">
+                    <p class="kr-prompt-scramble">(${item.kr})</p>
+                    
+                    <div id="scramble-result-${currentScrambleIndex}" class="scramble-result" 
+                         onclick="event.target.classList.contains('result-token') ? moveToken(event, 'scramble-words-${currentScrambleIndex}', 'scramble-result-${currentScrambleIndex}') : null;">
+                        <!-- 결과 단어 배치 영역 -->
+                    </div>
+                    
+                    <div id="scramble-words-${currentScrambleIndex}" class="scramble-words"
+                         onclick="event.target.classList.contains('word-token') ? moveToken(event, 'scramble-words-${currentScrambleIndex}', 'scramble-result-${currentScrambleIndex}') : null;">
+                        ${shuffledTokens.map((token, i) => `
+                            <button class="word-token" data-index="${i}">${token}</button>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            
+            // 버튼 상태 초기화
+            $('scramble-check-btn').style.display = 'inline-block';
+            $('scramble-next-btn').style.display = 'none';
+            $('scramble-result-message').textContent = '';
+        }
+
+        // --- 3단계: 최종 타이핑 (Drill Mode) ---
+
+        /** 타이핑 연습 모드 UI를 렌더링하고 이벤트를 설정합니다. */
+        function renderDrillMode(container) {
+            const data = lessons[currentLessonId].data;
+
+            container.innerHTML = `
+                <h3 class="section-title">3단계: 최종 타이핑 테스트</h3>
+                <p style="color: var(--secondary-color); margin-bottom: 1.5rem;">가장 어려운 최종 테스트입니다. 완벽한 영어 문장을 입력하여 본문을 마무리하세요.</p>
+                <div id="drill-status" style="margin-bottom: 1rem; font-size: 1.125rem; font-weight: 600; color: var(--secondary-color);"></div>
+
+                <div id="drill-card" class="drill-card">
+                    <p id="kr-prompt" style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;"></p>
+                    <p id="en-target-display" style="visibility: hidden; font-size: 1rem; color: var(--secondary-color); font-style: italic; margin-bottom: 1rem; padding: 0.5rem; background-color: var(--background-color); border-radius: 0.25rem;"></p>
+                    <textarea id="user-input-drill" placeholder="여기에 영어 문장을 입력하세요. (Shift+Enter로 줄바꿈, Enter로 정답 확인)" rows="4"></textarea>
+                    
+                    <div class="drill-buttons">
+                        <button id="check-btn-drill" class="action-btn">정답 확인</button>
+                        <button id="hint-btn-drill" class="action-btn">힌트 보기</button>
+                    </div>
+                    <p id="result-message-drill" style="margin-top: 1rem; font-size: 1.25rem; font-weight: 700;"></p>
+                </div>
+            `;
+
+            $('check-btn-drill').addEventListener('click', checkDrillAnswer);
+            $('hint-btn-drill').addEventListener('click', showDrillHint);
+            $('user-input-drill').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    checkDrillAnswer();
+                }
+            });
+
+            loadDrillItem(data[currentDrillIndex]);
+        }
+
+        /** 현재 순서의 문장을 로드합니다. */
+        function loadDrillItem(item) {
+            const data = lessons[currentLessonId].data;
+            $('drill-status').textContent = `문장 ${currentDrillIndex + 1} / ${data.length}`;
+            $('kr-prompt').textContent = item.kr;
+            $('en-target-display').textContent = item.en;
+            $('en-target-display').style.visibility = 'hidden';
+            $('en-target-display').style.color = 'var(--secondary-color)';
+            $('user-input-drill').value = '';
+            $('user-input-drill').disabled = false;
+            $('result-message-drill').textContent = '';
+            $('user-input-drill').focus();
+        }
+
+        /** 사용자 입력과 정답을 비교하고 다음 단계로 진행합니다. */
+        function checkDrillAnswer() {
+            const userInput = $('user-input-drill').value.trim();
+            const targetText = $('en-target-display').textContent.trim();
+            const resultMsg = $('result-message-drill');
+            const data = lessons[currentLessonId].data;
+            
+            // 비교 시 대소문자, 구두점, 공백 무시 (단어 순서만 확인)
+            const normalize = (text) => text.toLowerCase().replace(/[\W_]+/g, '');
+
+            // 완벽 일치 검사 (구두점, 대소문자까지는 아니더라도, 단어 순서와 공백은 맞추도록 유도)
+            if (userInput === targetText) {
+                resultMsg.textContent = '완벽하게 정답입니다! 다음 문장으로 이동합니다.';
+                resultMsg.className = 'text-success';
+                $('user-input-drill').disabled = true;
+
+                setTimeout(() => {
+                    currentDrillIndex++;
+                    if (currentDrillIndex < data.length) {
+                        loadDrillItem(data[currentDrillIndex]);
+                    } else {
+                        resultMsg.textContent = `${lessons[currentLessonId].title}의 모든 문장을 완벽하게 외웠습니다! 🎉`;
+                        resultMsg.className = 'text-success';
+                        $('drill-card').style.display = 'none';
+                        $('drill-status').textContent = '';
+                    }
+                }, 1500);
+
+            } else if (normalize(userInput) === normalize(targetText)) {
+                 resultMsg.textContent = '단어 순서는 맞췄으나, 구두점이나 대소문자를 다시 한번 확인해 보세요.';
+                 resultMsg.className = 'text-warning';
+            } else {
+                resultMsg.textContent = '오답입니다. 다시 한번 시도해 보세요. (띄어쓰기, 구두점 확인)';
+                resultMsg.className = 'text-error';
+            }
+        }
+
+        /** 정답 힌트를 보여줍니다. */
+        function showDrillHint() {
+            const targetDisplay = $('en-target-display');
+            targetDisplay.style.visibility = 'visible';
+            targetDisplay.style.color = 'var(--error-color)';
+        }
+
+        // 페이지 로드 시 초기화
+        window.onload = function() {
+            loadLesson(currentLessonId);
+        };
+
+    </script>
+</body>
+</html>
