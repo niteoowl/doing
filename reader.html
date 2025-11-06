@@ -10,7 +10,7 @@
     <script src="https://cdn.jsdelivr.net/npm/epubjs/dist/epub.min.js"></script>
     <style>
         /* ==================================== */
-        /* 1. 기본 스타일 및 라이트 모드 테마 */
+        /* 1. 기본 스타일 (라이트 모드 고정) */
         /* ==================================== */
         html, body {
             height: 100%;
@@ -19,9 +19,8 @@
             padding: 0;
             overflow: hidden;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #F8F8F8; /* Light Mode: 밝은 배경 */
+            background-color: #F8F8F8; /* 밝은 배경 고정 */
             color: #333;
-            transition: background-color 0.3s, color 0.3s;
         }
 
         #app-container {
@@ -40,7 +39,6 @@
             flex-direction: column;
             gap: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            transition: background 0.3s, box-shadow 0.3s;
         }
 
         #controls {
@@ -55,26 +53,6 @@
             align-items: center;
             flex-grow: 1;
             margin-right: 10px;
-        }
-
-        /* 컨트롤 버튼 (다크모드, 모드 전환) */
-        .control-button {
-            padding: 8px;
-            border: none;
-            background: rgba(255, 255, 255, 0.15);
-            color: white;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .control-button:hover {
-            background: rgba(255, 255, 255, 0.3);
         }
 
         .mobile-button {
@@ -118,7 +96,6 @@
             flex-grow: 1;
             background-color: white;
             overflow: hidden;
-            transition: background-color 0.3s;
         }
 
         #bottom-controls {
@@ -131,7 +108,6 @@
             position: relative;
             z-index: 10;
             min-height: 44px; /* 최소 높이 확보 */
-            transition: background 0.3s, box-shadow 0.3s;
         }
 
         #page-status {
@@ -147,40 +123,7 @@
             padding: 50px;
             font-size: 16px;
             color: #4A90E2;
-            transition: color 0.3s;
         }
-        
-        /* ==================================== */
-        /* 2. 다크 모드 스타일 (글자색 흰색 보장) */
-        /* ==================================== */
-        .dark-mode {
-            background-color: #1a1a1a !important;
-            color: #E0E0E0 !important;
-        }
-        
-        .dark-mode #top-bar {
-            background: linear-gradient(to bottom, #333333 0%, #1a1a1a 100%);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
-        }
-
-        .dark-mode #book-viewer {
-            /* 뷰어의 배경색이 EPUBJS 테마로 설정되므로, 여기서는 UI 배경만 설정 */
-            background-color: #1a1a1a; 
-        }
-
-        .dark-mode #bottom-controls {
-            background: linear-gradient(to top, #2b2b2b 0%, #3a3a3a 100%);
-            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.4);
-        }
-        
-        .dark-mode #page-status {
-            color: #B0B0B0;
-        }
-
-        .dark-mode #loading-message {
-            color: #88BBDD;
-        }
-
     </style>
 </head>
 <body id="body">
@@ -193,31 +136,7 @@
                 <input type="file" id="epub-file-input" accept=".epub">
                 <label for="epub-file-input" class="mobile-button">파일 선택</label>
             </div>
-            <div style="display: flex; gap: 8px;">
-                <!-- Dark Mode Toggle Button (Moon Icon) -->
-                <button id="dark-mode-toggle" class="control-button" title="다크 모드 전환">
-                    <!-- Moon Icon SVG -->
-                    <svg id="moon-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
-                    </svg>
-                    <!-- Sun Icon SVG (Hidden initially) -->
-                    <svg id="sun-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                    </svg>
-                </button>
-                
-                <!-- Reading Mode Toggle Button (Scroll/Page Icon) -->
-                <button id="mode-toggle" class="control-button" title="현재: 페이지 모드 (클릭하여 스크롤 모드 전환)">
-                    <!-- List Icon SVG (Represents Scroll Mode) -->
-                    <svg id="scroll-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
-                    </svg>
-                    <!-- Chevron Icon SVG (Represents Page Mode - Hidden initially) -->
-                    <svg id="page-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path>
-                    </svg>
-                </button>
-            </div>
+            <!-- 다크 모드 토글 버튼 삭제됨 -->
         </div>
         <div id="book-title" style="font-size: 13px;">현재 로드된 책: 없음</div>
     </div>
@@ -225,7 +144,7 @@
     <div id="book-viewer">
         <div id="loading-message">
             EPUB 파일을 보려면 '파일 선택' 버튼을 눌러 로컬 파일을 업로드하세요.<br>
-            파일 로드 후 **모드 전환** 버튼으로 스크롤/페이지 모드를 선택하세요.
+            뷰어는 **밝은 모드(Light Mode) 페이지 넘기기**로 고정되어 있습니다.
         </div>
         <!-- EPUB 내용이 여기에 렌더링됩니다 -->
     </div>
@@ -233,8 +152,6 @@
     <div id="bottom-controls">
         <span id="page-status"></span>
     </div>
-    
-    <!-- 가독성 설정 모달이 제거되었습니다 -->
 </div>
 
 <script>
@@ -243,120 +160,38 @@
     let rendition;
     let startX = 0; // 스와이프 시작 X 좌표
     const SWIPE_THRESHOLD = 70; // 스와이프 최소 거리 (픽셀)
-    let isScrollMode = false; // 기본값: 페이지 모드 (false)
     
     // UI 요소 가져오기
-    const body = document.getElementById('body');
     const viewer = document.getElementById('book-viewer');
     const pageStatus = document.getElementById('page-status');
     const bookTitleElement = document.getElementById('book-title');
     const fileInput = document.getElementById('epub-file-input');
     const fileNameDisplay = document.getElementById('file-name-display');
-    const darkModeToggle = document.getElementById('dark-mode-toggle');
-    const moonIcon = document.getElementById('moon-icon');
-    const sunIcon = document.getElementById('sun-icon');
-    const modeToggle = document.getElementById('mode-toggle'); // 모드 토글 버튼
-    const scrollIcon = document.getElementById('scroll-icon'); // 스크롤 모드 아이콘
-    const pageIcon = document.getElementById('page-icon'); // 페이지 모드 아이콘
 
     // ====================================
-    // 1. 다크 모드 및 모드 전환 설정
+    // 1. 라이트 모드 강제 적용 설정
     // ====================================
 
-    // EPUBJS의 다크 모드 테마 정의 (글자색: #E0E0E0)
-    const darkTheme = {
+    // EPUBJS의 기본 라이트 모드 테마 정의. !important를 사용하여 우선순위를 높여 검정 텍스트 문제를 방지합니다.
+    const lightTheme = {
         'body': {
-            'background': '#1a1a1a',
-            'color': '#E0E0E0 !important'
+            'background': 'white !important', // 배경색 흰색 강제 적용
+            'color': '#333 !important' // 기본 글자색 검정 계열 강제 적용
         },
-        '*': { 'color': '#E0E0E0 !important' }, // 모든 요소의 글자색을 흰색 계열로 설정하여 가독성 보장
-        'a': { 'color': '#7CD3F2 !important' },
+        // 주요 텍스트 태그에 강제로 스타일 적용
+        'p, span, div, li, td, th': { 'color': '#333 !important' }, 
+        'h1, h2, h3, h4, h5, h6': { 'color': '#333 !important' },
+        '*': { 'color': '#333 !important' }, // 모든 요소의 글자색을 검정 계열로 설정 (최후의 수단)
+        'a': { 'color': '#4A90E2 !important' }, // 링크 색상
     };
 
-    /** 현재 테마를 렌디션에 적용 */
-    function applyCurrentTheme() {
+
+    /** 항상 라이트 테마를 렌디션에 적용 */
+    function applyLightTheme() {
         if (!rendition) return;
-
-        const isDark = body.classList.contains('dark-mode');
-        if (isDark) {
-            // EPUBJS 렌더링에 다크 테마 적용
-            rendition.themes.override(darkTheme);
-            rendition.themes.applyProperty('background', '#1a1a1a');
-        } else {
-            // EPUBJS 렌더링에 기본 테마 (흰색 배경) 적용
-            rendition.themes.removeOverride('background');
-            rendition.themes.override({}); // 모든 오버라이드 초기화
-        }
-    }
-
-    /** 다크 모드 UI 적용 */
-    function applyDarkMode(isDark) {
-        if (isDark) {
-            body.classList.add('dark-mode');
-            moonIcon.classList.add('hidden');
-            sunIcon.classList.remove('hidden');
-        } else {
-            body.classList.remove('dark-mode');
-            moonIcon.classList.remove('hidden');
-            sunIcon.classList.add('hidden');
-        }
-        applyCurrentTheme(); // 테마 변경 시 렌디션에도 적용
-        localStorage.setItem('darkMode', isDark);
-    }
-
-    /** 로컬 저장소에서 테마 로드 및 초기 적용 */
-    function loadTheme() {
-        const isDark = localStorage.getItem('darkMode') === 'true';
-        applyDarkMode(isDark);
+        rendition.themes.override(lightTheme);
     }
     
-    // 다크 모드 토글 이벤트
-    darkModeToggle.addEventListener('click', () => {
-        const isDark = body.classList.contains('dark-mode');
-        applyDarkMode(!isDark);
-    });
-    
-    /** 모드 아이콘 업데이트 */
-    function updateModeIcon() {
-        if (isScrollMode) {
-            scrollIcon.classList.add('hidden');
-            pageIcon.classList.remove('hidden');
-            modeToggle.title = '현재: 스크롤 모드 (클릭하여 페이지 모드 전환)';
-        } else {
-            scrollIcon.classList.remove('hidden');
-            pageIcon.classList.add('hidden');
-            modeToggle.title = '현재: 페이지 모드 (클릭하여 스크롤 모드 전환)';
-        }
-    }
-
-    /** 모드 토글 (스크롤/페이지) 및 재렌더링 */
-    function toggleReadingMode() {
-        isScrollMode = !isScrollMode;
-        localStorage.setItem('readingMode', isScrollMode ? 'scroll' : 'page');
-        updateModeIcon();
-        
-        showCustomAlert(isScrollMode ? '스크롤 모드 활성화' : '페이지 모드 활성화');
-
-        if (book) {
-            reRenderBook();
-        }
-    }
-
-    /** 로컬 저장소에서 모드 로드 및 초기 적용 */
-    function loadReadingMode() {
-        const mode = localStorage.getItem('readingMode');
-        isScrollMode = (mode === 'scroll');
-        updateModeIcon();
-    }
-    
-    // 모드 토글 이벤트
-    modeToggle.addEventListener('click', toggleReadingMode);
-
-    // 초기 설정 로드
-    loadTheme();
-    loadReadingMode();
-
-
     // ====================================
     // 2. EPUB 로드 및 렌더링 기능
     // ====================================
@@ -371,51 +206,41 @@
         setTimeout(() => document.body.removeChild(errorElement), 3000);
     }
 
-    /** 현재 위치 정보를 분석하여 하단 상태 표시줄을 업데이트합니다. (relocated, rendered 이벤트에서 사용) */
+    /** 현재 위치 정보를 분석하여 하단 상태 표시줄을 업데이트합니다. */
     function updatePageStatus(location) {
         if (!location) {
             pageStatus.textContent = "위치 정보 없음";
             return;
         }
 
-        if (isScrollMode) {
-            // 스크롤 모드: 퍼센티지와 섹션으로 표시
+        // 페이지 모드 (Paginated) 전용 로직
+        const totalPages = location.total;
+        const displayed = location.displayed;
+        
+        // displayed 배열에서 첫 번째 페이지 번호를 안전하게 가져옴
+        const currentPage = (Array.isArray(displayed) && displayed.length > 0) ? displayed[0].page : undefined;
+
+        if (totalPages && totalPages > 0 && currentPage !== undefined) {
+            pageStatus.textContent = `페이지 ${currentPage + 1} / ${totalPages}`;
+        } else if (location.percentage !== undefined) {
+             // 페이지 계산 중이거나 오류 시 퍼센티지 폴백
             const percentage = location.percentage * 100;
-            // location.start.cfi에서 섹션 번호 추출
-            let section = '...';
-            try {
-                // CFI의 두 번째 요소 (spine index)를 사용합니다. 예: /6/8!/4/1:0 -> 8
-                section = location.start.cfi.split('!')[0].split(',')[1].replace('/', '');
-            } catch (e) {
-                console.error("CFI 파싱 오류:", e);
-            }
-            pageStatus.textContent = `섹션 ${section} | ${percentage.toFixed(1)}%`;
-
+            pageStatus.textContent = `읽는 중... ${percentage.toFixed(1)}%`;
         } else {
-            // 페이지 모드: 페이지 번호로 표시
-            const totalPages = location.total;
-            
-            // FIX: location.displayed가 유효한 배열인지 확인하고, 첫 번째 요소의 page 속성을 안전하게 가져옵니다.
-            const displayed = location.displayed;
-            const currentPage = (Array.isArray(displayed) && displayed.length > 0) ? displayed[0].page : undefined;
-
-            if (totalPages && totalPages > 0 && currentPage !== undefined) {
-                pageStatus.textContent = `페이지 ${currentPage + 1} / ${totalPages}`;
-            } else if (location.percentage !== undefined) {
-                 // 페이지 계산 중이거나 오류 시 퍼센티지 폴백
-                const percentage = location.percentage * 100;
-                pageStatus.textContent = `읽는 중... ${percentage.toFixed(1)}%`;
-            } else {
-                pageStatus.textContent = "페이지 정보 로딩 중...";
-            }
+            pageStatus.textContent = "페이지 정보 로딩 중...";
         }
     }
     
-    /** 렌디션 이벤트 리스너 설정 */
+    /** 렌디션 이벤트 리스너 설정 및 강제 스타일 적용 훅 등록 */
     function setupRenditionListeners() {
         if (!rendition) return;
 
-        // 페이지 변경 시 상태 업데이트를 updatePageStatus 함수로 처리
+        // 콘텐츠가 로드될 때마다 라이트 테마를 강제로 다시 적용하는 훅 등록
+        rendition.hooks.content.register((contents) => {
+            applyLightTheme(); 
+        });
+
+        // 페이지 변경 시 상태 업데이트
         rendition.on("relocated", updatePageStatus);
         
         // 초기 페이지 상태 업데이트 (rendered 이벤트 후)
@@ -427,40 +252,6 @@
         });
     }
 
-    /** 책을 현재 모드 설정으로 다시 렌더링 */
-    async function reRenderBook() {
-        if (!book) return;
-        
-        const flow = isScrollMode ? "scrolled-continuous" : "paginated";
-        const spread = "none"; // 모바일 뷰어 스타일을 위해 spread는 항상 none
-
-        // 기존 렌더링 정리
-        if (rendition) {
-            const currentCfi = rendition.currentLocation() ? rendition.currentLocation().start.cfi : null;
-            rendition.destroy();
-            rendition = null;
-
-            // 새 렌더링 인스턴스 생성 (모드 설정 반영)
-            rendition = book.renderTo(viewer, {
-                width: "100%", 
-                height: "100%", 
-                method: "default",
-                flow: flow,
-                spread: spread
-            });
-            
-            applyCurrentTheme();
-            setupRenditionListeners();
-
-            // 이전 위치로 이동 시도
-            if (currentCfi) {
-                await rendition.display(currentCfi).catch(e => console.error("Re-render display failed at CFI:", e));
-            } else {
-                await rendition.display().catch(e => console.error("Re-render display failed:", e));
-            }
-        }
-    }
-
     /**
      * 지정된 EPUB File 객체를 로드하고 렌더링합니다.
      * @param {File} epubFile 로드할 EPUB File 객체
@@ -468,7 +259,6 @@
     async function loadBook(epubFile) {
         if (!epubFile) return;
 
-        // 파일 이름 표시
         fileNameDisplay.textContent = epubFile.name;
 
         // 기존 렌더링 정리
@@ -488,11 +278,10 @@
         pageStatus.textContent = '';
 
         try {
-            // EPUB 인스턴스 생성 (File 객체 직접 전달)
             book = new ePub(epubFile);
 
-            // 초기 모드 설정 반영
-            const flow = isScrollMode ? "scrolled-continuous" : "paginated";
+            // 페이지 모드로 고정
+            const flow = "paginated";
             const spread = "none";
 
             // 렌더링 인스턴스 생성
@@ -500,14 +289,12 @@
                 width: "100%", 
                 height: "100%", 
                 method: "default",
-                flow: flow,
+                flow: flow, // Paginated 모드로 고정
                 spread: spread 
             });
             
-            applyCurrentTheme();
             setupRenditionListeners();
 
-            // 렌더링 시작
             await rendition.display();
 
             // 로딩 메시지 숨기기
@@ -548,14 +335,12 @@
     });
 
     // ====================================
-    // 3. PC 키보드 & 모바일 스와이프 제스처
-    // (페이지 모드에서만 작동)
+    // 3. PC 키보드 & 모바일 스와이프 제스처 (페이지 모드 전용)
     // ====================================
 
     // A. PC 키보드 이벤트 (화살표 키)
     window.addEventListener('keydown', (event) => {
-        // 스크롤 모드에서는 키보드 이벤트를 사용하지 않음
-        if (!rendition || isScrollMode) return; 
+        if (!rendition) return; 
 
         if (event.key === 'ArrowLeft') {
             event.preventDefault();
@@ -568,14 +353,12 @@
 
     // B. 모바일 스와이프 제스처 이벤트
     viewer.addEventListener('touchstart', (event) => {
-        // 스크롤 모드에서는 스와이프 이벤트를 사용하지 않음
-        if (!rendition || isScrollMode || event.touches.length !== 1) return;
+        if (!rendition || event.touches.length !== 1) return;
         startX = event.touches[0].clientX;
     }, { passive: true }); 
 
     viewer.addEventListener('touchend', (event) => {
-        // 스크롤 모드에서는 스와이프 이벤트를 사용하지 않음
-        if (!rendition || isScrollMode) return;
+        if (!rendition) return;
 
         const endX = event.changedTouches[0].clientX;
         const deltaX = startX - endX; 
