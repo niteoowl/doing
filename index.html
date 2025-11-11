@@ -125,6 +125,7 @@
             font-size: 24px; 
             margin-bottom: 2px; 
         }
+        /* nav-item은 이제 div입니다. */
         .nav-item {
             color: #999; 
             text-decoration: none;
@@ -141,6 +142,7 @@
         }
         
         /* Vue Router의 active 클래스 */
+        /* router-link-exact-active 클래스가 .interactive 컨테이너에 수동으로 적용됩니다. */
         .router-link-exact-active .nav-item { 
             color: var(--color-accent); 
             font-weight: 600;
@@ -291,24 +293,34 @@
     
     <!-- 하단 내비게이션 바 (공통 레이아웃) -->
     <div class="bottom-nav">
-        <!-- Vue Router Link 사용: to 속성으로 경로 지정 -->
-        <router-link to="/" tag="div" class="interactive">
-            <a class="nav-item">
-                <i class="material-icons">home</i>
-                <span>홈</span>
-            </a>
+        <!-- 1. v-slot과 custom prop을 사용하여 경고 제거 -->
+        <router-link to="/" v-slot="{ navigate, isExactActive }" custom>
+            <div :class="['interactive', { 'router-link-exact-active': isExactActive }]" @click="navigate">
+                <div class="nav-item">
+                    <i class="material-icons">home</i>
+                    <span>홈</span>
+                </div>
+            </div>
         </router-link>
-        <router-link to="/challenge" tag="div" class="interactive">
-            <a class='nav-item'>
-                <i class="material-icons">local_fire_department</i> 
-                <span>챌린지</span>
-            </a>
+        
+        <!-- 2. v-slot과 custom prop을 사용하여 경고 제거 -->
+        <router-link to="/challenge" v-slot="{ navigate, isExactActive }" custom>
+            <div :class="['interactive', { 'router-link-exact-active': isExactActive }]" @click="navigate">
+                <div class='nav-item'>
+                    <i class="material-icons">local_fire_department</i> 
+                    <span>챌린지</span>
+                </div>
+            </div>
         </router-link>
-        <router-link to="/my" tag="div" class="interactive">
-            <a class="nav-item">
-                <i class="material-icons">person</i>
-                <span>마이</span>
-            </a>
+
+        <!-- 3. v-slot과 custom prop을 사용하여 경고 제거 -->
+        <router-link to="/my" v-slot="{ navigate, isExactActive }" custom>
+            <div :class="['interactive', { 'router-link-exact-active': isExactActive }]" @click="navigate">
+                <div class="nav-item">
+                    <i class="material-icons">person</i>
+                    <span>마이</span>
+                </div>
+            </div>
         </router-link>
     </div>
 
